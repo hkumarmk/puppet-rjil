@@ -42,3 +42,19 @@ rjil::system::accounts::active_users:
 rjil::system::accounts::sudo_users:
   - user1
   - user3
+
+########### Apt settings
+############################
+
+apt::purge_sources_list: true
+apt::purge_sources_list_d: true
+
+## Complete set of sources are added in class rjil::system::apt
+## Only repos which are added to active_sources are enabled
+
+rjil::system::apt::active_sources:
+  - trusty
+  - trusty-updates
+  - puppetlabs
+  - ceph
+  - rustedhalo
