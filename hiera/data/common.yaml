@@ -150,3 +150,50 @@ rjil::system::apt::enable_ubuntu: true
 rjil::system::apt::enable_puppetlabs: true
 rjil::system::apt::enable_ceph: true
 rjil::system::apt::enable_rustedhalo: true
+
+###########################################
+############ Ceph Configuration ###########
+###########################################
+
+########## Ceph common configuration
+####################################
+
+### These should go to environment specific yaml
+
+## fsid: unique uuid
+rjil::ceph::fsid: fac04d85-db48-4564-b821-deebda046261
+
+
+rjil::ceph::storage_cluster_if: eth1
+rjil::ceph::public_if: eth0
+
+## rjil::ceph::mon_config: - A hash defines all mon nodes
+
+rjil::ceph::mon_config:
+  st1: { mon_addr: '10.1.0.51'}
+  st2: { mon_addr: '10.1.0.52'}
+  st3: { mon_addr: '10.1.0.53'}
+
+## rjil::ceph::mon_initial_members: This is a comma separated value which
+##      defines initial mon members, if not define, this is derived from mon_config
+## mon_initial_members are initial members required to form a ceph cluster.
+##   this is only used during cluster initialization.
+
+#rjil::ceph::mon_initial_members: 'st2,st3'
+
+########## Ceph Mon configuration
+####################################
+rjil::ceph::mon::public_if: "%{hiera('rjil::ceph::public_if')}"
+
+## rjil::ceph::mon::key: ceph mon key
+rjil::ceph::mon::key: 'AQBRSfNSQNCMAxAA/wSNgHmHwzjnl2Rk22P4jA=='
+
+
+########## Ceph OSD configuration
+####################################
+rjil::ceph::osd::public_if: "%{hiera('rjil::ceph::public_if')}"
+rjil::ceph::osd::storage_cluster_if: "%{hiera('rjil::ceph::storage_cluster_if')}"
+
+### This may be override in clientcert
+rjil::ceph::osd::osds:
+  - /dev/vdb

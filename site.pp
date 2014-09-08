@@ -58,6 +58,30 @@ node /mc\d*/ {
   include rjil::memcached
 }
 
+## Setup ceph base config on oc, and cp nodes
+node /^(oc|cp)\d+/ {
+  include rjil::system
+  include rjil::ceph
+}
+
+## setup ceph configuration and osds on st nodes
+node /st\d+/ {
+  include rjil::system
+  include rjil::ceph
+  include rjil::ceph::osd
+}
+
+## setup ceph osd and mon configuration on ceph
+## Mon nodes.
+## Note: This node list can be derived from hiera - rjil::ceph::mon_config
+
+node st1,st2,st3 {
+  include rjil::system
+  include rjil::ceph
+  include rjil::ceph::mon
+  include rjil::ceph::osd
+}
+
 node /apache\d*/ {
   include base
   ## Configure apache reverse proxy
