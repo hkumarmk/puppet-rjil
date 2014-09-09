@@ -150,3 +150,14 @@ rjil::system::apt::enable_ubuntu: true
 rjil::system::apt::enable_puppetlabs: true
 rjil::system::apt::enable_ceph: true
 rjil::system::apt::enable_rustedhalo: true
+
+########### ntp server settings
+###############################
+### This settings here set internal ntp servers from which
+### All servers sync the time.
+### There will be clientcert specific overrides for internal NTP servers
+###     to configure them with external ntp servers
+
+ntp::servers:
+  - 10.1.0.5
+ntp::udlc: yes

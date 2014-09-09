@@ -1,0 +1,3 @@
+#### lb1 is local ntp server
+ntp::servers:
+  - pool.ntp.org

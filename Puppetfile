@@ -21,6 +21,10 @@ mod 'dprince/qpid',
   :git => "#{base_url}/dprince/puppet-qpid",
   :ref => "1.0.2"
 
+mod 'puppetlabs/ntp',
+  :git => "#{base_url}/puppetlabs/puppetlabs-ntp",
+  :ref => '3.0.1'
+
 mod 'saz/ssh',
   :git => "#{base_url}/saz/puppet-ssh.git",
   :ref => 'v2.3.6'

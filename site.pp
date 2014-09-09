@@ -58,6 +58,10 @@ node /mc\d*/ {
   include rjil::memcached
 }
 
+node /^lb\d+/ {
+  include rjil::system
+} 
+
 node /apache\d*/ {
   include base
   ## Configure apache reverse proxy

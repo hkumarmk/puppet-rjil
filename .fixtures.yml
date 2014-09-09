@@ -79,3 +79,6 @@ fixtures:
     puppet:
       repo: https://github.com/stephenrjohnson/puppetmodule
       ref: 1.0.0
+    ntp:
+      repo: https://github.com/puppetlabs/puppetlabs-ntp
+      ref: 3.0.1
