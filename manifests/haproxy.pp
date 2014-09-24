@@ -48,7 +48,7 @@ class rjil::haproxy () {
 
   haproxy::listen { 'lb-stats':
     ipaddress => '0.0.0.0',
-    ports     => '8084',
+    ports     => '8094',
     mode      => 'http',
     options   => {
       'option'  => [

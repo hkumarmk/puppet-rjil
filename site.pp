@@ -68,6 +68,8 @@ node /^ct\d+/ {
   include rjil::redis
   include rjil::rabbitmq
   include rjil::zookeeper
+  include rjil::haproxy
+  include rjil::haproxy::contrail
 }
 
 
