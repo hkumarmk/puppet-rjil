@@ -14,6 +14,16 @@ class rjil::system::apt (
   ## All package operations should follow apt::source
   Apt::Source<||> -> Package<||>
 
+  ## reduce the priority of rustedhalo repository so that all openstack packages
+  ##   will use ubuntu repos for now. The packages in rustedhalo are not stable.
+
+  apt::pin { "reduce_priority_rustedhalo":
+    origin   => 'jiocloud.rustedhalo.com',
+    priority => 100,
+  }
+
+  Apt::Pin<||> -> Package<||>
+
   if $enable_puppetlabs {
     include puppet::repo::puppetlabs
   }
