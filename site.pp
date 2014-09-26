@@ -64,6 +64,13 @@ node /apache\d*/ {
 ## Setup contrail nodes
 ##
 node /^ct\d+/ {
+  anchor{'site::ct::end_base_services': }
+  Class['rjil::redis'] -> Anchor['site::ct::end_base_services']
+  Class['rjil::rabbitmq'] -> Anchor['site::ct::end_base_services']
+  Class['rjil::zookeeper'] -> Anchor['site::ct::end_base_services']
+  Class['rjil::haproxy'] -> Class['rjil::haproxy::contrail'] ->
+    Anchor['site::ct::end_base_services']
+  Anchor['site::ct::end_base_services'] -> Class['rjil::contrail::server']
   include rjil::base
   include rjil::redis
   include rjil::cassandra
@@ -71,6 +78,7 @@ node /^ct\d+/ {
   include rjil::zookeeper
   include rjil::haproxy
   include rjil::haproxy::contrail
+  include rjil::contrail::server
 }
 
 

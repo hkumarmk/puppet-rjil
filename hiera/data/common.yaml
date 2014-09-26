@@ -208,3 +208,9 @@ rjil::system::apt::enable_rustedhalo: true
 
 rabbitmq::manage_repos: false
 rabbitmq::admin_enable: false
+
+contrail::keystone_host: 10.1.0.11
+contrail::keystone_admin_token: "%{hiera('keystone::admin_token')}"
+contrail::keystone_admin_password: "%{hiera('keystone::admin_password')}"
+contrail::keystone_auth_password: "%{hiera('neutron::keystone::auth::password')}"
+contrail::manage_repo: true
