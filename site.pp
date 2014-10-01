@@ -93,6 +93,8 @@ node /^oc\d+/ {
   include rjil::base
   include rjil::memcached
   include rjil::keystone
+  include rjil::ceph
+  include rjil::ceph::mon_config
   include rjil::glance
 }
 
@@ -105,6 +107,8 @@ node /^ocdb\d+/ {
   include rjil::memcached
   include rjil::db
   include rjil::keystone
+  include rjil::ceph
+  include rjil::ceph::mon_config
   include rjil::glance
   include openstack_extras::keystone_endpoints
   include rjil::keystone::test_user

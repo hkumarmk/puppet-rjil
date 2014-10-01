@@ -77,13 +77,13 @@ openstack_extras::auth_file::controller_node: "keystone.service.consul"
 ## default one is rbd, which need ceph to be setup
 ## if ceph is not setup, use file
 
-rjil::glance::backend: file
+rjil::glance::backend: rbd
 
 ### Start: rbd backend specific settings
-# rjil::glance::ceph_mon_key: "%{hiera('rjil::ceph::mon::key')}"
-# rjil::glance::rbd_user: glance
-# glance::backend::rbd::rbd_store_user: "%{hiera('rjil::glance::rbd_user')}"
-# glance::backend::rbd::rbd_store_pool: images
+rjil::glance::ceph_mon_key: "%{hiera('rjil::ceph::mon::key')}"
+rjil::glance::rbd_user: glance
+glance::backend::rbd::rbd_store_user: "%{hiera('rjil::glance::rbd_user')}"
+glance::backend::rbd::rbd_store_pool: images
 ### End: rbd backend specific settings
 
 

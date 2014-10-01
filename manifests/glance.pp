@@ -36,7 +36,11 @@ class rjil::glance (
       fail("Class['rjil::ceph'] is not defined")
     }
     # Rbd backend
-    Class['rjil::ceph'] ->  Class['::glance::backend::rbd']
+    ensure_resource('rjil::service_blocker', 'stmon', {})
+    Class['rjil::ceph'] ->
+    Rjil::Service_blocker['stmon'] ->
+    Class['::glance::backend::rbd']
+    Class['glance::api'] -> Ceph::Auth['glance_client']
 
     if ! $ceph_mon_key {
       fail("Parameter ceph_mon_key is not defined")
