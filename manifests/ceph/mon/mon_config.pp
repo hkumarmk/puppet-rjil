@@ -1,18 +1,19 @@
 #
-# Define: rjil::ceph::mon::mon_config
+# Class: rjil::ceph::mon::mon_config
 #    Setup mon configuration for mon nodes.
 #
+# Parameters
+# *mon_config* array of IP addresses which is resolved for
+# stmon.service.consul
+#
 
-define rjil::ceph::mon::mon_config (
+
+class rjil::ceph::mon::mon_config (
   $mon_service_name = 'stmon.service.consul',
   $public_if        = eth0,
+  $mon_config       = split(dns_resolve($mon_service_name),','),
+  $leader           = false,
 ) {
-
-  ##
-  # mon_config is array of IP addresses which is resolved for
-  # stmon.service.consul
-  ##
-  $mon_config = split(dns_resolve($mon_service_name),',')
 
   ##
   # Ceph mon configuration for the same node must have following properties
@@ -45,6 +46,8 @@ define rjil::ceph::mon::mon_config (
 
   if ! empty($other_mons) {
     ::ceph::conf::mon_config{ $other_mons: }
+  } elsif ! $leader {
+    fail("External Mon list cannot be empty when we are not the leader")
   }
 
 }

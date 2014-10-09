@@ -40,7 +40,7 @@ class rjil::ceph::mon (
   # Add mon configuration on all mon nodes.
   ##
 
-  rjil::ceph::mon::mon_config {"mon_config_${::hostname}":
+  class { 'rjil::ceph::mon::mon_config':
     public_if       => $public_if,
     mon_service_name=> "${mon_service_name}.service.consul",
   }
@@ -77,5 +77,7 @@ class rjil::ceph::mon (
     port          => 6789,
     check_command => '/usr/lib/jiocloud/tests/check_ceph_mon.sh'
   }
+
+  rjil::profile { 'stmon': }
 
 }

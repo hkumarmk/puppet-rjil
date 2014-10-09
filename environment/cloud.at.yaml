@@ -31,3 +31,15 @@ resources:
     image: 169d484a-dde2-44c8-8f15-daaa1ba69e94
     networks:
       - d7c83218-276b-4e4c-8ed1-1165b44c3a44
+  stmonleader:
+    number: 1
+    flavor: 101
+    image: 169d484a-dde2-44c8-8f15-daaa1ba69e94
+    networks:
+      - d7c83218-276b-4e4c-8ed1-1165b44c3a44
+  stmon:
+    number: 2
+    flavor: 101
+    image: 169d484a-dde2-44c8-8f15-daaa1ba69e94
+    networks:
+      - d7c83218-276b-4e4c-8ed1-1165b44c3a44

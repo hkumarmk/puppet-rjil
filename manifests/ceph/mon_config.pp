@@ -1,11 +1,11 @@
 #
-# Define: rjil::ceph::mon_config
+# Class: rjil::ceph::mon_config
 #  Setup mon configuration for ceph storage nodes and clients except mon
 #  nodes.
 #  NOTE:: MON NODES WILL USE rjil::ceph::mon::mon_config
 #
 
-define rjil::ceph::mon_config (
+class rjil::ceph::mon_config (
   $mon_service_name = 'stmon.service.consul',
 ) {
 
