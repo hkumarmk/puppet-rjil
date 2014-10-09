@@ -118,7 +118,8 @@ class rjil::ceph::osd (
     exec { 'make_disk_file':
       command => "dd if=/dev/zero of=/var/lib/ceph/disk-1 bs=4k \
                   count=${autodisk_size_4k}",
-      unless => 'test -e /var/lib/ceph/disk-1',
+      unless  => 'test -e /var/lib/ceph/disk-1',
+      timeout => 600,
       require => Package['ceph'],
     }
 

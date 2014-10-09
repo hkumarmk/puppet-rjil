@@ -9,3 +9,7 @@ resources:
     number: 1
   ct:
     number: 1
+  stmonleader:
+    number: 1
+  stmon:
+    number: 2

@@ -1,9 +1,45 @@
-###Class: rjil::ceph
+#
+# Class: rjil::ceph
+#  Install and configure ceph on both ceph clients and servers
+#
+# == Parameters
+#
+# [*fsid*]
+#   Ceph fsid - a unique id for the ceph cluster
+#
+# [*keyring*]
+#   Path to ceph keyring file. Default: /etc/ceph/keyring
+#
+# [*auth_type*]
+#   Ceph auth type. Cephx provide authentication managed by ceph mons. Default: Cephx
+#
+# [*storage_cluster_if*]
+#   Network Interface used for storage cluster.
+#
+# [*storage_cluster_network*]
+#   Optional storage cluster network. If not specified, auto detected from
+#   ip address assigned to $storage_clsuter_if
+#
+# [*public_if*]
+#   Network Interface used for public communication - this is the interface used
+#   by storage clients for storage access.
+#
+# [*public_network*]
+#   Optional public network. If not specified, automatically detected from ip
+#   address assigned to $public_if
+#
+# [*osd_journal_type*]
+#   OSD Jounal types. Valid types are
+#     first_partition -> first partition of the data disk,
+#     filesystem -> journal directory under individual disk filesystem,
+#
+# [*pool_default_size*]
+#   Default number of replicas for all pools, unless override in any pools.
+#   Default: 3, and it should be 3 or more in production systems.
+#
+
 class rjil::ceph (
-  $mon_config, ## a hash of mon hostname and ip address
   $fsid,
-  $mon_initial_members    = undef,
-  $admin_key              = undef,
   $keyring                = '/etc/ceph/keyring',
   $auth_type              = 'cephx',
   $storage_cluster_if     = eth1,
@@ -47,16 +83,10 @@ class rjil::ceph (
   } elsif $public_if {
     $pub_net   = inline_template("<%= scope.lookupvar('network_' + @public_if) %>")
     $pub_mask  = inline_template("<%= scope.lookupvar('netmask_' + @public_if) %>")
-  #notice($public_if,$pub_net,$pub_mask)
     if $pub_mask {
       $pub_cidr  = netmask2cidr($pub_mask)
       $public_network_orig = "${pub_net}/${pub_cidr}"
     }
-  }
-  if $mon_initial_members {
-    $mon_initial_members_orig = $mon_initial_members
-  } else {
-    $mon_initial_members_orig = join(keys($mon_config),',')
   }
 
   ## run base ceph installation and config  which is to be setup
@@ -78,17 +108,8 @@ class rjil::ceph (
     auth_type        => $auth_type,
     cluster_network  => $storage_cluster_network_orig,
     public_network   => $public_network_orig,
-    mon_init_members => $mon_initial_members_orig,
     osd_journal_type => $osd_journal_type,
     pool_default_size=> $pool_default_size,
     require          => File['/etc/ceph'],
   }
-
-  ## specify mon cluster details
-  if is_hash($mon_config) {
-    create_resources(::ceph::conf::mon_config,$mon_config)
-  } else {
-    fail("Incorrect ceph mon definition: ${mon_config}")
-  }
-
 }

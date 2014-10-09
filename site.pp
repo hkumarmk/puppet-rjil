@@ -16,27 +16,51 @@ node /etcd/ {
     discovery_token => $::etcd_discovery_token
   }
 }
+##
+# setup ceph configuration and osds on st nodes
+# These nodes wait at least one stmon to be registered in consul.
+##
 
-## setup ceph configuration and osds on st nodes
 node /^st\d+/ {
   include rjil::base
   include rjil::ceph
   include rjil::ceph::osd
+  ensure_resource('rjil::service_blocker', 'stmon', {})
+  Class['rjil::base'] -> Rjil::Service_blocker['stmon'] ->
+  Class['rjil::ceph'] -> Class['rjil::ceph::osd']
 }
 
-# single leader that will be used to ensure that all
-# mons form a single cluster
+##
+# single leader that will be used to ensure that all mons form a single cluster.
+#
+# The only difference in stmon and stmonleader is that stmonleader is the node
+# which starts first in the ceph cluster initialization. After that, both
+# those roles will serve the same purpose.
+# All ceph servers and clients (st, stmon, cp, oc nodes) except stmonleader will wait for at least
+# one "stmon" service node in consul.
+#
+# The leader will register the service in consul with name "stmon" (or
+# any other name if overridden in hiera).
+#
+##
+
 node /^stmonleader1/ {
   include rjil::base
   include rjil::ceph
   include rjil::ceph::mon
   include rjil::ceph::osd
   rjil::profile { 'stmonleader': }
+  include rjil::jiocloud::consul::agent
 }
 
-## setup ceph osd and mon configuration on ceph
-## Mon nodes.
-## Note: This node list can be derived from hiera - rjil::ceph::mon_config
+##
+# setup ceph osd and mon configuration on ceph Mon nodes.
+# All ceph mon nodes are registered in consul as service name "stmon" (or any
+# other name if overridden)
+#
+# stmon nodes will wait at least one "stmon" service to be up in consul before
+# initialize themselves
+##
 
 node /^stmon\d+/ {
   include rjil::base
@@ -44,6 +68,12 @@ node /^stmon\d+/ {
   include rjil::ceph::mon
   include rjil::ceph::osd
   rjil::profile { 'stmon': }
+  include rjil::jiocloud::consul::agent
+  ensure_resource('rjil::service_blocker', 'stmon', {})
+  Class[rjil::base] -> Rjil::Service_blocker['stmon']
+  Rjil::Service_blocker['stmon'] -> Class['rjil::ceph::mon']
+  Rjil::Service_blocker['stmon'] -> Class['rjil::ceph::osd']
+
 }
 
 ##
