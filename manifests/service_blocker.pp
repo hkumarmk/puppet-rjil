@@ -32,8 +32,9 @@ define rjil::service_blocker(
     timeout   => $timeout,
     try_sleep => $try_sleep,
     tries     => $timeout/$try_sleep,
+    logoutput => true,
   }
 
-  Rjil::Service_blocker[$name] -> Exec <| title == 'reload-consul' |>
+  Exec <| title == 'reload-consul' |> -> Rjil::Service_blocker[$name]
 
 }
