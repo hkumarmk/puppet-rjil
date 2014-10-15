@@ -106,3 +106,5 @@ fixtures:
     ntp:
       repo: https://github.com/puppetlabs/puppetlabs-ntp
       ref: 3.0.1
+    openstack_zeromq:
+      repo: https://github.com/JioCloud/puppet-openstack_zeromq
