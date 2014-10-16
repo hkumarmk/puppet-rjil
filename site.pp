@@ -94,6 +94,7 @@ node /^oc\d+/ {
   include rjil::keystone
   include rjil::glance
   include rjil::openstack_zeromq
+  include rjil::cinder
 }
 
 #
@@ -107,6 +108,7 @@ node /^ocdb\d+/ {
   include rjil::keystone
   include rjil::glance
   include rjil::openstack_zeromq
+  include rjil::cinder
   include openstack_extras::keystone_endpoints
   include rjil::keystone::test_user
   # ensure that we don't create keystone objects until
@@ -127,6 +129,7 @@ node /^oclb\d+/ {
   include rjil::keystone
   include rjil::glance
   include rjil::openstack_zeromq
+  include rjil::cinder
   include openstack_extras::keystone_endpoints
   include rjil::keystone::test_user
   include rjil::haproxy
