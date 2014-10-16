@@ -22,6 +22,9 @@ keystone_db_user: keystone
 keystone_db_password: keystone
 glance_db_user: glance
 glance_db_password: glance
+cinder_db_user: cinder
+cinder_db_password: cinder
+
 keystone_public_address: lb.keystone.service.consul
 keystone_private_address: real.keystone.service.consul
 
@@ -60,6 +63,7 @@ debug: 'false'
 verbose: 'false'
 region: RegionOne
 admin_email: cloud.devops@ril.com
+rpc_backend: zmq
 
 ########### auth for test user
 ##################################
@@ -109,6 +113,24 @@ glance::registry::keystone_password: "%{hiera('glance::keystone::auth::password'
 glance::registry::database_connection: "%{hiera('glance::api::database_connection')}"
 glance::registry::mysql_module: 2.3
 
+########### Cinder configuration
+###################################
+cinder::rpc_backend: "%{hiera('rpc_backend')}"
+rjil::cinder::rpc_backend: "%{hiera('rpc_backend')}"
+cinder::verbose: "%{hiera('verbose')}"
+cinder::debug: "%{hiera('debug')}"
+cinder::database_connection: "mysql://%{hiera('cinder_db_user')}:%{hiera('cinder_db_password')}@%{hiera('db_host')}/cinder"
+cinder::mysql_module: 2.3
+cinder::api::keystone_password: "%{hiera('cinder::keystone::auth::password')}"
+cinder::api::keystone_auth_host: "%{hiera('rjil::keystone::public_address')}"
+cinder::api::keystone_auth_protocol: "%{hiera('rjil::keystone::protocol')}"
+cinder::scheduler::scheduler_driver: cinder.scheduler.simple.SimpleScheduler
+cinder::volume::rbd::rbd_pool: volumes
+cinder::volume::rbd::rbd_user: cinder_volume
+cinder::volume::rbd::rbd_secret_uuid: 26f3bfcf-7acd-40ec-948d-62b12cd14901
+cinder::volume::rbd::volume_tmp_dir: /tmp
+rjil::cinder::ceph_mon_key: "%{hiera('rjil::ceph::mon::key')}"
+rjil::cinder::rbd_user: cinder_volume
 
 ########### Keystone config
 ###################################

@@ -62,8 +62,8 @@ mod 'puppetlabs/apt',
   :ref => '1.6.0'
 
 mod 'stackforge/cinder',
-  :git => "#{base_url}/jiocloud/puppet-cinder",
-  :ref => 'svn_to_git_2'
+  :git => "#{base_url}/stackforge/puppet-cinder",
+  :ref => 'stable/icehouse'
 
 mod 'puppetlabs/concat',
   :git => "#{base_url}/puppetlabs/puppetlabs-concat",

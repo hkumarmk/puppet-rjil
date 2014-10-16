@@ -92,6 +92,7 @@ node /^oc\d+/ {
   include rjil::base
   include rjil::memcached
   include rjil::keystone
+  include rjil::cinder
   include rjil::glance
   include rjil::openstack_zeromq
 }
@@ -105,6 +106,7 @@ node /^ocdb\d+/ {
   include rjil::memcached
   include rjil::db
   include rjil::keystone
+  include rjil::cinder
   include rjil::glance
   include rjil::openstack_zeromq
   include openstack_extras::keystone_endpoints
@@ -125,6 +127,7 @@ node /^oclb\d+/ {
   include rjil::memcached
   include rjil::db
   include rjil::keystone
+  include rjil::cinder
   include rjil::glance
   include rjil::openstack_zeromq
   include openstack_extras::keystone_endpoints
