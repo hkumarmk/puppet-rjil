@@ -12,10 +12,6 @@ rjil::jiocloud::consul::server::bind_addr: "%{ipaddress_eth1}"
 rjil::jiocloud::consul::bootstrapserver::bind_addr: "%{ipaddress_eth1}"
 rjil::jiocloud::consul::agent::bind_addr: "%{ipaddress_eth1}"
 
-rjil::haproxy::openstack::keystone_ips: "%{lookup_array('services::keystone::eth1')}"
-rjil::haproxy::openstack::keystone_internal_ips: "%{lookup_array('services::keystone::eth1')}"
-rjil::haproxy::openstack::glance_ips: "%{lookup_array('services::glance::eth1')}"
-
 rjil::keystone::public_address: "%{ipaddress_eth1}"
 
 rjil::ceph::storage_cluster_if: eth1

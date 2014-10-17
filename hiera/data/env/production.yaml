@@ -24,10 +24,6 @@ cinder_internal_address: "volume-beta.jiocloud.com"
 rjil::jiocloud::etcd::addr: "%{ipaddress_eth0}:4001"
 rjil::jiocloud::etcd::peer_addr: "%{ipaddress_eth0}:7001"
 
-rjil::haproxy::openstack::keystone_ips: "%{lookup_array('services::keystone::eth0')}"
-rjil::haproxy::openstack::keystone_internal_ips: "%{lookup_array('services::keystone::eth0')}"
-rjil::haproxy::openstack::glance_ips: "%{lookup_array('services::glance::eth0')}"
-
 rjil::keystone::public_address: "%{ipaddress_eth0}"
 
 # Don't let Jenkins log in in production
