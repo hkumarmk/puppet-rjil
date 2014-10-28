@@ -30,8 +30,6 @@ keystone_private_address: real.keystone.service.consul
 nova_public_address: lb.nova.service.consul
 nova_internal_address: real.nova.service.consul
 
-neutron_public_address: lb.neutron.service.consul
-neutron_internal_address: real.neutron.service.consul
 
 glance_public_address: lb.glance.service.consul
 glance_internal_address: real.glance.service.consul
@@ -48,6 +46,7 @@ debug: 'false'
 verbose: 'false'
 region: RegionOne
 rpc_backend: zmq
+api_protocol: http
 
 ########### auth for test user
 ##################################
@@ -96,6 +95,29 @@ glance::registry::auth_uri: "%{hiera('rjil::keystone::protocol')}://%{hiera('gla
 glance::registry::keystone_password: "%{hiera('glance::keystone::auth::password')}"
 glance::registry::database_connection: "%{hiera('glance::api::database_connection')}"
 glance::registry::mysql_module: 2.3
+
+########### Neutron Configuration
+###################################
+neutron_public_address: lb.neutron.service.consul
+neutron_internal_address: real.neutron.service.consul
+neutron_public_port: 9696
+
+neutron::verbose: "%{hiera('verbose')}"
+neutron::debug: "%{hiera('debug')}"
+neutron::server::auth_password: "%{hiera('neutron::keystone::auth::password')}"
+neutron::server::auth_host: "%{hiera('keystone_public_address')}"
+neutron::server::auth_protocol: "%{hiera('rjil::keystone::protocol')}"
+neutron::rabbit_password: guest
+neutron::core_plugin: neutron_plugin_contrail.plugins.opencontrail.contrail_plugin.NeutronPluginContrailCoreV2
+neutron::service_plugins:
+  - neutron_plugin_contrail.plugins.opencontrail.loadbalancer.plugin.LoadBalancerPlugin
+neutron::quota::quota_driver: neutron_plugin_contrail.plugins.opencontrail.quota.driver.QuotaDriver
+
+# Below configs are not there in neutron module, so adding them in neutron
+# profile for now.
+rjil::neutron::api_extensions_path: extensions:/usr/lib/python2.7/dist-packages/neutron_plugin_contrail/extensions
+rjil::neutron::service_provider: LOADBALANCER:Opencontrail:neutron_plugin_contrail.plugins.opencontrail.loadbalancer.driver.OpencontrailLoadbalancerDriver:default
+
 
 ########### Cinder configuration
 ###################################
@@ -196,8 +218,8 @@ keystone::keystone::auth::region: "%{hiera('region')}"
 
 neutron::keystone::auth::password: neutron
 neutron::keystone::auth::public_address: "%{hiera('neutron_public_address')}"
-neutron::keystone::auth::public_port: 9696
-neutron::keystone::auth::public_protocol: http
+neutron::keystone::auth::public_port: "%{hiera('neutron_public_port')}"
+neutron::keystone::auth::public_protocol: "%{hiera('api_protocol')}"
 neutron::keystone::auth::admin_address: "%{hiera('neutron_internal_address')}"
 neutron::keystone::auth::internal_address: "%{hiera('neutron_internal_address')}"
 neutron::keystone::auth::region: "%{hiera('region')}"
@@ -276,7 +298,15 @@ contrail::keystone_address: "%{hiera('keystone_public_address')}"
 contrail::keystone_admin_token: "%{hiera('keystone::admin_token')}"
 contrail::keystone_admin_password: "%{hiera('admin_password')}"
 contrail::keystone_auth_password: "%{hiera('neutron::keystone::auth::password')}"
+
+##
+# Currently we have some dependency packages missing from rustedhalo, so they
+# are taken from opencontrail ppa. This can be made false after we have all
+# code.
+##
+
 contrail::manage_repo: true
+contrail::neutron_ip: "%{hiera('neutron_public_address')}"
 
 
 ###########################################

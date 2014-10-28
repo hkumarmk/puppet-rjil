@@ -39,6 +39,7 @@ describe 'rjil::haproxy::openstack' do
       'glance_ips'            => [],
       'cinder_ips'            => [],
       'nova_ips'              => [],
+      'neutron_ips'           => [],
     }
   end
 

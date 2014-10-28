@@ -12,45 +12,26 @@
 
 class rjil::haproxy::contrail(
   $vip                     = '0.0.0.0',
-  $neutron_vip             = undef,
-  $neutron_backend_ips     = [$::ipaddress],
   $api_server_vip          = undef,
   $api_backend_ips         = [$::ipaddress],
   $discovery_server_vip    = undef,
   $discovery_backend_ips   = [$::ipaddress],
-  $neutron_listen_ports    = 9696,
-  $neutron_balancer_ports  = 9697,
   $api_listen_ports        = 8082,
   $api_balancer_ports      = 9100,
   $discovery_listen_ports  = 5998,
   $discovery_balancer_ports= 9110,
-
 ) {
 
-  if $neutron_vip {
-    $neutron_vip_orig = $neutron_vip
-  } else {
-    $neutron_vip_orig = $vip
-  }
-
-  if $api_vip {
-    $api_vip_orig = $api_vip
+  if $api_server_vip {
+    $api_vip_orig = $api_server_vip
   } else {
     $api_vip_orig = $vip
   }
 
-  if $discovery_vip {
-    $discovery_vip_orig = $discovery_vip
+  if $discovery_server_vip {
+    $discovery_vip_orig = $discovery_server_vip
   } else {
     $discovery_vip_orig = $vip
-  }
-
-
-  rjil::haproxy_service { 'neutron':
-    vip               => $neutron_vip_orig,
-    listen_ports      => $neutron_listen_ports,
-    balancer_ports    => $neutron_balancer_ports,
-    cluster_addresses => $neutron_backend_ips,
   }
 
   rjil::haproxy_service { 'api':
