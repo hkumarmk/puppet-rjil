@@ -94,8 +94,8 @@ mod 'puppetlabs/mysql',
   :ref => '2.2.x'
 
 mod 'stackforge/neutron',
-  :git => "#{base_url}/jiocloud/puppet-neutron",
-  :ref => 'master'
+  :git => "#{base_url}/stackforge/puppet-neutron",
+  :ref => 'stable/icehouse'
 
 mod 'stackforge/nova',
   :git => "#{base_url}/sorenh/puppet-nova",

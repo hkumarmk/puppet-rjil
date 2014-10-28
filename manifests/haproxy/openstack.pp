@@ -9,6 +9,7 @@ class rjil::haproxy::openstack(
   $glance_ips            = values(service_discover_consul('glance', 'real')),
   $cinder_ips            = values(service_discover_consul('cinder', 'real')),
   $nova_ips              = values(service_discover_consul('nova', 'real')),
+  $neutron_ips           = values(service_discover_consul('neutron', 'real')),
   $horizon_port          = '80',
   $horizon_https_port    = '443',
   $novncproxy_port       = '6080',
@@ -18,6 +19,7 @@ class rjil::haproxy::openstack(
   $glance_registry_port  = '9191',
   $cinder_port           = '8776',
   $nova_port             = '8774',
+  $neutron_port          = '9696',
   $metadata_port         = '8775',
   $nova_ec2_port         = '8773',
 ) {
@@ -64,6 +66,11 @@ class rjil::haproxy::openstack(
   rjil::haproxy_service { 'glance':
     balancer_ports    => $glance_port,
     cluster_addresses => $glance_ips,
+  }
+
+  rjil::haproxy_service { 'neutron':
+    balancer_ports    => $neutron_port,
+    cluster_addresses => $neutron_ips,
   }
 
   rjil::haproxy_service { 'glance-registry':

@@ -97,6 +97,25 @@ glance::registry::keystone_password: "%{hiera('glance::keystone::auth::password'
 glance::registry::database_connection: "%{hiera('glance::api::database_connection')}"
 glance::registry::mysql_module: 2.3
 
+########### Neutron Configuration
+###################################
+neutron::verbose: "%{hiera('verbose')}"
+neutron::debug: "%{hiera('debug')}"
+neutron::server::auth_password: "%{hiera('neutron::keystone::auth::password')}"
+neutron::server::auth_host: "%{hiera('keystone_public_address')}"
+neutron::server::auth_protocol: "%{hiera('rjil::keystone::protocol')}"
+neutron::rabbit_password: guest
+neutron::core_plugin: neutron_plugin_contrail.plugins.opencontrail.contrail_plugin.NeutronPluginContrailCoreV2
+neutron::service_plugins:
+  - neutron_plugin_contrail.plugins.opencontrail.loadbalancer.plugin.LoadBalancerPlugin
+neutron::quota::quota_driver: neutron_plugin_contrail.plugins.opencontrail.quota.driver.QuotaDriver
+
+# Below configs are not there in neutron module, so adding them in neutron
+# profile for now.
+rjil::neutron::api_extensions_path: extensions:/usr/lib/python2.7/dist-packages/neutron_plugin_contrail/extensions
+rjil::neutron::service_provider: LOADBALANCER:Opencontrail:neutron_plugin_contrail.plugins.opencontrail.loadbalancer.driver.OpencontrailLoadbalancerDriver:default
+
+
 ########### Cinder configuration
 ###################################
 cinder::rpc_backend: "%{hiera('rpc_backend')}"
@@ -276,7 +295,15 @@ contrail::keystone_address: "%{hiera('keystone_public_address')}"
 contrail::keystone_admin_token: "%{hiera('keystone::admin_token')}"
 contrail::keystone_admin_password: "%{hiera('admin_password')}"
 contrail::keystone_auth_password: "%{hiera('neutron::keystone::auth::password')}"
+
+##
+# Currently we have some dependency packages missing from rustedhalo, so they
+# are taken from opencontrail ppa. This can be made false after we have all
+# code.
+##
+
 contrail::manage_repo: true
+contrail::neutron_ip: "%{hiera('neutron_public_address')}"
 
 
 ###########################################
