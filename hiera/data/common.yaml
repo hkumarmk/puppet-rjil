@@ -272,6 +272,13 @@ rjil::system::apt::enable_rustedhalo: true
 rabbitmq::manage_repos: false
 rabbitmq::admin_enable: false
 
+contrail::keystone_address: "%{hiera('keystone_public_address')}"
+contrail::keystone_admin_token: "%{hiera('keystone::admin_token')}"
+contrail::keystone_admin_password: "%{hiera('admin_password')}"
+contrail::keystone_auth_password: "%{hiera('neutron::keystone::auth::password')}"
+contrail::manage_repo: true
+
+
 ###########################################
 ############ Ceph Configuration ###########
 ###########################################

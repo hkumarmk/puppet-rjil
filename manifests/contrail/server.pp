@@ -4,11 +4,13 @@
 class rjil::contrail::server () {
 
   ##
-  ## Add test scripts
+  # Added tests
   ##
-  ## rabbitmq
-
-  rjil::test { 'check_rabbitmq.sh': }
+  $contrail_tests = ['ifmap.sh','contrail-analytics.sh','contrail-api.sh',
+                      'contrail-control.sh','contrail-discovery.sh',
+                      'contrail-dns.sh','contrail-schema.sh',
+                      'contrail-webui-webserver.sh','contrail-webui-jobserver.sh']
+  rjil::test {$contrail_tests:}
 
   include ::contrail
 }

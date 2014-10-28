@@ -6,3 +6,4 @@ private_interface: eth1
 rjil::ceph::osd::autogenerate: true
 rjil::ceph::osd::autodisk_size: 10
 rjil::ceph::osd::osd_journal_size: 2
+contrail::interface: eth1
