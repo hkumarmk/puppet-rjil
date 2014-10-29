@@ -108,6 +108,7 @@ node /^ocdb\d+/ {
   include rjil::keystone
   include rjil::cinder
   include rjil::glance
+  include rjil::nova::controller
   include rjil::openstack_zeromq
   include openstack_extras::keystone_endpoints
   include rjil::keystone::test_user

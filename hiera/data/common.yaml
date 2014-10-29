@@ -75,7 +75,6 @@ rjil::glance::rbd_user: glance
 glance::backend::rbd::rbd_store_user: "%{hiera('rjil::glance::rbd_user')}"
 glance::backend::rbd::rbd_store_pool: images
 ### End: rbd backend specific settings
-
 glance::bind_host: "%{hiera('private_address')}"
 glance::api::debug: "%{hiera('debug')}"
 glance::api::verbose: "%{hiera('verbose')}"
@@ -117,16 +116,36 @@ rjil::cinder::rbd_user: cinder_volume
 
 ########### Nova config
 ###################################
+nova_api_public_port: 8774
+
+nova::rpc_backend: "%{hiera('rpc_backend')}"
+nova::glance_api_servers: "%{hiera('glance_public_address')}:%{hiera('glance::keystone::auth::public_port')}"
+nova::database_connection: "mysql://%{hiera('nova_db_user')}:%{hiera('nova_db_password')}@%{hiera('db_host')}/nova"
+nova::mysql_module: 2.3
 
 nova::api::debug: "%{hiera('debug')}"
 nova::api::verbose: "%{hiera('verbose')}"
 nova::api::auth_host: "%{hiera('rjil::keystone::public_address')}"
 nova::api::auth_protocol: "%{hiera('rjil::keystone::protocol')}"
 nova::api::auth_uri: "%{hiera('rjil::keystone::protocol')}://%{hiera('nova::api::auth_host')}:%{hiera('rjil::keystone::public_port')}/%{hiera('rjil::keystone::version')}"
-nova::api::keystone_password: "%{hiera('nova::keystone::auth::password')}"
-nova::api::database_connection: "mysql://%{hiera('nova_db_user')}:%{hiera('nova_db_password')}@%{hiera('db_host')}/glance"
-nova::api::mysql_module: 2.3
+nova::api::admin_password: "%{hiera('nova::keystone::auth::password')}"
+nova::api::enabled: true
 
+nova::scheduler::enabled: true
+
+nova::network::neutron::neutron_admin_password: "%{hiera('nova::keystone::auth::password')}"
+nova::network::neutron::neutron_url: "%{hiera('api_protocol')}://%{hiera('neutron_public_address')}:%{hiera('neutron_public_port')}"
+nova::network::neutron::neutron_region_name: "%{hiera('region')}"
+nova::network::neutron::neutron_admin_auth_url: "%{hiera('rjil::keystone::protocol')}://%{hiera('nova::api::auth_host')}:%{hiera('rjil::keystone::public_port')}/%{hiera('rjil::keystone::version')}"
+
+nova::conductor::enabled: true
+
+nova::cert::enabled: true
+
+#TODO Multiple consoleauth need memcache server to keep tokens.
+nova::consoleauth::enabled: true
+
+nova::vncproxy::enabled: true
 
 ########### Ironic config
 ###################################
@@ -204,8 +223,8 @@ neutron::keystone::auth::region: "%{hiera('region')}"
 
 nova::keystone::auth::password: nova
 nova::keystone::auth::public_address: "%{hiera('nova_public_address')}"
-nova::keystone::auth::public_port: 8774
-nova::keystone::auth::public_protocol: http
+nova::keystone::auth::public_port: "%{hiera('nova_api_public_port')}"
+nova::keystone::auth::public_protocol: "%{hiera('api_protocol')}"
 nova::keystone::auth::admin_address: "%{hiera('nova_internal_address')}"
 nova::keystone::auth::internal_address: "%{hiera('nova_internal_address')}"
 nova::keystone::auth::region: "%{hiera('region')}"
