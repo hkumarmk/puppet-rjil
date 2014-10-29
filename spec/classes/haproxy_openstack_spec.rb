@@ -56,17 +56,14 @@ describe 'rjil::haproxy::openstack' do
 
       should contain_rjil__haproxy_service('horizon').with_listen_options(
         {
-          'tcpka'        => '',
-          'abortonclose' => '',
           'balance'      => 'source',
+          'option'       => ['tcpka','abortonclose']
         }
       )
       should contain_rjil__haproxy_service('metadata').with_listen_options(
         {
-          'tcpka'        => '',
-          'abortonclose' => '',
           'balance'      => 'roundrobin',
-          'option'       => 'ssl-hello-chk',
+          'option'       => ['ssl-hello-chk','tcpka','abortonclose']
         }
       )
 
