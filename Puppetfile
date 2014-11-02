@@ -5,6 +5,14 @@ mod 'puppetlabs/java',
   :git => "#{base_url}/puppetlabs/puppetlabs-java",
   :ref => '1.1.2'
 
+mod 'adrianthebo/network',
+  :git => "#{base_url}/adrienthebo/puppet-network",
+  :ref => '0.4.1'
+
+mod 'adrianthebo/filemapper',
+  :git => "#{base_url}/adrienthebo/puppet-filemapper",
+  :ref => '1.1.3'
+
 mod 'puppetlabs/haproxy',
   :git => "#{base_url}/puppetlabs/puppetlabs-haproxy",
   :ref => '1.0.0'

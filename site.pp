@@ -85,6 +85,7 @@ node /^ct\d+/ {
   include rjil::neutron
 }
 
+
 ##
 ## oc is openstack controller node which will have all
 ## openstack controller applications
@@ -139,9 +140,15 @@ node /^oclb\d+/ {
   include rjil::haproxy::openstack
 }
 
+##
+# compute nodes
+##
 node /^cp\d+/ {
   include rjil::base
   include rjil::ceph
+  include rjil::contrail::vrouter
+  include rjil::openstack_zeromq
+  include rjil::nova::compute
 }
 
 node /^haproxy\d+/ {

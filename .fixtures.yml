@@ -128,3 +128,9 @@ fixtures:
     dnsquery:
       repo: https://github.com/dalen/puppet-dnsquery
       ref: origin/master
+    network:
+      repo: https://github.com/adrienthebo/puppet-network
+      ref: 0.4.1
+    filemapper:
+      repo: https://github.com/adrienthebo/puppet-filemapper
+      ref: 1.1.3

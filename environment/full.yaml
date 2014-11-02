@@ -36,3 +36,8 @@ resources:
     flavor: large
     image: trusty
     networks: default
+  cp:
+    number: 2
+    flavor: medium
+    image: trusty
+    networks: default

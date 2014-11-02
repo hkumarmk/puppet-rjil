@@ -2,12 +2,9 @@
 # Class: rjil::nova::controller
 #   To setup nova controller
 class rjil::nova::controller (
-  $rpc_zmq_bind_address = '*',
-  $rpc_zmq_contexts     = 1,
-  $rpc_zmq_matchmaker   = 'oslo.messaging._drivers.matchmaker_ring.MatchMakerRing',
-  $rpc_zmq_port         = 9501,
   $api_bind_port        = 8774,
   $vncproxy_bind_port   = 6080,
+  $consul_check_interval= '120s',
 ) {
 
 # Tests
@@ -31,19 +28,8 @@ class rjil::nova::controller (
   Nova_config<| title == 'database/connection' |>
 
   ##
-  # Add zmq specific configuration in case of zmq rpc_backend
-  # Also make sure nova services refreshed on matchmakerring config changes.
+  # Make sure nova services refreshed on matchmakerring config changes.
   ##
-
-  nova_config {
-    'DEFAULT/rpc_zmq_bind_address': value => $rpc_zmq_bind_address;
-    'DEFAULT/ring_file':            value => '/etc/oslo/matchmaker_ring.json';
-    'DEFAULT/rpc_zmq_port':         value => $rpc_zmq_port;
-    'DEFAULT/rpc_zmq_contexts':     value => $rpc_zmq_contexts;
-    'DEFAULT/rpc_zmq_ipc_dir':      value => '/var/run/openstack';
-    'DEFAULT/rpc_zmq_matchmaker':   value => $rpc_zmq_matchmaker;
-    'DEFAULT/rpc_zmq_host':         value => $::hostname;
-  }
 
   Matchmakerring_config<||> ~> Exec['post-nova_config']
 
@@ -56,6 +42,7 @@ class rjil::nova::controller (
   Package['python-six'] -> Class['nova::api']
 
 
+  include ::rjil::nova::zmq_config
   include ::nova::client
   include ::nova
   include ::nova::scheduler
@@ -90,32 +77,38 @@ class rjil::nova::controller (
   rjil::jiocloud::consul::service {'nova':
     tags          => ['real'],
     port          => $api_bind_port,
-    check_command => "/usr/lib/nagios/plugins/check_http -I ${::nova::api::api_bind_address} -p ${api_bind_port}"
+    check_command => "/usr/lib/nagios/plugins/check_http -I ${::nova::api::api_bind_address} -p ${api_bind_port}",
+    interval      => $consul_check_interval,
   }
 
   rjil::jiocloud::consul::service {'nova-scheduler':
     port          => 0,
-    check_command => "sudo nova-manage service list | grep 'nova-scheduler.*${::hostname}.*enabled.*:-)'"
+    check_command => "sudo nova-manage service list | grep 'nova-scheduler.*${::hostname}.*enabled.*:-)'",
+    interval      => $consul_check_interval,
   }
 
   rjil::jiocloud::consul::service {'nova-conductor':
     port          => 0,
+    interval      => $consul_check_interval,
     check_command => "sudo nova-manage service list | grep 'nova-conductor.*${::hostname}.*enabled.*:-)'"
   }
 
   rjil::jiocloud::consul::service {'nova-cert':
     port          => 0,
+    interval      => $consul_check_interval,
     check_command => "sudo nova-manage service list | grep 'nova-cert.*${::hostname}.*enabled.*:-)'"
   }
 
   rjil::jiocloud::consul::service {'nova-consoleauth':
     port          => 0,
+    interval      => $consul_check_interval,
     check_command => "sudo nova-manage service list | grep 'nova-consoleauth.*${::hostname}.*enabled.*:-)'"
   }
 
   rjil::jiocloud::consul::service {'nova-vncproxy':
     port          => $vncproxy_bind_port,
     tags          => ['real'],
+    interval      => $consul_check_interval,
     check_command => "/usr/lib/nagios/plugins/check_http -H localhost -p $vncproxy_bind_port -u /vnc_auto.html",
   }
 

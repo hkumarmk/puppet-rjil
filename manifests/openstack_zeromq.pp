@@ -20,6 +20,8 @@
 # [*nova_cert_nodes*]
 #   A hash of hostname and ip pairs
 #
+# [*nova_compute_nodes*]
+#   A hash of hostname and ip pairs of compute nodes
 # == Action
 #   1. Resolve srv records for the names given,
 #   2. Add /etc/hosts entry for the hostname part of fqdn, so that the hostnames can be resolved.
@@ -40,6 +42,7 @@ class rjil::openstack_zeromq (
   $nova_consoleauth_nodes = service_discover_consul('nova-consoleauth'),
   $nova_conductor_nodes   = service_discover_consul('nova-conductor'),
   $nova_cert_nodes        = service_discover_consul('nova-cert'),
+  $nova_compute_nodes     = service_discover_consul('nova-compute'),
 ) {
 
   ##
@@ -65,11 +68,12 @@ class rjil::openstack_zeromq (
   ##
 
   $cinder_scheduler_nodes_orig = regsubst(keys($cinder_scheduler_nodes),'^([\w-]+)\.\S+','\1')
-  $cinder_volume_nodes_orig = regsubst(keys($cinder_volume_nodes),'^([\w-]+)\.\S+','\1')
-  $nova_scheduler_nodes_orig = regsubst(keys($nova_scheduler_nodes),'^([\w-]+)\.\S+','\1')
+  $cinder_volume_nodes_orig    = regsubst(keys($cinder_volume_nodes),'^([\w-]+)\.\S+','\1')
+  $nova_scheduler_nodes_orig   = regsubst(keys($nova_scheduler_nodes),'^([\w-]+)\.\S+','\1')
   $nova_consoleauth_nodes_orig = regsubst(keys($nova_consoleauth_nodes),'^([\w-]+)\.\S+','\1')
-  $nova_conductor_nodes_orig = regsubst(keys($nova_conductor_nodes),'^([\w-]+)\.\S+','\1')
-  $nova_cert_nodes_orig = regsubst(keys($nova_cert_nodes),'^([\w-]+)\.\S+','\1')
+  $nova_conductor_nodes_orig   = regsubst(keys($nova_conductor_nodes),'^([\w-]+)\.\S+','\1')
+  $nova_cert_nodes_orig        = regsubst(keys($nova_cert_nodes),'^([\w-]+)\.\S+','\1')
+  $nova_compute_nodes_orig     = regsubst(keys($nova_compute_nodes),'^([\w-]+)\.\S+','\1')
 
   class { '::openstack_zeromq':
     cinder_scheduler_nodes => $cinder_scheduler_nodes_orig,
@@ -78,5 +82,6 @@ class rjil::openstack_zeromq (
     nova_consoleauth_nodes => $nova_consoleauth_nodes_orig,
     nova_conductor_nodes   => $nova_conductor_nodes_orig,
     nova_cert_nodes        => $nova_cert_nodes_orig,
+    nova_compute_nodes     => $nova_compute_nodes_orig,
   }
 }

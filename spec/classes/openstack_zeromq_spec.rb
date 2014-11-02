@@ -27,6 +27,7 @@ describe 'rjil::openstack_zeromq' do
                                     'nob.example.com' => '1.1.1.2'},
         :nova_cert_nodes        => {'nea.example.com' => '1.1.1.1',
                                     'neb.example.com' => '1.1.1.2'},
+        :nova_compute_nodes     => {'comupte.example.com' => '1.1.1.1'}
       }
     end
     it do

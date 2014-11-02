@@ -7,3 +7,12 @@ rjil::ceph::osd::autogenerate: true
 rjil::ceph::osd::autodisk_size: 10
 rjil::ceph::osd::osd_journal_size: 2
 contrail::interface: eth1
+
+# Only Qemu is supported on virtual testing environment
+nova::compute::libvirt::libvirt_virt_type: qemu
+
+# service check interval of 10s would be too often and thus causing
+# multiple instances of same chcecking scripts are running in parallel.
+# Just making large enough numer. This may need further discussion to get
+# more appropriate value.
+rjil::jiocloud::consul::service::interval: 120s

@@ -1,4 +1,13 @@
 ###################################
+######### Common Config ###########
+###################################
+
+##
+# Idea is to enable jumbo frames after completing initial setup.
+##
+mtu: 1500
+
+###################################
 ########  Database config #########
 ###################################
 
@@ -133,6 +142,7 @@ cinder::scheduler::scheduler_driver: cinder.scheduler.simple.SimpleScheduler
 cinder::volume::rbd::rbd_pool: volumes
 cinder::volume::rbd::rbd_user: cinder_volume
 cinder::volume::rbd::volume_tmp_dir: /tmp
+cinder::volume::rbd::rbd_secret_uuid: "%{hiera('cinder_rbd_secret_uuid')}"
 rjil::cinder::ceph_mon_key: "%{hiera('rjil::ceph::mon::key')}"
 rjil::cinder::rbd_user: cinder_volume
 
@@ -155,7 +165,7 @@ nova::api::enabled: true
 
 nova::scheduler::enabled: true
 
-nova::network::neutron::neutron_admin_password: "%{hiera('nova::keystone::auth::password')}"
+nova::network::neutron::neutron_admin_password: "%{hiera('neutron::keystone::auth::password')}"
 nova::network::neutron::neutron_url: "%{hiera('api_protocol')}://%{hiera('neutron_public_address')}:%{hiera('neutron_public_port')}"
 nova::network::neutron::neutron_region_name: "%{hiera('region')}"
 nova::network::neutron::neutron_admin_auth_url: "%{hiera('rjil::keystone::protocol')}://%{hiera('nova::api::auth_host')}:%{hiera('rjil::keystone::public_port')}/%{hiera('rjil::keystone::version')}"
@@ -168,6 +178,23 @@ nova::cert::enabled: true
 nova::consoleauth::enabled: true
 
 nova::vncproxy::enabled: true
+
+nova::compute::enabled: true
+nova::compute::vncserver_proxyclient_address: "%{hiera('private_address')}"
+nova::compute::vncproxy_host: "%{hiera('nova_public_address')}"
+nova::compute::virtio_nic: true
+nova::compute::neutron_enabled: true
+nova::compute::network_device_mtu: "%{hiera('mtu')}"
+nova::compute::libvirt::migration_support: true
+nova::compute::libvirt::vncserver_listen: 0.0.0.0
+nova::compute::libvirt::libvirt_images_type: raw
+
+nova::compute::neutron::libvirt_vif_driver: nova_contrail_vif.contrailvif.VRouterVIFDriver
+
+
+rjil::nova::compute::cinder_rbd_secret_uuid: "%{hiera('cinder_rbd_secret_uuid')}"
+rjil::nova::compute::ceph_mon_key: "%{hiera('rjil::ceph::mon::key')}"
+
 
 ########### Ironic config
 ###################################
@@ -406,6 +433,8 @@ contrail::keystone_admin_token: "%{hiera('keystone::admin_token')}"
 contrail::keystone_admin_password: "%{hiera('admin_password')}"
 contrail::keystone_auth_password: "%{hiera('neutron::keystone::auth::password')}"
 
+contrail::vrouter::keystone_admin_password: "%{hiera('admin_password')}"
+
 ##
 # Currently we have some dependency packages missing from rustedhalo, so they
 # are taken from opencontrail ppa. This can be made false after we have all
@@ -414,6 +443,8 @@ contrail::keystone_auth_password: "%{hiera('neutron::keystone::auth::password')}
 
 contrail::manage_repo: true
 contrail::neutron_ip: "%{hiera('neutron_public_address')}"
+
+contrail::vrouter::vrouter_physical_interface: "%{hiera('contrail::interface')}"
 
 
 ###########################################
