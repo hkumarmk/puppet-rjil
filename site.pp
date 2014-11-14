@@ -143,7 +143,7 @@ node /^oclb\d+/ {
 ##
 # compute nodes
 ##
-node /^cp\d+/ {
+node /^(cp\d+|gcp1)/ {
   include rjil::base
   include rjil::ceph
   include rjil::contrail::vrouter

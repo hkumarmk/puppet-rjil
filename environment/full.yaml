@@ -41,3 +41,8 @@ resources:
     flavor: medium
     image: trusty
     networks: default
+  gcp:
+    number: 1
+    flavor: medium
+    image: trusty
+    networks: default

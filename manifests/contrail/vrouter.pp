@@ -13,13 +13,13 @@ class rjil::contrail::vrouter (
 ) {
 
   ##
-  # Added tests
+  # Vgw need floating IP pool to be created before it can successfully created
+  # it, I dont know if this is handled in contrail code. Trying service blocker
+  # here to see if that work.
   ##
-#  $contrail_tests = ['ifmap.sh','contrail-analytics.sh','contrail-api.sh',
-#                      'contrail-control.sh','contrail-discovery.sh',
-#                      'contrail-dns.sh','contrail-schema.sh',
-#                      'contrail-webui-webserver.sh','contrail-webui-jobserver.sh']
-#  rjil::test {$contrail_tests:}
+
+  ensure_resource( 'rjil::service_blocker', 'neutron', {})
+  Rjil::Service_blocker['neutron'] -> Contrail_vgw<||>
 
   include nova::compute::libvirt
 
