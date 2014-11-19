@@ -31,6 +31,7 @@ describe 'rjil::nova::controller' do
       'rjil::nova::controller::api_bind_port'         => 100,
       'rjil::nova::controller::vncproxy_bind_port'    => 101,
       'openstack_extras::auth_file::admin_password'   => 'pw',
+      'rjil::nova::controller::memcached_servers'     => ['10.2.2.1','10.2.2.2'],
     }
   end
 
@@ -44,6 +45,8 @@ describe 'rjil::nova::controller' do
       should contain_file('/usr/lib/jiocloud/tests/nova-vncproxy.sh')
       should contain_class('rjil::test::nova_controller')
 
+      should contain_rjil__service_blocker('memcached').that_comes_before('Nova_config[DEFAULT/memcached_servers]')
+      should contain_package('python-memcache').that_comes_before('Class[nova]')
       should contain_Nova_config('database/connection').that_requires('Rjil::Service_blocker[mysql]')
       should contain_nova_config('DEFAULT/rpc_zmq_bind_address').with_value('*')
       should contain_nova_config('DEFAULT/ring_file').with_value('/etc/oslo/matchmaker_ring.json')
@@ -53,7 +56,9 @@ describe 'rjil::nova::controller' do
       should contain_nova_config('DEFAULT/rpc_zmq_matchmaker').with_value('oslo.messaging._drivers.matchmaker_ring.MatchMakerRing')
       should contain_nova_config('DEFAULT/rpc_zmq_host').with_value('node1')
       should contain_package('python-six')
-      should contain_class('nova')
+      should contain_class('nova').with({
+        'memcached_servers' => ['10.2.2.1:11211','10.2.2.2:11211']
+      })
       should contain_class('nova::client')
       should contain_class('nova::api')
       should contain_class('nova::scheduler')

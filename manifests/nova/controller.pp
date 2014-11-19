@@ -1,10 +1,27 @@
 #
 # Class: rjil::nova::controller
 #   To setup nova controller
+#
+# == Parameters
+#
+# [*api_bind_port*]
+#   Nova api bind port. Default: 8774
+#
+# [*vncproxy_bind_port*]
+#   Nova vncproxy bind port. Default: 6080
+#
+# [*memcached_servers*]
+#   Array of memcached servers
+#
+# [*memcached_port*]
+#   Memcached server port. Default: 11211
+#
 class rjil::nova::controller (
   $api_bind_port        = 8774,
   $vncproxy_bind_port   = 6080,
   $consul_check_interval= '120s',
+  $memcached_servers    = service_discover_dns('memcached.service.consul','ip'),
+  $memcached_port       = 11211,
 ) {
 
 # Tests
@@ -18,6 +35,14 @@ class rjil::nova::controller (
   ensure_resource( 'rjil::service_blocker', 'mysql', {})
   Rjil::Service_blocker['mysql'] ->
   Nova_config<| title == 'database/connection' |>
+
+  ##
+  # memcached service blocker to make sure memcached is up before memcached
+  # configuration in nova.
+  ##
+  ensure_resource('rjil::service_blocker','memcached',{})
+  Rjil::Service_blocker['memcached'] ->
+  Nova_config<| title == 'DEFAULT/memcached_servers' |>
 
   ##
   # db_sync fail if nova-manage.log is writable by nova user, so making the file
@@ -42,9 +67,25 @@ class rjil::nova::controller (
   Package['python-six'] -> Class['nova::api']
 
 
+  ##
+  # Python-memcache is a dependancy to use memcache, but not handled in the
+  # package. Installing that package.
+  ##
+  package {'python-memcache': ensure => installed }
+
+  Package['python-memcache'] -> Class['nova']
+
+  if empty($memcached_servers) {
+    fail("Memcache servers cannot be empty")
+  }
+
+  $memcache_url = split(inline_template('<%= @memcached_servers.map{ |ip| "#{ip}:#{@memcached_port}" }.join(",") %>'),',')
+
   include ::rjil::nova::zmq_config
   include ::nova::client
-  include ::nova
+  class {'::nova':
+    memcached_servers => $memcache_url
+  }
   include ::nova::scheduler
   include ::nova::api
   include ::nova::network::neutron
