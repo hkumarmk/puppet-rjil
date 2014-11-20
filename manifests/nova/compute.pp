@@ -50,12 +50,23 @@ class rjil::nova::compute (
 
   ensure_resource('package','python-six', { ensure => 'latest' })
 
+  ##
+  # Hardcoding private/public ipaddress/interface will not work in case of
+  # compute node, the IP address will be moved to vhost0 So adding a variable
+  # to get interface details by running the function first_interface_with_ip.
+  ##
+
+  $usable_ipaddress = first_interface_with_ip('ipaddress',"${private_interface},vhost0")
+
+
   include ::ceph::conf
   include rjil::ceph::mon_config
   include rjil::nova::zmq_config
   include ::nova::client
   include ::nova
-  include ::nova::compute
+  class {'::nova::compute':
+    vncserver_proxyclient_address => $usable_ipaddress
+  }
   include ::nova::compute::libvirt
   include ::nova::compute::neutron
   include ::nova::network::neutron

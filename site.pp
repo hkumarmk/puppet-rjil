@@ -98,6 +98,7 @@ node /^oc\d+/ {
   include rjil::cinder
   include rjil::glance
   include rjil::openstack_zeromq
+  include rjil::nova::controller
 }
 
 #

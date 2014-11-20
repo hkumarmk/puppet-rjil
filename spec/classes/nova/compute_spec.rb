@@ -9,6 +9,7 @@ describe 'rjil::nova::compute' do
       :osfamily         => 'Debian',
       :concat_basedir   => '/tmp',
       :hostname         => 'node1',
+      :ipaddress_vhost0 => '10.1.1.1',
     }
   end
 
@@ -23,7 +24,8 @@ describe 'rjil::nova::compute' do
     {
       'rjil::ceph::mon_config::mon_config'             => 'foo',
       'nova::network::neutron::neutron_admin_password' => 'pw',
-      'ceph::conf::fsid'                                     => 'fsid',
+      'ceph::conf::fsid'                               => 'fsid',
+      'private_interface'                              => 'eth0',
     }
   end
 
@@ -38,13 +40,16 @@ describe 'rjil::nova::compute' do
       'rjil::nova::zmq_config',
       'nova::client',
       'nova',
-      'nova::compute',
       'nova::compute::libvirt',
       'nova::compute::neutron',
       'nova::network::neutron'
     ].each do |x|
       should contain_class(x)
     end
+
+    should contain_class('nova::compute').with({
+      'vncserver_proxyclient_address' => '10.1.1.1'
+    })
 
     should contain_ceph__auth('cinder_volume')
 
