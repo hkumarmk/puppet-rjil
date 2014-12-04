@@ -22,8 +22,8 @@ class rjil::contrail::vrouter (
   # code after successful addition of floatingip pool.
   ##
 
-  ensure_resource( 'consul_kv_blocker', 'neutron/floatingip_pool/status', {tries => 50, try_sleep => 20})
-  Consul_kv_blocker['neutron/floatingip_pool/status'] -> Contrail_vgw<||>
+  ensure_resource( 'consul_kv_fail', 'neutron/floatingip_pool/status', {})
+  Consul_kv_fail['neutron/floatingip_pool/status'] -> Contrail::Vgw<||>
 
   include nova::compute::libvirt
 
