@@ -26,11 +26,40 @@ class rjil::haproxy::openstack(
   $nova_ec2_port         = '8773',
 ) {
 
+  ##
+  # It is important to add all services details to validation checks.
+  # Validation checks prevents any deployment issues (and thus leaving the
+  # services unconfigured) and further errors by running puppet when it happens.
+  ##
+
+  ##
+  # Port checks - this is very basic check which probe all ports mentioned.
+  ##
   class { 'rjil::test::haproxy_openstack':
     ports  => [ $radosgw_port, $novncproxy_port, $keystone_public_port,
                 $keystone_admin_port, $glance_port, $glance_registry_port,
                 $cinder_port, $nova_port, $neutron_port, $metadata_port,
                 $nova_ec2_port ],
+  }
+
+  ##
+  # Backend checks - this will in fact go ahead and check if the particular
+  # backend is registered and is up in haproxy or not.
+  ##
+  class { 'rjil::test::haproxy_backend_openstack':
+    backend_services => {
+                          'radosgw'         => $radosgw_ips,
+                          'keystone'        => $keystone_ips,
+                          'keystone-admin'  => $keystone_internal_ips,
+                          'glance'          => $glance_ips,
+                          'cinder'          => $cinder_ips,
+                          'nova'            => $nova_ips,
+                          'neutron'         => $neutron_ips,
+                          'novncproxy'      => $nova_ips,
+                          'glance-registry' => $glance_ips,
+                          'metadata'        => $nova_ips,
+                          'nova-ec2'        => $nova_ips,
+                        }
   }
 
   rjil::haproxy_service { 'horizon':
