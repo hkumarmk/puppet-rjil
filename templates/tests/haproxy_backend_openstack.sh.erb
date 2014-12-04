@@ -1,0 +1,16 @@
+#!/bin/bash
+set -e
+function fail {
+  echo "CRITICAL: $@"
+  exit 2
+}
+<% if @status_check -%>
+  <% status = 'UP' -%>
+<% end -%>
+
+<% @backend_services.each do |backend,ips| -%>
+  <% ips.each do |ip| -%>
+echo "show stat" | socat unix-connect:/var/run/haproxy stdio | grep -q "<%= backend %>,<%= ip %>,.*<%= status %>" || fail "Failed <%= backend %>/<%= ip %>"
+  <% end -%>
+<% end -%>
+echo "Haproxy backend services OK: All good :)"
