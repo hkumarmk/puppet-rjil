@@ -14,8 +14,12 @@ class rjil::ceph::mon_config (
 
   if ! empty($mon_config) {
     ::ceph::conf::mon_config{ $mon_config: }
-  } else {
-    fail("External Mon list cannot be empty for non-mon nodes")
+    $fail = false
+  }
+
+  runtime_fail {'monlist_empty_fail':
+    fail    => $fail,
+    message => 'External Mon list cannot be empty for non-mon nodes',
   }
 
 }
