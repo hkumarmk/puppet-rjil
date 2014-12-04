@@ -37,11 +37,17 @@ then
        dpkg -i internal.deb
 fi
 apt-get update
-apt-get install -y puppet software-properties-common puppet-jiocloud jiocloud-ssl-certificate
+apt-get install -y puppet software-properties-common puppet-jiocloud jiocloud-ssl-certificate; rv_apt_install_1=\$?
+if [ \$rv_apt_install_1 -ne 0 ]; then
+  apt-get update
+  apt-get install -y puppet software-properties-common puppet-jiocloud jiocloud-ssl-certificate
+fi
+
 if [ -n "${python_jiocloud_source_repo}" ]; then
   apt-get install -y python-pip python-jiocloud python-dev libffi-dev libssl-dev git
   pip install -e "${python_jiocloud_source_repo}@${python_jiocloud_source_branch}#egg=jiocloud"
 fi
+
 if [ -n "${puppet_modules_source_repo}" ]; then
   apt-get install -y git
   git clone ${puppet_modules_source_repo} /tmp/rjil
@@ -78,7 +84,7 @@ echo 'cloud_provider='${cloud_provider} > /etc/facter/facts.d/cloud_provider.txt
 while true
 do
     puppet apply --detailed-exitcodes --debug -e "include rjil::jiocloud"
-    ret_code=$?
+    ret_code=\$?
     if [[ \$ret_code = 1 || \$ret_code = 4 || \$ret_code = 6 ]]
     then
         echo "Puppet failed. Will retry in 5 seconds"
