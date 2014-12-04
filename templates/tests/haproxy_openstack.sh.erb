@@ -1,6 +1,5 @@
 #!/bin/bash
 set -e
-test -f /root/openrc
-source /root/openrc
-keystone catalog
-glance image-list
+<% @ports.each do |port| -%>
+  /usr/lib/nagios/plugins/check_tcp -H <%= @vip %> -p <%= port %>
+<% end -%>

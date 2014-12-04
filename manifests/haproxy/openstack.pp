@@ -27,12 +27,10 @@ class rjil::haproxy::openstack(
 ) {
 
   class { 'rjil::test::haproxy_openstack':
-    horizon_ips           => $horizon_ips,
-    keystone_ips          => $keystone_ips,
-    keystone_internal_ips => $keystone_internal_ips,
-    glance_ips            => $glance_ips,
-    cinder_ips            => $cinder_ips,
-    nova_ips              => $nova_ips,
+    ports  => [ $radosgw_port, $novncproxy_port, $keystone_public_port,
+                $keystone_admin_port, $glance_port, $glance_registry_port,
+                $cinder_port, $nova_port, $neutron_port, $metadata_port,
+                $nova_ec2_port ],
   }
 
   rjil::haproxy_service { 'horizon':
