@@ -3,14 +3,14 @@
 #   Setup openstack services in haproxy.
 #
 class rjil::haproxy::openstack(
-  $horizon_ips           = values(service_discover_consul('horizon', 'real')),
-  $keystone_ips          = values(service_discover_consul('keystone', 'real')),
-  $keystone_internal_ips = values(service_discover_consul('keystone-admin', 'real')),
-  $glance_ips            = values(service_discover_consul('glance', 'real')),
-  $cinder_ips            = values(service_discover_consul('cinder', 'real')),
-  $nova_ips              = values(service_discover_consul('nova', 'real')),
-  $neutron_ips           = values(service_discover_consul('neutron', 'real')),
-  $radosgw_ips           = values(service_discover_consul('radosgw', 'real')),
+  $horizon_ips           = sort(values(service_discover_consul('horizon', 'real'))),
+  $keystone_ips          = sort(values(service_discover_consul('keystone', 'real'))),
+  $keystone_internal_ips = sort(values(service_discover_consul('keystone-admin', 'real'))),
+  $glance_ips            = sort(values(service_discover_consul('glance', 'real'))),
+  $cinder_ips            = sort(values(service_discover_consul('cinder', 'real'))),
+  $nova_ips              = sort(values(service_discover_consul('nova', 'real'))),
+  $neutron_ips           = sort(values(service_discover_consul('neutron', 'real'))),
+  $radosgw_ips           = sort(values(service_discover_consul('radosgw', 'real'))),
   $radosgw_port          = '80',
   $horizon_port          = '80',
   $horizon_https_port    = '443',
