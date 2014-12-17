@@ -61,6 +61,17 @@ class rjil::keystone(
     workers                     => 3,
   }
 
+  include ::apache::mod::headers
+
+  Apache::Vhost <| title == 'keystone_wsgi_main' |> {
+    headers => [ 'set Access-Control-Allow-Origin "*"' ],
+  }
+
+  Apache::Vhost <| title == 'keystone_wsgi_admin' |> {
+    headers => [ 'set Access-Control-Allow-Origin "*"' ],
+  }
+
+
   if $ceph_radosgw_enabled {
     include rjil::keystone::radosgw
   }
