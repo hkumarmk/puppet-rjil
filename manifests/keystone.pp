@@ -53,8 +53,13 @@ class rjil::keystone(
     include rjil::apache
   }
 
-  class { '::keystone': }
-  # class { 'keystone::cron::token_flush': }
+  class { '::keystone': enabled => false }
+
+  class {'::keystone::wsgi::apache':
+    ssl                         => false,
+    keystone_wsgi_script_source => '/usr/lib/python2.7/dist-packages/keystone_wsgi/__init__.py',
+    workers                     => 3,
+  }
 
   if $ceph_radosgw_enabled {
     include rjil::keystone::radosgw
