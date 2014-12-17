@@ -98,8 +98,8 @@ mod 'stackforge/glance',
   :ref => 'f377c02'
 
 mod 'puppetlabs/keystone',
-  :git => "#{base_url}/stackforge/puppet-keystone",
-  :ref => 'stable/icehouse'
+  :git => "#{base_url}/hkumarmk/puppet-keystone",
+  :ref => 'wsgi_script_source'
 
 mod 'puppetlabs/mysql',
   :git => "#{base_url}/puppetlabs/puppetlabs-mysql",
