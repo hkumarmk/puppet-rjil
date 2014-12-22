@@ -581,6 +581,9 @@ ceph::radosgw::keystone_admin_token: "%{hiera('keystone::admin_token')}"
 ceph::radosgw::mon_key: "%{hiera('rjil::ceph::mon::key')}"
 ceph::radosgw::gw_serveradmin_email: "%{hiera('admin_email')}"
 ceph::radosgw::gw_server_name: "%{hiera('radosgw_public_address')}"
+# below header is required to enable CORS.
+ceph::radosgw::apache::headers:
+  - 'set Access-Control-Allow-Origin "*"'
 radosgw_protocol: http
 radosgw_port: 80
 
