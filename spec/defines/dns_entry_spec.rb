@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe 'rjil::jiocloud::dns::entry' do
   before(:each) do
-    MockFunction.new('dns_a') { |f|
-      f.stubs(:call).with(['some.other.host']).returns(['2.3.4.5', '5.6.7.8'])
+    MockFunction.new('dns_resolve') { |f|
+      f.stubs(:call).with(['some.other.host']).returns('2.3.4.5,5.6.7.8')
     }
   end
 

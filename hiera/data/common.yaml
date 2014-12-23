@@ -36,27 +36,54 @@ rjil::db::dbs:
 rjil::keystone::disable_db_sync: true
 
 ####################################
+####### Add cnames #################
+####################################
+##
+# The cnames are required to use ssl as the names should match the domain name
+# in the certificate.
+##
+
+
+rjil::jiocloud::dns::entries:
+  identity.jiocloud.com:
+    cname: lb.keystone.service.consul
+  volume.jiocloud.com:
+    cname: lb.cinder.service.consul
+  network.jiocloud.com:
+    cname: lb.neutron.service.consul
+  compute.jiocloud.com:
+    cname: lb.nova.service.consul
+  image.jiocloud.com:
+    cname: lb.glance.service.consul
+  object.jiocloud.com:
+    cname: lb.radosgw.service.consul
+  ironic.jiocloud.com:
+    cname: lb.ironic.service.consul
+
+####################################
 ######## Openstack configs #########
 ####################################
 
-keystone_public_address: lb.keystone.service.consul
-keystone_private_address: real.keystone.service.consul
+keystone_public_address: identity.jiocloud.com
+keystone_private_address: identity.jiocloud.com
 
-nova_public_address: lb.nova.service.consul
-nova_internal_address: real.nova.service.consul
+nova_public_address: compute.jiocloud.com
+nova_internal_address: compute.jiocloud.com
 
+glance_public_address: image.jiocloud.com
+glance_internal_address: image.jiocloud.com
 
-glance_public_address: lb.glance.service.consul
-glance_internal_address: real.glance.service.consul
+cinder_public_address: volume.jiocloud.com
+cinder_internal_address: volume.jiocloud.com
 
-cinder_public_address: lb.cinder.service.consul
-cinder_internal_address: real.cinder.service.consul
+radosgw_public_address: object.jiocloud.com
+radosgw_internal_address: object.jiocloud.com
 
-radosgw_public_address: lb.radosgw.service.consul
-radosgw_internal_address: real.radosgw.service.consul
+neutron_public_address: network.jiocloud.com
+neutron_internal_address: network.jiocloud.com
 
-ironic_public_address: lb.ironic.service.consul
-ironic_internal_address: real.ironic.service.consul
+ironic_public_address: ironic.jiocloud.com
+ironic_internal_address: ironic.jiocloud.com
 
 ########### Openstack Common config
 ###################################
@@ -109,8 +136,8 @@ glance::bind_host: "%{hiera('private_address')}"
 glance::api::debug: "%{hiera('debug')}"
 glance::api::verbose: "%{hiera('verbose')}"
 glance::api::registry_host: "localhost"
-glance::api::registry_protocol: "http"
-glance::api::auth_host: "%{hiera('rjil::keystone::public_address')}"
+glance::api::registry_protocol: "%{hiera('api_protocol')}"
+glance::api::auth_host: "%{hiera('keystone_public_address')}"
 glance::api::auth_protocol: "%{hiera('rjil::keystone::protocol')}"
 glance::api::auth_uri: "%{hiera('rjil::keystone::protocol')}://%{hiera('glance::api::auth_host')}:%{hiera('keystone_port')}/%{hiera('rjil::keystone::version')}"
 glance::api::keystone_password: "%{hiera('glance::keystone::auth::password')}"
@@ -119,7 +146,7 @@ glance::api::mysql_module: 2.3
 
 glance::registry::debug: "%{hiera('debug')}"
 glance::registry::verbose: "%{hiera('verbose')}"
-glance::registry::auth_host: "%{hiera('rjil::keystone::public_address')}"
+glance::registry::auth_host: "%{hiera('keystone_public_address')}"
 glance::registry::auth_protocol: "%{hiera('rjil::keystone::protocol')}"
 glance::registry::auth_uri: "%{hiera('rjil::keystone::protocol')}://%{hiera('glance::registry::auth_host')}:%{hiera('keystone_port')}/%{hiera('rjil::keystone::version')}"
 glance::registry::keystone_password: "%{hiera('glance::keystone::auth::password')}"
@@ -128,9 +155,6 @@ glance::registry::mysql_module: 2.3
 
 ########### Neutron Configuration
 ###################################
-neutron_public_address: lb.neutron.service.consul
-neutron_internal_address: real.neutron.service.consul
-neutron_public_port: 9696
 
 neutron::verbose: "%{hiera('verbose')}"
 neutron::debug: "%{hiera('debug')}"
@@ -255,9 +279,8 @@ nova::compute::ironic::keystone_url: "%{hiera('ironic::api::auth_uri')}"
 
 ########### Keystone config
 ###################################
-
 rjil::keystone::ssl: false
-rjil::keystone::protocol: http
+rjil::keystone::protocol: "%{hiera('api_protocol')}"
 rjil::keystone::version: v2.0
 rjil::keystone::admin_email: "%{hiera('admin_email')}"
 rjil::keystone::public_port: "%{hiera('keystone_port')}"
@@ -644,6 +667,7 @@ rjil::jiocloud::dhcp::dhcppools:
 ########## Common apache settings
 #################################
 apache::default_vhost: false
+rjil::apache::ssl_enabled: false
 
 
 ######### Tempest settings

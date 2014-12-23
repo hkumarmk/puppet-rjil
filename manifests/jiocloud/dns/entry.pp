@@ -11,7 +11,7 @@ define rjil::jiocloud::dns::entry (
   if ($ip) {
     $ip_real = $ip
   } else {
-    $ips = dns_a($cname)
+    $ips = split(dns_resolve($cname),',')
     $ip_real = $ips[0]
   }
 
