@@ -2,6 +2,7 @@
 #
 # Parallel provisioning for vagrant
 #
+#
 up() {
   vagrant up --no-provision
 }
