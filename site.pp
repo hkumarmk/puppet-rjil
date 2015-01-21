@@ -109,11 +109,6 @@ node /^ocdb\d+/ {
   include rjil::openstack_zeromq
   include openstack_extras::keystone_endpoints
   include rjil::keystone::test_user
-  # ensure that we don't create keystone objects until
-  # the service is operational
-  ensure_resource('rjil::service_blocker', 'keystone-admin', {})
-  Rjil::Service_blocker['keystone-admin'] -> Class['openstack_extras::keystone_endpoints']
-  Rjil::Service_blocker['keystone-admin'] -> Class['rjil::keystone::test_user']
 }
 
 #
