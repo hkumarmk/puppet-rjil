@@ -19,7 +19,8 @@ class rjil::keystone(
   $disable_db_sync        = false,
 ) {
 
-  Service['keystone'] -> Service['httpd']
+  Service['keystone'] -> Apache::Vhost<|title == 'keystone'|>
+  Service['keystone'] -> Apache::Vhost<|title == 'keystone-admin'|>
 
   if $public_address == '0.0.0.0' {
     $address = '127.0.0.1'
