@@ -34,8 +34,8 @@ mod 'puppetlabs/vscrepo',
   :ref => '1.2.0'
 
 mod 'stackforge/tempest',
-  :git => "#{base_url}/jiocloud/puppet-tempest",
-  :ref => 'master'
+  :git => "#{base_url}/hkumarmk/puppet-tempest",
+  :ref => 'cinder-volume-storage-protocol'
 
 mod 'dprince/qpid',
   :git => "#{base_url}/dprince/puppet-qpid",

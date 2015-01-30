@@ -756,6 +756,7 @@ tempest::neutron_available: true
 tempest::public_network_name: "%{hiera('public_network_name')}"
 tempest::fixed_network_name: net_tempest
 tempest::setup_venv: false
+tempest::volume_storage_protocol: ceph
 tempest::swift_available: true
 tempest::tempest_clone_path: /home/jenkins/tempest
 tempest::tempest_clone_owner: jenkins
