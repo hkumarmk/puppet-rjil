@@ -196,4 +196,5 @@ mod 'puppetlabs/dhcp',
   :ref => 'origin/master'
 
 mod 'jiocloud/vitess',
-  :git => "#{base_url}/JioCloud/puppet-vitess"
+  :git => "#{base_url}/hkumarmk/puppet-vitess",
+  :ref => 'single_node'

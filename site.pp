@@ -3,6 +3,7 @@ Exec { path => [ "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/", "/usr/local/bin/
 node /etcd/ {
   include rjil::base
 }
+
 ##
 # setup ceph configuration and osds on st nodes
 # These nodes wait at least one stmon to be registered in consul.
@@ -115,6 +116,12 @@ node /^ocdb\d+/ {
   Rjil::Service_blocker['keystone-admin'] -> Class['openstack_extras::keystone_endpoints']
   Rjil::Service_blocker['keystone-admin'] -> Class['rjil::keystone::test_user']
 }
+
+node /vitess/ {
+  include rjil::base
+  include rjil::vitess
+}
+
 
 #
 # A variation of the controller that also runs a load balancer

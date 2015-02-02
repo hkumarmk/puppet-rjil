@@ -48,7 +48,7 @@ resources:
     networks: default
 # for now adding three extra nodes to test vitess independant to other system
   vitess:
-    number: 3
+    number: 1
     flavor: large
     image: trusty
     networks: default
