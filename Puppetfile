@@ -194,3 +194,6 @@ mod 'thias/squid3',
 mod 'puppetlabs/dhcp',
   :git => "#{base_url}/JioCloud/puppetlabs-dhcp",
   :ref => 'origin/master'
+
+mod 'jiocloud/vitess',
+  :git => "#{base_url}/JioCloud/puppet-vitess"

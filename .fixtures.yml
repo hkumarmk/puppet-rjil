@@ -142,3 +142,6 @@ fixtures:
     squid3:
       repo: https://github.com/bodepd/puppet-squid3
       ref: origin/master
+    vitess:
+      repo: https://github.com/jiocloud/puppet-vitess
+      ref: origin/master
