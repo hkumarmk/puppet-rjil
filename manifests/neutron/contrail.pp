@@ -12,12 +12,14 @@
 
 class rjil::neutron::contrail(
   $keystone_admin_password,
-  $public_network_name  = 'public',
-  $public_subnet_name   = 'pub_subnet1',
-  $public_cidr          = undef,
-  $public_rt_number     = 10000,
-  $router_asn           = 64512,
-  $contrail_api_server  = 'real.neutron.service.consul',
+  $public_network_name    = 'public',
+  $public_subnet_name     = 'pub_subnet1',
+  $public_cidr            = undef,
+  $public_rt_number       = 10000,
+  $router_asn             = 64512,
+  $public_subnet_ip_start = undef,
+  $public_subnet_ip_end   = undef,
+  $contrail_api_server    = 'real.neutron.service.consul',
 ) {
 
   include ::rjil::neutron
@@ -66,11 +68,25 @@ class rjil::neutron::contrail(
       router_external => true,
     }
 
-    neutron_subnet {$public_subnet_name:
-      ensure       => present,
-      cidr         => $public_cidr,
-      network_name => $public_network_name,
-      before       => Contrail_rt["default-domain:services:${public_network_name}"],
+    if $subnet_ip_start {
+      if !$subnet_ip_end {
+        fail('subnet_ip_end is required if subset of IPs to be added to subnet')
+      }
+
+      neutron_subnet {$public_subnet_name:
+        ensure           => present,
+        cidr             => $public_cidr,
+        network_name     => $public_network_name,
+        allocation_pools => ["start=$public_subnet_ip_start,end=$public_subnet_ip_end"],
+        before           => Contrail_rt["default-domain:services:${public_network_name}"],
+      }
+    } else {
+      neutron_subnet {$public_subnet_name:
+        ensure       => present,
+        cidr         => $public_cidr,
+        network_name => $public_network_name,
+        before       => Contrail_rt["default-domain:services:${public_network_name}"],
+      }
     }
   }
 }

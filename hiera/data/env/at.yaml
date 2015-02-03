@@ -8,8 +8,11 @@ rjil::ceph::osd::osd_journal_size: 2
 nova::compute::libvirt::libvirt_virt_type: qemu
 
 rjil::neutron::contrail::public_cidr: 100.1.0.0/24
+rjil::neutron::contrail::public_subnet_ip_start: 100.1.0.11
+rjil::neutron::contrail::public_subnet_ip_end: 100.1.0.254
 rjil::system::accounts::active_users: [soren,bodepd,hkumar,jenkins,consul,pandeyop,jaspreet,vivek,ahmad,vaidy,himanshu,rohit,sanjayu,vigneshvar,alokjani,amar,ynshenoy,hanish]
 rjil::system::accounts::sudo_users: [soren,bodepd,hkumar,jenkins,consul,pandeyop,jaspreet,vivek,ahmad,vaidy,himanshu,rohit,sanjayu,vigneshvar,alokjani,amar,ynshenoy,hanish]
+
 rjil::base::self_signed_cert: true
 
 tempest::admin_password: tempest_admin
