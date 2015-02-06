@@ -8,6 +8,7 @@ class rjil::test::nova_flavor(
 ) {
 
   include rjil::test::base
+  include openstack_extras::auth_file
 
   file { "/usr/lib/jiocloud/tests/nova_flavor.sh":
     content => template("rjil/tests/nova_flavor.sh.erb"),
