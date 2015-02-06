@@ -109,6 +109,10 @@ openstack_extras::auth_file::admin_password: "%{hiera('test_user_password')}"
 openstack_extras::auth_file::controller_node: "%{hiera('keystone_public_address')}"
 openstack_extras::auth_file::keystone_protocol: "%{hiera('api_protocol')}"
 
+########### client install
+##################################
+openstack_extras::client::ceilometer: false
+
 ########### Openstack ports
 ##################################
 localbind_host: 127.0.0.1
@@ -303,6 +307,29 @@ nova::compute::neutron::libvirt_vif_driver: nova_contrail_vif.contrailvif.VRoute
 rjil::nova::compute::cinder_rbd_secret_uuid: "%{hiera('cinder_rbd_secret_uuid')}"
 rjil::nova::compute::ceph_mon_key: "%{hiera('rjil::ceph::mon::key')}"
 
+rjil::nova::controller::nova_auth:
+  username: nova
+  password: "%{hiera('nova::keystone::auth::password')}"
+  tenant_name: services
+  auth_url: "%{hiera('rjil::keystone::protocol')}://%{hiera('nova::api::auth_host')}:%{hiera('keystone_port')}/%{hiera('rjil::keystone::version')}"
+
+rjil::nova::controller::flavors:
+  small:
+    ram: 1024
+    disk: 20
+    vcpu: 1
+  medium:
+    ram: 4096
+    disk: 40
+    vcpu: 2
+  large:
+    ram: 8192
+    disk: 40
+    vcpu: 4
+  xlarge:
+    ram: 16384
+    disk: 40
+    vcpu: 4
 
 ########### Ironic config
 ###################################
