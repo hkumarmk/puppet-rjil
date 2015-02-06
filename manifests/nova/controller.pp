@@ -36,6 +36,9 @@ class rjil::nova::controller (
 
 # Tests
   include rjil::test::nova_controller
+  class { 'rjil::test::nova_flavor':
+    flavors => $flavors,
+  }
 
   nova_config {
     'DEFAULT/default_floating_pool':      value => $default_floating_pool;
