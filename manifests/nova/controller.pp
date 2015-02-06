@@ -30,6 +30,8 @@ class rjil::nova::controller (
   $osapi_localbind_port = 18774,
   $ec2_localbind_port   = 18773,
   $ssl                  = false,
+  $flavors              = {},
+  $nova_auth            = {},
 ) {
 
 # Tests
@@ -150,6 +152,11 @@ class rjil::nova::controller (
   include ::nova::consoleauth
   include ::nova::vncproxy
   include ::nova::quota
+
+  ##
+  # Create flavors
+  ##
+  create_resources('nova_flavor', $flavors, {auth => $nova_auth})
 
   ##
   # Making sure /var/log/nova-manage.log is writable by nova user. This is
