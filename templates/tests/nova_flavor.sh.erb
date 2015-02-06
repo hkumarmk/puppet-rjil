@@ -1,0 +1,3 @@
+<% @flavors.each do |flavor| -%>
+openstack -q flavor show <%= flavor[0] %>
+<% end -%>
