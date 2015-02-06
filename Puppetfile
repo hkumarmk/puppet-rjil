@@ -78,8 +78,8 @@ mod 'stackforge/cinder',
   :ref => 'stable/icehouse'
 
 mod 'stackforge/openstacklib',
-  :git => "#{base_url}/stackforge/puppet-openstacklib",
-  :ref => 'master'
+  :git => "#{base_url}/hkumarmk/puppet-openstacklib",
+  :ref => 'removed_empty_element_from_args'
 
 mod 'stackforge/ironic',
   :git => "#{base_url}/JioCloud/puppet-ironic",
@@ -110,8 +110,8 @@ mod 'stackforge/neutron',
   :ref => 'stable/icehouse'
 
 mod 'stackforge/nova',
-  :git => "#{base_url}/sorenh/puppet-nova",
-  :ref => 'ironic'
+  :git => "#{base_url}/hkumarmk/puppet-nova",
+  :ref => 'nova_flavor'
 
 mod 'puppetlabs/rabbitmq',
   :git => "#{base_url}/puppetlabs/puppetlabs-rabbitmq",
@@ -126,7 +126,8 @@ mod 'stackforge/vswitch',
   :ref => '0.3.0'
 
 mod 'stackforge/openstack_extras',
-  :git => "#{base_url}/jiocloud/puppet-openstack_extras"
+  :git => "#{base_url}/hkumarmk/puppet-openstack_extras",
+  :ref => 'openstack_client'
 
 mod 'stackforge/heat',
   :git => "#{base_url}/stackforge/puppet-heat",
