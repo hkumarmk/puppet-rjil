@@ -778,7 +778,7 @@ apache::default_ssl_key: '/etc/ssl/keys/jiocloud.com.key'
 tempest::tempest_repo_uri: 'https://github.com/JioCloud/tempest.git'
 tempest::image_name: cirros-0.3.3
 tempest::image_name_alt: cirros-0.3.3
-tempest::flavor_ref: 1
+tempest::flavor_name: small
 tempest::admin_password: tempest_admin
 tempest::admin_username: tempest_admin
 tempest::tenant_name: tempest
