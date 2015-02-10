@@ -6,13 +6,13 @@ class rjil::vitess {
   Class['vitess'] ->
   Class['vitess::vtctld'] ->
   Class['vitess::mysql'] ->
-  Class['vitess::vttablet']
+  Class['vitess::vttablet'] ->
+  Class['vitess::vtgate']
 
   class {'::vitess': }
   include ::vitess::vtctld
   include ::vitess::mysql
   include ::vitess::vttablet
-
-#  contain rjil::zookeeper
+  include ::vitess::vtgate
 
 }
