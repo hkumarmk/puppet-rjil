@@ -162,6 +162,13 @@ class rjil::nova::controller (
   create_resources('nova_flavor', $flavors, {auth => $nova_auth})
 
   ##
+  # Purge unmanaged flavors
+  ##
+  resources {'nova_flavor':
+    purge => true,
+  }
+
+  ##
   # Making sure /var/log/nova-manage.log is writable by nova user. This is
   # because, nova module is running "nova-manage db sync" as user nova
   # which is failing as nova dont have write permission to nova-manage.log.

@@ -111,7 +111,7 @@ mod 'stackforge/neutron',
 
 mod 'stackforge/nova',
   :git => "#{base_url}/hkumarmk/puppet-nova",
-  :ref => 'nova_flavor'
+  :ref => 'nova_flavor_purge'
 
 mod 'puppetlabs/rabbitmq',
   :git => "#{base_url}/puppetlabs/puppetlabs-rabbitmq",
