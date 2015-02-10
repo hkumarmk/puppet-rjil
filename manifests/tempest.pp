@@ -11,6 +11,8 @@ class rjil::tempest (
   $neutron_admin_password = 'neutron',
   $glance_admin_user      = 'glance',
   $glance_admin_password  = 'glance',
+  $nova_admin_user        = 'nova',
+  $nova_admin_password    = 'nova',
   $tempest_test_file      = '/home/jenkins/tempest_tests.txt',
 ) {
 
@@ -41,6 +43,20 @@ class rjil::tempest (
   Keystone_config<||> -> Keystone_tenant<||>
   Keystone_config<||> -> Keystone_user<||>
   Keystone_config<||> -> Keystone_user_role<||>
+
+  ##
+  # nova config for nova_flavor
+  ##
+  Nova_config<||> -> Tempest_Config<||>
+  nova_config {
+    'keystone_authtoken/auth_host':         value => $auth_host;
+    'keystone_authtoken/auth_port':         value => $auth_port;
+    'keystone_authtoken/auth_uri':          value => "${auth_protocol}://${auth_host}:${auth_port}/v2.0";
+    'keystone_authtoken/auth_protocol':     value => $auth_protocol;
+    'keystone_authtoken/admin_tenant_name': value => $service_tenant;
+    'keystone_authtoken/admin_user':        value => $nova_admin_user;
+    'keystone_authtoken/admin_password':    value => $nova_admin_password;
+  }
 
   ##
   # Glance image and tempest glance image id setter need keystone section in
