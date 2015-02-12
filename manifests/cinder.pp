@@ -75,8 +75,8 @@ class rjil::cinder (
   # database configuration.
   ##
 
-  ensure_resource( 'rjil::service_blocker', 'mysql', {})
-  Rjil::Service_blocker['mysql'] -> Cinder_config<| title == 'database/connection' |>
+  ensure_resource( 'rjil::service_blocker', 'master.mysql', {})
+  Rjil::Service_blocker['master.mysql'] -> Cinder_config<| title == 'database/connection' |>
 
   ##
   # service blocker to stmon before mon_config to be run.

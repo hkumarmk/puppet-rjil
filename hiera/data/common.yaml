@@ -100,9 +100,9 @@ ironic_internal_address: ironic.jiocloud.com
 ###################################
 
 admin_email: cloud.devops@ril.com
-db_host: mysql.service.consul
-debug: 'true'
-verbose: 'true'
+db_host: master.mysql.service.consul
+debug: 'false'
+verbose: 'false'
 region: RegionOne
 rpc_backend: zmq
 api_protocol: https

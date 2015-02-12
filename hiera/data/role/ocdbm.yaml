@@ -1,2 +1,3 @@
 rjil::keystone::disable_db_sync: false
 rjil::jiocloud::consul_role: server
+rjil::db::is_master: true

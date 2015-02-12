@@ -18,7 +18,7 @@ resources:
     image: trusty
     networks: default
     boot_volume: default_volume
-  ocdb:
+  ocdbm:
     number: 1
     flavor: large
     image: trusty

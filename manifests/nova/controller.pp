@@ -100,8 +100,8 @@ class rjil::nova::controller (
   # database configuration.
   ##
 
-  ensure_resource( 'rjil::service_blocker', 'mysql', {})
-  Rjil::Service_blocker['mysql'] ->
+  ensure_resource( 'rjil::service_blocker', 'master.mysql', {})
+  Rjil::Service_blocker['master.mysql'] ->
   Nova_config<| title == 'database/connection' |>
 
   ##

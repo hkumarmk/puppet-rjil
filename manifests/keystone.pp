@@ -52,8 +52,8 @@ class rjil::keystone(
 
   # ensure that we don't even try to configure the
   # database connection until the service is up
-  ensure_resource( 'rjil::service_blocker', 'mysql', {})
-  Rjil::Service_blocker['mysql'] -> Keystone_config['database/connection']
+  ensure_resource( 'rjil::service_blocker', 'master.mysql', {})
+  Rjil::Service_blocker['master.mysql'] -> Keystone_config['database/connection']
 
   if $disable_db_sync {
     Exec <| title == 'keystone-manage db_sync' |> {

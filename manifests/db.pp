@@ -8,13 +8,50 @@
 class rjil::db (
   $mysql_root_pass,
   $mysql_server_package_name = 'mariadb-server',
-  $mysql_datadir =  '/data',
-  $mysql_max_connections = 1024,
-  $mysql_data_disk = undef,
-  $dbs = {},
-  $bind_address = '0.0.0.0',
+  $mysql_datadir             =  '/data',
+  $mysql_max_connections     = 1024,
+  $mysql_data_disk           = undef,
+  $dbs                       = {},
+  $bind_address              = '0.0.0.0',
+  $server_id                 = undef,
+  $log_bin                   = 'mysql-bin.log',
+  $is_master                 = false,
+  $binlog_format             = 'mixed',
+  $sync_binlog               = 1,
+  $relay_log                 = 'mysql-relay-bin.log',
+  $repl_user                 = 'repl',
+  $repl_pass                 = 'repl',
+  $master_server             = 'master.mysql.service.consul',
 )  {
 
+  if $server_id {
+    $server_id_orig = $server_id
+  } else {
+    $server_id_orig = regsubst($bind_address,'^(\d+)\.(\d+)\.(\d+)\.(\d+)$','\4')
+  }
+
+  $default_mysqld_options = {
+        'max_connections' => $mysql_max_connections,
+        'datadir'         => $mysql_datadir,
+        'bind-address'    => $bind_address,
+        'server-id'       => $server_id_orig,
+        'log_bin'         => $log_bin,
+        'binlog_format'   => $binlog_format,
+        'sync_binlog'     => $sync_binlog,
+      }
+
+  if $is_master {
+    $override_mysqld_options = {}
+    $consul_tags = ['master']
+  } else {
+    $override_mysqld_options = {
+      'read_only' => true,
+      'relay_log' => $relay_log,
+    }
+    $consul_tags = ['slave']
+  }
+
+  $mysqld_options = merge($default_mysqld_options,$override_mysqld_options)
 
   ## Setup test code
 
@@ -27,11 +64,8 @@ class rjil::db (
     root_password    => $mysql_root_pass,
     restart          => true,
     package_name     => $mysql_server_package_name,
-    override_options => { 'mysqld' => {
-      'max_connections' => $mysql_max_connections,
-      'datadir'         => $mysql_datadir,
-      'bind-address'    => $bind_address,
-      }
+    override_options => {
+      'mysqld' => $mysqld_options
     },
   }
 
@@ -123,13 +157,29 @@ class rjil::db (
     require    => Mysql_user["monitor@${user_address}"],
   }
 
+  mysql_user { "${repl_user}@%":
+    ensure        => 'present',
+    password_hash => mysql_password($repl_pass),
+    require       => File['/root/.my.cnf'],
+  }
+
+  mysql_grant { "${repl_user}@%/*.*":
+    ensure     => 'present',
+    options    => ['GRANT'],
+    privileges => ['REPLICATION SLAVE'],
+    user       => "${repl_user}@%",
+    table      => '*.*',
+    require    => Mysql_user["${repl_user}@%"],
+  }
+
   rjil::jiocloud::consul::service { "mysql":
     port          => 3306,
+    tags          => $consul_tags,
     check_command => "/usr/lib/nagios/plugins/check_mysql -H ${bind_address} -u monitor -p monitor"
   }
 
   # make sure that we install mysql before our service blocker starts for the
   # case where they are on the same machine
-  Class['rjil::db'] -> Rjil::Service_blocker<| title == 'mysql' |>
+  Class['rjil::db'] -> Rjil::Service_blocker<| title == 'master.mysql' |>
 
 }

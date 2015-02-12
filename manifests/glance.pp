@@ -29,9 +29,9 @@ class rjil::glance (
 
   # ensure that we don't even try to configure the
   # database connection until the service is up
-  ensure_resource( 'rjil::service_blocker', 'mysql', {})
-  Rjil::Service_blocker['mysql'] -> Glance_api_config<| title == 'database/connection' |>
-  Rjil::Service_blocker['mysql'] -> Glance_registry_config<| title == 'database/connection' |>
+  ensure_resource( 'rjil::service_blocker', 'master.mysql', {})
+  Rjil::Service_blocker['master.mysql'] -> Glance_api_config<| title == 'database/connection' |>
+  Rjil::Service_blocker['master.mysql'] -> Glance_registry_config<| title == 'database/connection' |>
 
   ## setup glance api
   include ::glance::api
