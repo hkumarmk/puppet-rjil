@@ -157,6 +157,10 @@ class rjil::db (
     require    => Mysql_user["monitor@${user_address}"],
   }
 
+  ##
+  # This user should be anabled from all slave nodes, need to see how we add
+  #   the access to specific hosts, so enabling from all hosts for now.
+  ##
   mysql_user { "${repl_user}@%":
     ensure        => 'present',
     password_hash => mysql_password($repl_pass),

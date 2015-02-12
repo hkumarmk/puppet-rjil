@@ -19,7 +19,32 @@ describe 'rjil::db' do
     }
   end
 
-  describe 'default resources' do
+  context 'with master' do
+    let :params do
+      {
+        :is_master => true,
+      }
+    end
+    it do
+      should contain_class('mysql::server').with(
+        {
+          'root_password'    => 'testpass',
+          'override_options' => {'mysqld'  =>
+            {
+              'max_connections' => '1024',
+              'datadir'         => '/tmp/mysql',
+              'bind-address'    => '0.0.0.0',
+              'server-id'       => '0',
+              'log_bin'         => 'mysql-bin.log',
+              'binlog_format'   => 'mixed',
+              'sync_binlog'     => '1',
+            }
+          },
+        }
+      )
+    end
+  end
+  context 'with slave, no data disk' do
     it 'should contain default resources' do
       should contain_file('/etc/consul/mysql.json').with_content(/\"port\": 3306/)
       should contain_file('/usr/lib/jiocloud/tests/mysql.sh')
@@ -31,6 +56,12 @@ describe 'rjil::db' do
               'max_connections' => '1024',
               'datadir'         => '/tmp/mysql',
               'bind-address'    => '0.0.0.0',
+              'server-id'       => '0',
+              'log_bin'         => 'mysql-bin.log',
+              'binlog_format'   => 'mixed',
+              'sync_binlog'     => '1',
+              'read_only'       => true,
+              'relay_log'       => 'mysql-relay-bin.log',
             }
           },
         }
@@ -56,6 +87,43 @@ describe 'rjil::db' do
         {
           'ensure' => 'link',
           'target' => '/etc/mysql/.my.cnf',
+        }
+      )
+      should contain_mysql_user('monitor@127.0.0.1').with(
+        {
+          'ensure'        => 'present',
+          'password_hash' => '*1975D095AC033CAF4E1BF94F7202A9BBFEEB66F1',
+          'require'       => 'File[/root/.my.cnf]',
+        }
+      )
+
+      should contain_mysql_grant('monitor@127.0.0.1/*.*').with(
+        {
+          'ensure'     => 'present',
+          'options'    => ['GRANT'],
+          'privileges' => ['USAGE'],
+          'user'       => 'monitor@127.0.0.1',
+          'table'      => '*.*',
+          'require'    => 'Mysql_user[monitor@127.0.0.1]',
+        }
+      )
+
+      should contain_mysql_user('repl@%').with(
+        {
+          'ensure'        => 'present',
+          'password_hash' => '*A424E797037BF97C19A2E88CF7891C5C2038C039',
+          'require'       => 'File[/root/.my.cnf]',
+        }
+      )
+
+      should contain_mysql_grant('repl@%/*.*').with(
+        {
+          'ensure'     => 'present',
+          'options'    => ['GRANT'],
+          'privileges' => ['REPLICATION SLAVE'],
+          'user'       => 'repl@%',
+          'table'      => '*.*',
+          'require'    => 'Mysql_user[repl@%]',
         }
       )
     end

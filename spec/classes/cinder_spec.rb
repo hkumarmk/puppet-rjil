@@ -43,7 +43,8 @@ describe 'rjil::cinder' do
       should contain_file('/usr/lib/jiocloud/tests/service_checks/cinder.sh').with_content(
         /check_http -H 10\.1\.1\.1 -p 8776/
       )
-      should contain_Cinder_config('database/connection').that_requires('Rjil::Service_blocker[mysql]')
+      should
+contain_Cinder_config('database/connection').that_requires('Rjil::Service_blocker[master.mysql]')
       should contain_class('rjil::ceph::mon_config').that_requires('Rjil::Service_blocker[stmon]')
       should contain_class('cinder::volume').that_requires('Class[rjil::ceph::mon_config]')
       should contain_ceph__auth('cinder_volume').that_requires('Class[cinder]')
