@@ -101,7 +101,7 @@ node /^oc\d+/ {
 # this is a variation of the controller that has a database installed
 #
 
-node /^ocdb[sm]\d+/ {
+node /^ocdb\d+/ {
   include rjil::base
   include rjil::memcached
   include openstack_extras::client
