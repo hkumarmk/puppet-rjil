@@ -53,6 +53,14 @@ class rjil::db (
 
   $mysqld_options = merge($default_mysqld_options,$override_mysqld_options)
 
+  ##
+  # create a consul session
+  ##
+  consul_session{"mysql~${::hostname}":
+    ensure => present,
+    lockdelay => 60,
+  }
+
   ## Setup test code
 
   rjil::test { 'mysql.sh': }

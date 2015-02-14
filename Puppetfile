@@ -181,8 +181,8 @@ mod 'nvpuppet/gitolite',
   :ref => 'origin/master'
 
 mod 'jiocloud/orchestration_utils',
-  :git => "#{base_url}/jiocloud/puppet-orchestration_utils",
-  :ref => 'origin/master'
+  :git => "#{base_url}/hkumarmk/puppet-orchestration_utils",
+  :ref => 'consul_leader_election'
 
 mod 'thias/squid3',
   :git => "#{base_url}/sorenh/puppet-squid3",
