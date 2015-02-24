@@ -7,7 +7,8 @@ describe 'rjil::db' do
     {
       'rjil::db::mysql_datadir'   => '/tmp/mysql',
       'rjil::db::mysql_root_pass' => 'testpass',
-      'rjil::db::dbs'             => { 'nova' => { 'db' => 'testdb', 'user' => 'testuser', 'pass' => 'twst' }, }
+      'rjil::db::dbs'             => { 'nova' => { 'db' => 'testdb', 'user' => 'testuser', 'pass' => 'twst' }, },
+      'rjil::db::repl_pass'       => 'passwd'
     }
   end
 

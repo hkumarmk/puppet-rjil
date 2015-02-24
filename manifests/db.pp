@@ -7,6 +7,7 @@
 
 class rjil::db (
   $mysql_root_pass,
+  $repl_pass,
   $mysql_server_package_name = 'mariadb-server',
   $mysql_datadir             =  '/data',
   $mysql_max_connections     = 1024,
@@ -20,7 +21,6 @@ class rjil::db (
   $sync_binlog               = 1,
   $relay_log                 = 'mysql-relay-bin.log',
   $repl_user                 = 'repl',
-  $repl_pass                 = 'repl',
   $master_server             = 'master.mysql.service.consul',
 )  {
 

@@ -182,7 +182,7 @@ mod 'nvpuppet/gitolite',
 
 mod 'jiocloud/orchestration_utils',
   :git => "#{base_url}/hkumarmk/puppet-orchestration_utils",
-  :ref => 'consul_leader_election'
+  :ref => 'consul_leader_election_and_mysql_replication'
 
 mod 'thias/squid3',
   :git => "#{base_url}/sorenh/puppet-squid3",
