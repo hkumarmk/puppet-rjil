@@ -43,12 +43,36 @@ class rjil::db (
   if $is_master {
     $override_mysqld_options = {}
     $consul_tags = ['master']
+
+    ##
+    # Add master data to consul kv
+    ##
+    consul_kv_mysql_masterdata {'openstack':}
+    Mysql_user<||> -> Consul_kv_mysql_masterdata<||>
+    Mysql_grant<||> -> Consul_kv_mysql_masterdata<||>
+    Mysql_database<||> -> Consul_kv_mysql_masterdata<||>
+    Consul_kv_mysql_masterdata<||> -> Rjil::Jiocloud::Consul::Service<| title == 'mysql' |>
+    Class['rjil::db'] -> Rjil::Service_blocker<| title == 'master.mysql' |>
   } else {
-    $override_mysqld_options = {
-      'read_only' => true,
-      'relay_log' => $relay_log,
+    if $::leader {
+      $override_mysqld_options = {
+        'read_only' => true,
+        'relay_log' => $relay_log,
+      }
+      $consul_tags = ['slave']
+
+      consul_kv_mysql_slave_update{'openstack':
+        repl_user => $repl_user,
+        repl_password => $repl_user,
+      }
+      ensure_resource( 'rjil::service_blocker', 'master.mysql', {})
+
+      ensure_resource( 'consul_kv_fail', 'services/openstack/mysql/masterdata', {})
+
+      Consul_kv_fail['services/openstack/mysql/masterdata'] -> Consul_kv_mysql_slave_update<| title == 'openstack' |>
+
+      Rjil::Service_blocker['master.mysql'] -> Consul_kv_mysql_slave_update<| title == 'openstack' |>
     }
-    $consul_tags = ['slave']
   }
 
   $mysqld_options = merge($default_mysqld_options,$override_mysqld_options)
@@ -189,9 +213,5 @@ class rjil::db (
     tags          => $consul_tags,
     check_command => "/usr/lib/nagios/plugins/check_mysql -H ${bind_address} -u monitor -p monitor"
   }
-
-  # make sure that we install mysql before our service blocker starts for the
-  # case where they are on the same machine
-  Class['rjil::db'] -> Rjil::Service_blocker<| title == 'master.mysql' |>
 
 }
