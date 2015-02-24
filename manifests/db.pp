@@ -24,12 +24,21 @@ class rjil::db (
   $master_server             = 'master.mysql.service.consul',
 )  {
 
+  ##
+  # If server_id is not set, use last octet of its IP address
+  ##
+
   if $server_id {
     $server_id_orig = $server_id
-  } else {
+  } elsif $bind_address != '0.0.0.0' {
     $server_id_orig = regsubst($bind_address,'^(\d+)\.(\d+)\.(\d+)\.(\d+)$','\4')
+  } else {
+    $server_id_orig = regsubst($ipaddress,'^(\d+)\.(\d+)\.(\d+)\.(\d+)$','\4')
   }
 
+  ##
+  # This is the default mysql configuration options
+  ##
   $default_mysqld_options = {
         'max_connections' => $mysql_max_connections,
         'datadir'         => $mysql_datadir,
@@ -40,12 +49,20 @@ class rjil::db (
         'sync_binlog'     => $sync_binlog,
       }
 
+  ##
+  # is_master is true for the mysql master node. We run mysql master on the
+  # leader node which is based on cluster_role fact which will be 'leader' for
+  # cluster leader and 'follower' for followers.
+  ##
   if $is_master {
     $override_mysqld_options = {}
     $consul_tags = ['master']
 
     ##
-    # Add master data to consul kv
+    # Add master data to consul kv.
+    # Only collect master data after creating all dbs, users, grants but before
+    # any writes from the applications (or any other scripts or something if
+    # any)
     ##
     consul_kv_mysql_masterdata {'openstack':}
     Mysql_user<||> -> Consul_kv_mysql_masterdata<||>
@@ -54,17 +71,42 @@ class rjil::db (
     Consul_kv_mysql_masterdata<||> -> Rjil::Jiocloud::Consul::Service<| title == 'mysql' |>
     Class['rjil::db'] -> Rjil::Service_blocker<| title == 'master.mysql' |>
   } else {
-    if $::leader {
+    ##
+    # Do not run mysql slave block if leader_node fact is not defined. This will
+    # make sure unncessary service blocker on master.mysql on mysql slaves.
+    # This fact will not be set on initial puppet run and all subsequent runs
+    # after the consul session creation will have this fact set.
+    ##
+    if defined($::leader_node) {
+      ##
+      # Slave will be readonly.
+      ##
       $override_mysqld_options = {
         'read_only' => true,
         'relay_log' => $relay_log,
       }
+      ##
+      # So you will have slave.mysql.service.consul for slaves. This is not
+      # useful right now, but may be useful later.
+      ##
       $consul_tags = ['slave']
 
+      ##
+      # Update the mysql slave configuration with master data - mysql slave
+      # configuration need following items to be populated
+      # replication user, replication password -> both are getting as params
+      # Binary log file name and position -> they are getting from the consul kv
+      ##
       consul_kv_mysql_slave_update{'openstack':
         repl_user => $repl_user,
-        repl_password => $repl_user,
+        repl_password => $repl_pass,
       }
+
+      ##
+      # Make sure slave will not configure itself before master is up
+      # Also make sure slave will not be configured until the consul kv for
+      # masterdata is there.
+      ##
       ensure_resource( 'rjil::service_blocker', 'master.mysql', {})
 
       ensure_resource( 'consul_kv_fail', 'services/openstack/mysql/masterdata', {})
