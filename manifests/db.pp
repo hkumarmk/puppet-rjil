@@ -77,7 +77,7 @@ class rjil::db (
     # This fact will not be set on initial puppet run and all subsequent runs
     # after the consul session creation will have this fact set.
     ##
-    if defined($::leader_node) {
+    if $::leader_node {
       ##
       # Slave will be readonly.
       ##
