@@ -114,6 +114,11 @@ class rjil::db (
       Consul_kv_fail['services/openstack/mysql/masterdata'] -> Consul_kv_mysql_slave_update<| title == 'openstack' |>
 
       Rjil::Service_blocker['master.mysql'] -> Consul_kv_mysql_slave_update<| title == 'openstack' |>
+
+      ##
+      # Run mysql backup on slave node
+      ##
+      contain mysql::backup::mysqldump
     }
   }
 
@@ -177,29 +182,7 @@ class rjil::db (
       require => File_line["fstab_${mysql_data_disk}"],
     }
 
-    ## install db in case if mysql is not installed.
-    exec { 'mysql_install_db':
-      command   => "mysql_install_db --datadir=${mysql_datadir} --user=mysql",
-      creates   => "${mysql_datadir}/mysql",
-      logoutput => on_failure,
-      path      => '/bin:/sbin:/usr/bin:/usr/sbin',
-      unless    => [ "test -d ${mysql_datadir}/mysql" ],
-      require   => [Package['mysql-server'],Exec["mount_${mysql_data_disk}"]],
-    }
-
-  } else {
-
-    ## install db in case if mysql is not installed.
-    ## FIXME: I see this code is added in master branch of puppetlabs/mysql,
-    ##        Once we use that, this code should be removed.
-    exec { 'mysql_install_db':
-      command   => "mysql_install_db --datadir=${mysql_datadir} --user=mysql",
-      creates   => "${mysql_datadir}/mysql",
-      logoutput => on_failure,
-      path      => '/bin:/sbin:/usr/bin:/usr/sbin',
-      unless    => [ "test -d ${mysql_datadir}/mysql" ],
-      require   => Package['mysql-server'],
-    }
+    Exec["mount_${mysql_data_disk}"] -> Exec['mysql_install_db']
   }
 
   # init script of mariadb is looking for mysql cleiint configuration

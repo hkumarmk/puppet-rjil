@@ -46,6 +46,12 @@ rjil::db::dbs:
 # Gets overridden for ocdb role
 rjil::keystone::disable_db_sync: true
 
+## database backup
+mysql::backup::mysqldump::backupdir: /backup
+mysql::backup::mysqldump::backuprotate: 7
+mysql::backup::mysqldump::backupdatabases: [nova,keystone,cinder,glance,ironic,neutron]
+mysql::backup::mysqldump::file_per_database: true
+
 ####################################
 ####### Add cnames #################
 ####################################

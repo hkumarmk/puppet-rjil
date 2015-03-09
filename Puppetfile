@@ -99,7 +99,7 @@ mod 'puppetlabs/keystone',
 
 mod 'puppetlabs/mysql',
   :git => "#{base_url}/puppetlabs/puppetlabs-mysql",
-  :ref => '2.2.x'
+  :ref => '3.3.0'
 
 mod 'stackforge/neutron',
   :git => "#{base_url}/jiocloud/puppet-neutron",
