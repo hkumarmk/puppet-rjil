@@ -27,6 +27,21 @@ describe 'rjil::ceph::osd' do
       'processorcount'  => '4',
     }
   end
+
+  context 'on hp node' do
+    before do
+      facts.merge!({
+        :jiocloud_role       => 'st',
+        :manufacturer        => 'HP',
+        :hp_unassigned_disks => 'disk1,disk2,disk3',
+      })
+    end
+    it 'should contain default resources' do
+      should contain_package('hpacucli')
+      should contain_hp_drive('disk1','disk2','disk3')
+    end
+  end
+
   context 'with default resources' do
     it 'should contain default resources' do
       should contain_sysctl__value('vm.dirty_background_ratio').with_value(5)

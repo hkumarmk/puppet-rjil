@@ -70,6 +70,21 @@ class rjil::ceph::osd (
   }
 
   ##
+  # Detect any unassigned raw disks and create single disk raid0 on them. This
+  # is only required to be run on HP storage nodes.
+  # This is required on hp storage node as hp nodes will not let the operating
+  # system see the disks without creating any RAID on those disks. This is the
+  # workaround hp people suggested to do so that operating system detect the
+  # disks
+  ##
+
+  if ($::jiocloud_role =~ /(st|stmon)/) and ($::manufacturer =~ /^HP$/) {
+    ensure_packages('hpacucli')
+    $hp_drives_to_raid = split($::hp_unassigned_disks,',')
+    hp_drive {$hp_drives_to_raid: }
+  }
+
+  ##
   ## Fix for ceph being hang because of memory fragmentation
   ##
 
