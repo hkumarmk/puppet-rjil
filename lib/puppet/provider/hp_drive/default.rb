@@ -18,8 +18,7 @@ Puppet::Type.type(:hp_drive).provide(
   # destroy can cause dataloss.
   ##
   def destroy
-    warning("hp_drive does not support removing logical drive")
-    true
+    fail("hp_drive does not support removing logical drive")
   end
 
 end
