@@ -4,45 +4,54 @@ resources:
     flavor: small
     image: trusty
     networks: default
+    boot_volume: small
     assign_floating_ip: true
   haproxy:
     number: 1
     flavor: medium
     image: trusty
     networks: default
+    boot_volume: small
   oc:
     number: 1
     flavor: large
     image: trusty
     networks: default
+    boot_volume: small
   ocdb:
     number: 1
     flavor: large
     image: trusty
     networks: default
     assign_floating_ip: true
+    boot_volume: small
   ct:
     number: 1
     flavor: large
     image: trusty
     networks: default
+    boot_volume: small
   stmonleader:
     number: 1
     flavor: storage
     image: trusty
     networks: default
+    boot_volume: small
   stmon:
     number: 2
     flavor: storage
     image: trusty
     networks: default
+    boot_volume: small
   cp:
     number: 2
     flavor: large
     image: trusty
     networks: default
+    boot_volume: small
   gcp:
     number: 1
     flavor: large
     image: trusty
     networks: default
+    boot_volume: small

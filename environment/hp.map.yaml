@@ -8,3 +8,9 @@ flavor:
 networks:
    default:
      - d7c83218-276b-4e4c-8ed1-1165b44c3a44
+# Boot from volume is not required in HP
+boot_volume:
+  small: False
+  medium: False
+  large: False
+  None: False

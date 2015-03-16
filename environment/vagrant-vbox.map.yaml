@@ -16,3 +16,9 @@ flavor:
   storage:
     ram: 4096
     cpu: 2
+# Boot from volume is not required in Vagrant
+boot_volume:
+  small: False
+  medium: False
+  large: False
+  None: False
