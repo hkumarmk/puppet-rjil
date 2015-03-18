@@ -218,6 +218,9 @@ rjil::neutron::api_extensions_path: extensions:/usr/lib/python2.7/dist-packages/
 rjil::neutron::service_provider: LOADBALANCER:Opencontrail:neutron_plugin_contrail.plugins.opencontrail.loadbalancer.driver.OpencontrailLoadbalancerDriver:default
 rjil::neutron::contrail::keystone_admin_password: "%{hiera('admin_password')}"
 rjil::neutron::contrail::public_network_name: "%{hiera('public_network_name')}"
+
+rjil::neutron::contrail::fip_pool::keystone_admin_password: "%{hiera('admin_password')}"
+
 rjil::neutron::ovs::ctlplane_network_name: ctlplane
 rjil::neutron::server_name: "%{hiera('neutron_public_address')}"
 rjil::neutron::ssl: true

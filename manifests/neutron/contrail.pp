@@ -12,14 +12,10 @@
 
 class rjil::neutron::contrail(
   $keystone_admin_password,
-  $public_network_name    = 'public',
-  $public_subnet_name     = 'pub_subnet1',
-  $public_cidr            = undef,
-  $public_rt_number       = 10000,
-  $router_asn             = 64512,
-  $public_subnet_ip_start = undef,
-  $public_subnet_ip_end   = undef,
-  $contrail_api_server    = 'real.neutron.service.consul',
+  $fip_pools           = {},
+  $contrail_api_server = 'real.neutron.service.consul',
+  $rt_number           = 10000,
+  $router_asn          = 64512,
 ) {
 
   include ::rjil::neutron
@@ -42,51 +38,13 @@ class rjil::neutron::contrail(
   include rjil::contrail::server
 
   ##
-  # Add route target in contrail config database.
+  # Create fip pools including creation of network, subnet, fip pool etc
   ##
-  contrail_rt {"default-domain:services:${public_network_name}":
-    ensure             => present,
-    rt_number          => $public_rt_number,
-    router_asn         => $router_asn,
-    api_server_address => $contrail_api_server,
-    admin_password     => $keystone_admin_password,
-    require            => Neutron_network[$public_network_name],
-  }
-
-  consul_kv{'neutron/floatingip_pool/status':
-    value   => 'ready',
-    require => Contrail_rt["default-domain:services:${public_network_name}"],
-  }
-
-  if $public_cidr {
-    ##
-    # Add floating IPs
-    ##
-
-    neutron_network {$public_network_name:
-      ensure          => present,
-      router_external => true,
-    }
-
-    if $public_subnet_ip_start {
-      if !$public_subnet_ip_end {
-        fail('public_subnet_ip_end is required if subset of IPs to be added to subnet')
-      }
-
-      neutron_subnet {$public_subnet_name:
-        ensure           => present,
-        cidr             => $public_cidr,
-        network_name     => $public_network_name,
-        allocation_pools => ["start=$public_subnet_ip_start,end=$public_subnet_ip_end"],
-        before           => Contrail_rt["default-domain:services:${public_network_name}"],
-      }
-    } else {
-      neutron_subnet {$public_subnet_name:
-        ensure       => present,
-        cidr         => $public_cidr,
-        network_name => $public_network_name,
-        before       => Contrail_rt["default-domain:services:${public_network_name}"],
-      }
-    }
-  }
+  $fip_pool_defaults = {
+                        keystone_admin_password => $keystone_admin_password,
+                        contrail_api_server     => $contrail_api_server,
+                        rt_number               => $rt_number,
+                        router_asn              => $router_asn
+                       }
+  create_resources(contrail::fip,$fips,$fip_pool_defaults)
 }

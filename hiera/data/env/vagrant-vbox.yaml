@@ -16,7 +16,6 @@ nova::compute::libvirt::libvirt_virt_type: qemu
 # more appropriate value.
 rjil::jiocloud::consul::service::interval: 120s
 
-rjil::neutron::contrail::public_cidr: 100.1.0.0/24
 rjil::system::accounts::active_users: [soren,bodepd,hkumar,jenkins,consul,pandeyop,jaspreet,vivek,ahmad,vaidy,himanshu,rohit,sanjayu,vigneshvar,alokjani,amar,ynshenoy,hanish,abhishekl]
 rjil::system::accounts::sudo_users: [soren,bodepd,hkumar,jenkins,consul,pandeyop,jaspreet,vivek,ahmad,vaidy,himanshu,rohit,sanjayu,vigneshvar,alokjani,amar,ynshenoy,hanish,abhishekl]
 ceph::conf::mon_timecheck_interval: 30
@@ -96,3 +95,18 @@ rjil::jiocloud::dhcp::dhcppools:
 rjil::base::self_signed_cert: true
 tempest::admin_password: tempest_admin
 tempest::admin_username: tempest_admin
+
+rjil::neutron::contrail::fip_pools:
+  public:
+    network_name: public_net
+    subnet_name: public_subnet
+    cidr: 100.1.0.0/24
+    subnet_ip_start: 100.1.0.11
+    subnet_ip_end: 100.1.0.254
+    public: true
+  private_shared:
+    network_name: private_shared_net
+    subnet_name: private_shared_subnet
+    cidr: 99.0.0.0/24
+    public: false
+    tenants: ['tempest','testtenant']

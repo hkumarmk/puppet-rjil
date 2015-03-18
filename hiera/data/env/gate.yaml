@@ -7,12 +7,24 @@ rjil::ceph::osd::osd_journal_size: 2
 # Only Qemu is supported on virtual testing environment
 nova::compute::libvirt::libvirt_virt_type: qemu
 
-rjil::neutron::contrail::public_cidr: 100.1.0.0/24
-rjil::neutron::contrail::public_subnet_ip_start: 100.1.0.11
-rjil::neutron::contrail::public_subnet_ip_start: 100.1.0.254
 rjil::system::accounts::active_users: [soren,bodepd,hkumar,jenkins,consul,pandeyop,jaspreet]
 rjil::system::accounts::sudo_users: [soren,bodepd,hkumar,jenkins,consul,pandeyop,jaspreet]
 rjil::base::self_signed_cert: true
 
 tempest::admin_password: tempest_admin
 tempest::admin_username: tempest_admin
+
+rjil::neutron::contrail::fip_pools:
+  public:
+    network_name: public_net
+    subnet_name: public_subnet
+    cidr: 100.1.0.0/24
+    subnet_ip_start: 100.1.0.11
+    subnet_ip_end: 100.1.0.254
+    public: true
+  private_shared:
+    network_name: private_shared_net
+    subnet_name: private_shared_subnet
+    cidr: 99.0.0.0/24
+    public: false
+    tenants: ['tempest','testtenant']
