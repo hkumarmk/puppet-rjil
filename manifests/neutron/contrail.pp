@@ -46,5 +46,5 @@ class rjil::neutron::contrail(
                         rt_number               => $rt_number,
                         router_asn              => $router_asn
                       }
-  create_resources(contrail::fip,$fips,$fip_pool_defaults)
+  create_resources(rjil::neutron::contrail::fip_pool,$fip_pools,$fip_pool_defaults)
 }
