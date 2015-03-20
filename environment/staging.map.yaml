@@ -7,3 +7,5 @@ networks:
   default:
 assign_floating_ip:
   true: false
+boot_volume:
+  default_volume: False

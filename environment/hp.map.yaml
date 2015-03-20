@@ -8,3 +8,5 @@ flavor:
 networks:
    default:
      - d7c83218-276b-4e4c-8ed1-1165b44c3a44
+boot_volume:
+  default_volume: False
