@@ -38,6 +38,10 @@ class rjil::ceph::mon::mon_config (
     mon_addr => $pub_ip
   }
 
+  # mon_config should be finished before any ceph::auth execution which will
+  # reduce the time required for ceph setup
+  Ceph::Conf::Mon_config<||> -> Ceph::Auth<||>
+
   ##
   # step #2
   ##
