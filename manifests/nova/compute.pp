@@ -20,6 +20,15 @@ class rjil::nova::compute (
 
 
   ##
+  # Make sure /var/lib/nova/instances has appropriate permission
+  ##
+  file {'/var/lib/nova/instances':
+    ensure  => 'directory',
+    owner   => 'nova',
+    require => Package['nova-common'],
+  }
+
+  ##
   # service blocker to stmon before mon_config to be run.
   # Mon_config must be run on all ceph client nodes also.
   # Also mon_config should be setup before cinder_volume to be started,
