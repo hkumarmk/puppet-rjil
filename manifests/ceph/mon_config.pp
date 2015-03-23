@@ -17,6 +17,10 @@ class rjil::ceph::mon_config (
     $fail = false
   }
 
+  # mon_config should be finished before any ceph::auth execution which will
+  # reduce the time required for ceph setup
+  Ceph::Conf::Mon_config<||> -> Ceph::Auth<||>
+
   runtime_fail {'monlist_empty_fail':
     fail    => $fail,
     message => 'External Mon list cannot be empty for non-mon nodes',
