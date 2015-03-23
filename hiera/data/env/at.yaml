@@ -17,3 +17,6 @@ rjil::base::self_signed_cert: true
 
 tempest::admin_password: tempest_admin
 tempest::admin_username: tempest_admin
+
+ceph::conf::pool_default_pg_num: 128
+ceph::conf::pool_default_pgp_num: 128
