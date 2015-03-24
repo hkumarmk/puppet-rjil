@@ -10,3 +10,5 @@ rjil::system::proxies:
     url: "http://10.0.0.2:3128/"
   https:
     url: "http://10.0.0.2:3128/"
+
+resolvconf::nameserver: ['127.0.0.1','10.0.0.2']
