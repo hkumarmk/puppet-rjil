@@ -36,7 +36,7 @@ class rjil::nova::compute (
   ##
   # This will fix the failure on puppet first run.
   ##
-  Concat['/etc/ceph/ceph.conf'] ->
+  Ceph::Conf::Mon_config<||> ->
   Exec['secret_set_value_cinder_volume']
 
   Class['::nova'] ->
