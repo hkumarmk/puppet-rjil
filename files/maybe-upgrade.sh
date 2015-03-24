@@ -14,7 +14,7 @@ rv=$?
 run_puppet() {
         # ensure that our service catalog hiera data is available
         # now run puppet
-        puppet apply --detailed-exitcodes --logdest=syslog `puppet config print default_manifest`
+        puppet apply --debug --detailed-exitcodes --logdest=syslog `puppet config print default_manifest`
         # publish the results of that run
         ret_code=$?
         python -m jiocloud.orchestrate update_own_status puppet $ret_code
