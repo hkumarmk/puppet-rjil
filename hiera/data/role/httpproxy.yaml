@@ -4,3 +4,5 @@ ntp::servers:
 rjil::system::proxies:
   "no":
     url: "127.0.0.1,169.254.169.254,localhost,consul,jiocloud.com"
+
+resolvconf::nameservers: ['8.8.4.4','8.8.8.8']

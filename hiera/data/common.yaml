@@ -821,3 +821,8 @@ tempest::provision::networkname: "%{hiera('tempest::fixed_network_name')}"
 
 apache::trace_enable: 'Off'
 apache::mod::ssl::ssl_cipher: "HIGH:MEDIUM:!aNULL:!MD5:!RC4"
+
+######### Resolvconf Settings
+#####################################
+resolvconf::use_local: true
+resolvconf::search: ['node.consul','service.consul']

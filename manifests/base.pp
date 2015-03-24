@@ -8,6 +8,7 @@ class rjil::base (
   include rjil::system
   include rjil::jiocloud::dns
   include rjil::default_manifest
+  include resolvconf
   ##
   # In case of self signed certificate mostly all of the servers need to trust
   # tht certificate as it is required to do api calls to any openstack services
