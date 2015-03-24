@@ -876,3 +876,14 @@ tempest::provision::networkname: "%{hiera('tempest::fixed_network_name')}"
 
 apache::trace_enable: 'Off'
 apache::mod::ssl::ssl_cipher: "HIGH:MEDIUM:!aNULL:!MD5:!RC4"
+
+#### Squid configurations
+squid3::cache_dir: ['ufs /var/spool/squid3 40000 16 256'],
+squid3::maximum_object_size: '512 MB'
+squid3::maximum_object_size_in_memory: '10240 KB'
+squid3::cache_mem: '1024 MB'
+squid3::refresh_patterns:
+  - 'deb$   129600 100% 129600'
+  - 'udeb$   129600 100% 129600'
+  - 'tar.gz$  129600 100% 129600'
+  - 'changelogs.ubuntu.com/*  0  1% 1'
