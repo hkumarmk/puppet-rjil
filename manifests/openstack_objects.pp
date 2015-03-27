@@ -8,6 +8,8 @@
 class rjil::openstack_objects(
   $identity_address,
   $override_ips      = false,
+  $users             = {},
+  $tenants           = undef,
 ) {
 
   if $override_ips {
@@ -46,7 +48,19 @@ class rjil::openstack_objects(
   include openstack_extras::keystone_endpoints
   # provision tempest resources like images, network, users etc.
   include tempest::provision
-  # create the user that performs validation tests
-  include rjil::keystone::test_user
+
+  # create users, tenants, roles, default networks
+  create_resources('rjil::keystone::users',$users)
+
+  ##
+  # Tenants can be created without creating users, $tenants can be an array of
+  # all tenant names to be created, and a hash of tenants with appropriate
+  # params for rjil::keystone::tenant
+  ##
+  if is_array($tenants) {
+    rjil::keystone::tenant { $tenants: }
+  } elsif is_hash($tenants) {
+    create_resources('rjil::keystone::tenants',$tenants)
+  }
 
 }
