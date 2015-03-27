@@ -77,9 +77,11 @@ if [ -n "${puppet_modules_source_repo}" ]; then
   else
     time librarian-puppet install --puppetfile=/tmp/rjil/Puppetfile --path=/etc/puppet/modules.overrides
   fi
-  puppet apply -e "ini_setting { basemodulepath: path => \"/etc/puppet/puppet.conf\", section => main, setting => basemodulepath, value => \"/etc/puppet/modules.overrides:/etc/puppet/modules\" }"
-  puppet apply -e "ini_setting { default_manifest: path => \"/etc/puppet/puppet.conf\", section => main, setting => default_manifest, value => \"/etc/puppet/manifests.overrides/site.pp\" }"
-  puppet apply -e "ini_setting { disable_per_environment_manifest: path => \"/etc/puppet/puppet.conf\", section => main, setting => disable_per_environment_manifest, value => \"true\" }"
+  cat <<INISETTING | puppet apply
+  ini_setting { basemodulepath: path => "/etc/puppet/puppet.conf", section => main, setting => basemodulepath, value => "/etc/puppet/modules.overrides:/etc/puppet/modules" }
+  ini_setting { default_manifest: path => "/etc/puppet/puppet.conf", section => main, setting => default_manifest, value => "/etc/puppet/manifests.overrides/site.pp" }
+  ini_setting { disable_per_environment_manifest: path => "/etc/puppet/puppet.conf", section => main, setting => disable_per_environment_manifest, value => "true" }
+INISETTING
 else
   puppet apply -e "ini_setting { default_manifest: path => \"/etc/puppet/puppet.conf\", section => main, setting => default_manifest, value => \"/etc/puppet/manifests/site.pp\" }"
 fi
