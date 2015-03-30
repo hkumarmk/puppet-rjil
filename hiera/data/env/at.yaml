@@ -14,6 +14,7 @@ rjil::system::accounts::active_users: [soren,bodepd,hkumar,jenkins,consul,pandey
 rjil::system::accounts::sudo_users: [soren,bodepd,hkumar,jenkins,consul,pandeyop,jaspreet,vivek,ahmad,vaidy,himanshu,rohit,sanjayu,vigneshvar,alokjani,amar,ynshenoy,hanish,abhishekl,mayankkapoor]
 
 rjil::base::self_signed_cert: true
+rjil::golden_image::self_signed_cert: true
 
 tempest::admin_password: tempest_admin
 tempest::admin_username: tempest_admin

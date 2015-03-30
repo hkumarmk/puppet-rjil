@@ -1,5 +1,9 @@
 Exec { path => [ "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/", "/usr/local/bin/","/usr/local/sbin/" ], logoutput => true }
 
+node /^golden\d+/ {
+  include rjil::golden_image
+}
+
 node /^bootstrap\d+/ {
   include rjil::base
 }

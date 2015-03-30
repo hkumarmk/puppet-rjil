@@ -13,6 +13,8 @@ class rjil::jiocloud (
 
   include rjil::system::apt
 
+  contain rjil::system::ntp
+
   # ensure that python-jiocloud is installed before
   # consul and dnsmasq. This is b/c these packages
   # can introduce race conditions that effect dns
