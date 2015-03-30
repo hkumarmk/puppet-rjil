@@ -10,7 +10,7 @@ define rjil::keystone::user_role (
   $roles  = ['_member_'],
 ) {
 
-  keystone_user_role {"${username}@${tenant}:
+  keystone_user_role { "${username}@${tenant}":
     roles => $roles,
   }
 }

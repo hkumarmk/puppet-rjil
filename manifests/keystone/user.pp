@@ -9,7 +9,7 @@ define rjil::keystone::user (
   $username       = $name,
   $email          = "${name}@jiocloud.local",
   $tenants        = [$name],
-  $roles          = ['_member_']
+  $roles          = ['_member_'],
   $create_network = true,
 ) {
 

@@ -27,8 +27,6 @@ describe 'rjil::openstack_objects' do
         'fail'   => true,
       })
       should contain_class('openstack_extras::keystone_endpoints')
-      should contain_class('rjil::keystone::test_user')
-      should contain_class('rjil::keystone::test_user')
     end
   end
 
