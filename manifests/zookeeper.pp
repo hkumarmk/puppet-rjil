@@ -20,4 +20,13 @@ class rjil::zookeeper (
     id => $zk_id,
   }
 
+  ##
+  # I dont know if the port check is enough here - refer
+  # https://github.com/JioCloud/puppet-rjil/issues/521 for more details
+  ##
+  rjil::jiocloud::consul::service { 'zookeeper':
+    tags          => ['real','contrail'],
+    check_command => '/usr/lib/jiocloud/tests/check_zookeeper.sh',
+  }
+
 }

@@ -55,4 +55,13 @@ class rjil::cassandra (
     require           => Host['localhost'],
   }
 
+  ##
+  # I dont know if the port check is enough here - refer
+  # https://github.com/JioCloud/puppet-rjil/issues/521 for more details
+  ##
+  rjil::jiocloud::consul::service { "cassandra":
+    tags          => ['real','contrail'],
+    check_command => '/usr/lib/jiocloud/tests/check_cassandra.sh',
+  }
+
 }
