@@ -35,7 +35,7 @@ class rjil::haproxy (
     'group'     => 'haproxy',
     'daemon'    => '',
     'quiet'     => '',
-    'stats'     => 'socket /var/run/haproxy mode 777',
+    'stats'     => 'socket /var/run/haproxy level admin',
   }
 
   class { '::haproxy':
