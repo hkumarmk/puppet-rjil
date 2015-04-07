@@ -37,4 +37,8 @@ class rjil::contrail::server () {
   Package['dsc'] -> Package['contrail-analytics']
 
   include ::contrail
+
+  include zookeeper
+
+  include cassandra
 }

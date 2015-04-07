@@ -8,8 +8,10 @@ describe 'rjil::contrail::server' do
       :osfamily        => 'Debian',
       :ipaddress_eth0  => '10.1.1.1',
       :interfaces      => 'eth0,lo',
-      :lsbdistid        => 'ubuntu',
-      :lsbdistcodename  => 'trusty',
+      :lsbdistid       => 'ubuntu',
+      :lsbdistcodename => 'trusty',
+      :processorcount  => '10',
+      :ipaddress       => '10.1.1.1',
     }
   end
   let :hiera_data do
@@ -18,6 +20,7 @@ describe 'rjil::contrail::server' do
       'contrail::keystone_admin_token'    => 'admin_token',
       'contrail::keystone_admin_password' => 'admin_pass',
       'contrail::keystone_auth_password'  => 'auth_pass',
+      'cassandra::seeds'                  => ['10.0.0.1'],
     }
   end
 

@@ -13,6 +13,8 @@ describe 'rjil::neutron::contrail' do
       :ipaddress_eth0         => '10.1.1.100',
       :lsbdistid              => 'ubuntu',
       :lsbdistcodename        => 'trusty',
+      :processorcount         => '10',      
+      :ipaddress              => '10.1.1.1',
     }
   end
   let :hiera_data do
