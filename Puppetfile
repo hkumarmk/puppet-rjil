@@ -5,6 +5,10 @@ mod 'puppetlabs/java',
   :git => "#{base_url}/puppetlabs/puppetlabs-java",
   :ref => '1.1.2'
 
+mod 'saz/rsyslog',
+  :git => "#{base_url}/saz/puppet-rsyslog",
+  :ref => 'v2.2.1'
+
 mod 'adrianthebo/network',
   :git => "#{base_url}/adrienthebo/puppet-network",
   :ref => '0.4.1'

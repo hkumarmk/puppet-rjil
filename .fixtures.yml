@@ -8,6 +8,9 @@ fixtures:
     inifile:
       repo: git://github.com/puppetlabs/puppetlabs-inifile.git
       ref: 41e2ddbc1cd861247e57d16b778cbe891602f509
+    rsyslog:
+      repo: git://github.com/saz/puppet-rsyslog
+      ref: v2.2.1
     openstack_extras:
       repo: https://github.com/bodepd/puppet-openstack_extras
     heat:
