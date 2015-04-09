@@ -5,7 +5,9 @@
 #
 #
 class rjil::haproxy (
-  $consul_service_tags = []
+  $consul_service_tags = [],
+  $logfile             = '/var/log/haproxy.log',
+  $log_level            = 'all',
 ) {
 
   rjil::test { 'haproxy.sh': }
@@ -28,8 +30,14 @@ class rjil::haproxy (
                     ],
   }
 
+  if $log_level == 'all' {
+    $loglevel_config = '127.0.0.1 local0'
+  } else {
+    $loglevel_config = "127.0.0.1 local0 $loglevel"
+  }
+
   $haproxy_globals = {
-    'log'       => '127.0.0.1 local0 notice',
+    'log'       => $loglevel_config,
     'maxconn'   => '4096',
     'user'      => 'haproxy',
     'group'     => 'haproxy',
@@ -41,6 +49,15 @@ class rjil::haproxy (
   class { '::haproxy':
     global_options   => $haproxy_globals,
     defaults_options => $haproxy_defaults
+  }
+
+  ##
+  # Create rsyslog config for haproxy
+  # TODO: the log facility should be taken from params, but there are bunch of
+  # things to be parameterised and will be done with that.
+  ##
+  rsyslog::snippet {'haproxy':
+    content => "local0.* -${logfile}"
   }
 
 #

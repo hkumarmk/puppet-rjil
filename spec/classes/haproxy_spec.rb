@@ -16,6 +16,11 @@ describe 'rjil::haproxy' do
     should contain_rjil__jiocloud__consul__service('haproxy').with({
       'tags' => []
     })
+    should contain_rsyslog__snippet('haproxy').with(
+      {
+        :content => 'local0.* -/var/log/haproxy.log',
+      }
+    )
   end
 
   context 'consul_service_tags are provided' do
