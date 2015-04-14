@@ -1,5 +1,13 @@
 #!/bin/bash -xe
 
+if [ -z "${consul_discovery_token}" ]
+then
+    consul_discovery_token=$(curl http://consuldiscovery.linux2go.dk/new)
+fi
+
+env="${env:-gate}"
+cloud_provider="${cloud_provider:-$env}"
+
 cat <<EOF >userdata.txt
 #!/bin/bash
 date
