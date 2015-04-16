@@ -28,3 +28,16 @@ rjil::neutron::contrail::fip_pools:
     cidr: 99.0.0.0/24
     public: false
     tenants: ['tempest','testtenant']
+
+# Undercloud stuff
+rjil::neutron::ovs::ctlplane_physical_interface: 'eth0'
+rjil::neutron::ovs::ctlplane_address: '10.130.182.11'
+rjil::neutron::ovs::ctlplane_netmask: '255.255.255.0'
+rjil::neutron::ovs::ctlplane_network: '10.130.182.0'
+rjil::neutron::ovs::ctlplane_broadcast: '10.130.182.255'
+rjil::neutron::ovs::ctlplane_gateway: '10.130.182.1'
+rjil::neutron::ovs::ctlplane_nameservers: '8.8.8.8'
+rjil::neutron::ovs::ctlplane_domain: 'gate.internal.jiocloud.com'
+rjil::neutron::ovs::ctlplane_cidr: '10.130.182.0/24'
+rjil::neutron::ovs::ctlplane_dhcp_start: '10.130.182.12'
+rjil::neutron::ovs::ctlplane_dhcp_end: '10.130.182.254'

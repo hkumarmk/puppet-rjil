@@ -1,0 +1,21 @@
+nodes:
+  uc1:
+    flavor: uc
+    image: trusty
+    disk: 100
+    networks:
+    - network: undercloud
+      securitygroups:
+      - jumphost
+      - undercloud
+      assign_floating_ip: true
+networks:
+  undercloud:
+    cidr: 10.130.182.0/24
+securitygroups:
+  jumphost:
+  - cidr: 0.0.0.0/0
+    from_port: 22
+    to_port: 22
+    protocol: tcp
+  undercloud:
