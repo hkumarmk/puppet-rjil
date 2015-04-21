@@ -177,14 +177,10 @@ node /^uc\d+/ {
   include rjil::ironic
   include rjil::nova::controller
   include rjil::openstack_zeromq
-  include openstack_extras::keystone_endpoints
-  include rjil::keystone::test_user
-  ensure_resource('rjil::service_blocker', 'keystone-admin', {})
-  Rjil::Service_blocker['keystone-admin'] -> Class['openstack_extras::keystone_endpoints']
-  Rjil::Service_blocker['keystone-admin'] -> Class['rjil::keystone::test_user']
+  include rjil::openstack_objects
 
-  include rjil::jiocloud::aptmirror
-  include rjil::jiocloud::dhcp
+  #include rjil::jiocloud::aptmirror
+  #include rjil::jiocloud::dhcp
 }
 
 node /^httpproxy\d+/ {
