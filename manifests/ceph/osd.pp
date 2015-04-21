@@ -99,13 +99,16 @@ class rjil::ceph::osd (
         before  => Exec['attach_loop'],
         require => Package['ceph'],
       }
+      Exec['attach_loop'] -> ::Ceph::OSD::Disk_setup['/dev/loop0']
+    } else {
+      Exec['attach_loop'] -> ::Ceph::OSD::Device['/dev/loop0']
     }
 
     exec {'attach_loop':
       command => 'losetup /dev/loop0 /var/lib/ceph/disk-1',
       unless  => 'losetup /dev/loop0',
-      before  => ::Ceph::OSD::Device['/dev/loop0']
     }
+
     $osds_orig = ['loop0']
   } elsif $autodetect {
     $disks = split($::blankorcephdisks,',')
