@@ -28,6 +28,13 @@ wget -O puppet.deb -t 5 -T 30 http://apt.puppetlabs.com/puppetlabs-release-\${re
 if [ "${env}" == "at" ]
 then
   jiocloud_repo_deb_url=http://jiocloud.rustedhalo.com/ubuntu/jiocloud-apt-\${release}-testing.deb
+  ##
+  # Install eatmydata and replace apt-get and dpkg with eatmydata, this should
+  # speedup the package installation
+  ##
+  apt-get install eatmydata
+  mv /usr/bin/apt-get /usr/local/bin/ && ln -s /usr/bin/eatmydata /usr/bin/apt-get
+  mv /usr/bin/dpkg /usr/local/bin/ && ln -s /usr/bin/eatmydata /usr/bin/dpkg
 else
   jiocloud_repo_deb_url=http://jiocloud.rustedhalo.com/ubuntu/jiocloud-apt-\${release}.deb
 fi
