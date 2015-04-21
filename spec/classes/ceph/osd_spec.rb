@@ -70,11 +70,10 @@ describe 'rjil::ceph::osd' do
   context 'with autogenerate' do
     let (:params) { {'autogenerate' => true, 'autodisk_size' => 40 } }
     it  do
-      should contain_exec('make_disk_file').with_command(/dd if=\/dev\/zero of=\/var\/lib\/ceph\/disk-1 bs=4k[ \n]*count=10000000/)
+      should_not contain_exec('make_disk_file')
       should contain_exec('attach_loop').with({
       'command' => 'losetup /dev/loop0 /var/lib/ceph/disk-1',
       'unless'  => 'losetup /dev/loop0',
-      'require' => 'Exec[make_disk_file]',
       })
 
       should contain_ceph__osd__device('/dev/loop0').with({
