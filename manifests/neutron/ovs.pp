@@ -3,18 +3,18 @@
 #
 
 class rjil::neutron::ovs(
-  $ctlplane_network_name,
-  $ctlplane_physical_interface = 'eth0',
   $ctlplane_address,
   $ctlplane_netmask,
   $ctlplane_network,
   $ctlplane_broadcast,
   $ctlplane_gateway,
-  $ctlplane_nameservers,
-  $ctlplane_domain,
   $ctlplane_cidr,
   $ctlplane_dhcp_start,
   $ctlplane_dhcp_end,
+  $ctlplane_network_name       = 'ctlplane',
+  $ctlplane_physical_interface = 'eth0',
+  $ctlplane_nameservers        = '8.8.8.8',
+  $ctlplane_domain             = 'undercloud.local',
 ) {
 
   include ::rjil::neutron
