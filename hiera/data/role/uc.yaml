@@ -7,3 +7,6 @@ apache::default_vhost: false
 rjil::glance::backend: file
 
 nova::api::neutron_metadata_proxy_shared_secret: false
+
+# neutron is already configured in case of uc, so no need to configure it again.
+rjil::tempest::provision::configure_neutron: false
