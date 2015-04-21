@@ -159,5 +159,12 @@ do
     break
   fi
 done
+
+cat << OSD_DISK_INIT | puppet apply
+  class {'rjil::ceph::osd':
+    initialize => true
+  }
+OSD_DISK_INIT
+
 date
 EOF
