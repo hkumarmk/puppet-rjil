@@ -26,6 +26,12 @@ class rjil::ironic(
     source => 'puppet:///modules/rjil/neutron-server.defaults',
   }
 
+  user {'ironic':
+    ensure => present,
+    before => [ Package['ironic-api'], Package['ironic-conductor'] ],
+    tag    => 'package',
+  }
+
   file { '/tftpboot':
     ensure => 'directory',
     owner  => 'ironic',
