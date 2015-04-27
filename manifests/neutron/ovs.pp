@@ -19,7 +19,9 @@ class rjil::neutron::ovs(
 
   include ::rjil::neutron
 
-  class { '::neutron::plugins::ovs': }
+  contain ::neutron::plugins::ovs
+
+  contain ::neutron::agents::ml2::ovs
 
   neutron_plugin_ovs {
     'OVS/bridge_mappings':   value => "${ctlplane_network_name}:br-${ctlplane_network_name}";
