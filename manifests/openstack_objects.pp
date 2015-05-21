@@ -10,6 +10,7 @@ class rjil::openstack_objects(
   $override_ips      = false,
   $users             = {},
   $tenants           = undef,
+  $lb_available      = true,
 ) {
 
   if $override_ips {
@@ -23,6 +24,19 @@ class rjil::openstack_objects(
   } else {
     $fail = false
   }
+
+  ##
+  # LB may not be available all the time, so make it optional - e.g, lb may not
+  # be available in case of undercloud
+  ##
+  if $lb_available {
+    $glance_service_name  = 'lb.glance'
+    $neutron_service_name = 'lb.neutron'
+  } else {
+    $glance_service_name  = 'glance'
+    $neutron_service_name = 'neutron'
+  }
+
   # add a runtime fail and ensure that it blocks all object creation.
   # otherwise, it's possible that we might have to wait for network
   # timeouts if the dns address does not correctly resolve.
@@ -35,14 +49,14 @@ class rjil::openstack_objects(
   Runtime_fail['keystone_endpoint_not_resolvable'] -> Keystone_tenant<||>
   Runtime_fail['keystone_endpoint_not_resolvable'] -> Keystone_service<||>
   Runtime_fail['keystone_endpoint_not_resolvable'] -> Keystone_endpoint<||>
-  Runtime_fail['keystone_endpoint_not_resolvable'] -> Rjil::Service_blocker['lb.glance']
-  Runtime_fail['keystone_endpoint_not_resolvable'] -> Rjil::Service_blocker['lb.neutron']
+  Runtime_fail['keystone_endpoint_not_resolvable'] -> Rjil::Service_blocker[$glance_service_name]
+  Runtime_fail['keystone_endpoint_not_resolvable'] -> Rjil::Service_blocker[$neutron_service_name]
 
-  ensure_resource('rjil::service_blocker', 'lb.glance', {})
-  ensure_resource('rjil::service_blocker', 'lb.neutron', {})
+  ensure_resource('rjil::service_blocker', $glance_service_name, {})
+  ensure_resource('rjil::service_blocker', $neutron_service_name, {})
 
-  Rjil::Service_blocker['lb.glance'] -> Glance_image<||>
-  Rjil::Service_blocker['lb.neutron'] -> Neutron_network<||>
+  Rjil::Service_blocker[$glance_service_name] -> Glance_image<||>
+  Rjil::Service_blocker[$neutron_service_name] -> Neutron_network<||>
 
   # provision keystone objects for all services
   include openstack_extras::keystone_endpoints
