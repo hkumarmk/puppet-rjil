@@ -3,30 +3,70 @@
 ###
 class rjil::contrail::server (
   $enable_analytics = true,
+  $enable_config    = true,
+  $enable_control   = true,
+  $enable_webui     = true,
+  $enable_ifmap     = true,
 ) {
 
   ##
   # Added tests
   ##
-  $contrail_tests = ['ifmap.sh','contrail-api.sh',
-                      'contrail-control.sh','contrail-discovery.sh',
-                      'contrail-dns.sh','contrail-schema.sh',
-                      'contrail-webui-webserver.sh','contrail-webui-jobserver.sh']
-  rjil::test {$contrail_tests:}
+  $config_tests = ['contrail-api.sh', 'contrail-discovery.sh',
+                    'contrail-schema.sh']
+  $control_tests = ['contrail-control.sh','contrail-dns.sh']
 
-  if $enable_analytics {
-    rjil::test {'contrail-analytics.sh':}
+  $webui_tests   = ['contrail-webui-webserver.sh','contrail-webui-jobserver.sh']
+
+  $analytics_tests  = [ 'contrail-analytics.sh' ]
+
+  $ifmap_tests = 'ifmap.sh'
+
+  ##
+  # Conditionally enable tests and logrotation for enabled services
+  ##
+  if $enable_config {
+    rjil::test {$config_tests:}
+    $config_logs = ['api','discovery','schema','svc-monitor']
+  } else {
+    $config_logs = []
   }
 
-  include ::contrail
+  if $enable_control {
+    rjil::test {$control_tests: }
+    $control_logs = ['contrail-control']
+  } else {
+    $control_logs = []
+  }
 
-  $contrail_logs = ['contrail-api-daily',
-                    'contrail-discovery-daily',
-                    'contrail-schema-daily',
-                    'contrail-svc-monitor-daily',
-                    'contrail-api-0-zk-daily',
-                    'contrail-collector-daily'
-  ]
+  if $enable_webui {
+    rjil::test {$webui_tests: }
+    $webui_logs = ['webserver','jobserver']
+  } else {
+    $webui_logs = []
+  }
+
+  if $enable_analytics {
+    rjil::test {$analytics_tests:}
+    $analytics_logs = ['contrail-analytic-api','contrail-collector',
+                        'query-engine']
+  } else {
+    $analytics_logs = []
+  }
+
+  if $enable_ifmap {
+    rjil::test {$ifmap_tests:}
+  }
+  class {'::contrail':
+    enable_config    => $enable_config,
+    enable_control   => $enable_control,
+    enable_webui     => $enable_webui,
+    enable_analytics => $enable_analytics,
+    enable_ifmap     => $enable_ifmap,
+  }
+
+  $contrail_logs = split(inline_template("<%= (@config_logs + @control_logs +
+                          @webui_logs + @analytics_logs).join(',') %>"),',')
 
   rjil::jiocloud::logrotate { $contrail_logs:
     logdir => '/var/log/contrail'

@@ -41,4 +41,43 @@ describe 'rjil::contrail::server' do
       end
     end
   end
+
+  context 'without config, webui' do
+    let :params do
+      {
+        :enable_config => false,
+        :enable_webui  => false,
+      }
+    end
+
+    it do
+      should_not contain_file('/usr/lib/jiocloud/tests/contrail-api.sh')
+      should_not contain_file('/usr/lib/jiocloud/tests/contrail-discovery.sh')
+      should_not contain_file('/usr/lib/jiocloud/tests/contrail-schema.sh')
+      should_not contain_file('/usr/lib/jiocloud/tests/contrail-webui-webserver.sh')
+      should_not contain_file('/usr/lib/jiocloud/tests/contrail-webui-jobserver.sh')
+      should contain_class('contrail').with_enable_config(false)
+      should contain_class('contrail').with_enable_webui(false)
+    end
+  end
+
+    context 'without control,analytics,ifmap' do
+    let :params do
+      {
+        :enable_control   => false,
+        :enable_analytics => false,
+        :enable_ifmap     => false,
+      }
+    end
+
+    it do
+      should_not contain_file('/usr/lib/jiocloud/tests/contrail-control.sh')
+      should_not contain_file('/usr/lib/jiocloud/tests/contrail-dns.sh')
+      should_not contain_file('/usr/lib/jiocloud/tests/contrail-analytics.sh')
+      should_not contain_file('/usr/lib/jiocloud/tests/ifmap.sh')
+      should contain_class('contrail').with_enable_control(false)
+      should contain_class('contrail').with_enable_analytics(false)
+      should contain_class('contrail').with_enable_ifmap(false)
+    end
+  end
 end
