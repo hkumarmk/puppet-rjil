@@ -4,7 +4,8 @@
 #
 
 class rjil::jiocloud (
-  $consul_role = 'agent'
+  $consul_role         = 'agent',
+  $consul_package_name = 'consul0.5.0',
 ) {
 
   if ! member(['agent', 'server', 'bootstrapserver'], $consul_role) {
@@ -20,7 +21,7 @@ class rjil::jiocloud (
   # install python-jiocloud
   ensure_resource('package','python-six', { ensure => 'latest' })
   package { 'python-jiocloud':
-    before => [Package['dnsmasq'], Package['consul']]
+    before => [Package['dnsmasq'], Package[$consul_package_name]]
   }
 
   if $consul_role == 'bootstrapserver' {
