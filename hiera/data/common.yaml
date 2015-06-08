@@ -770,6 +770,7 @@ radosgw_port: 80
 rjil::jiocloud::consul::server::bind_addr: "%{hiera('private_address')}"
 rjil::jiocloud::consul::bootstrapserver::bind_addr: "%{hiera('private_address')}"
 rjil::jiocloud::consul::agent::bind_addr: "%{hiera('private_address')}"
+consul::package_name: 'consul0.5.0'
 
 ########### ntp  settings
 ###############################
