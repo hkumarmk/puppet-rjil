@@ -3,11 +3,7 @@ require 'spec_helper'
 describe 'rjil::http_proxy' do
 
   it 'should configure a default proxy' do
-    should contain_class('squid3').with({
-      'cache_dir' => ['ufs /var/spool/squid3 10000 16 256'],
-      'maximum_object_size'           => '50096 KB',
-      'maximum_object_size_in_memory' => '5012 KB',
-    })
+    should contain_class('squid3')
     should contain_service('squid3_service').with_provider(
       'upstart'
     )
@@ -17,6 +13,5 @@ describe 'rjil::http_proxy' do
       'check_command' => "/usr/lib/nagios/plugins/check_http -H localhost -p 3128",
     })
   end
-
 
 end
