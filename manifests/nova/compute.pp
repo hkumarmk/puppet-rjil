@@ -97,4 +97,15 @@ class rjil::nova::compute (
     path        => '/usr/bin:/usr/sbin:/bin:/sbin:/usr/local/bin:/usr/local/sbin',
     refreshonly => true
   }
+
+  ##
+  # Specifically deny read access to /run/shm/lttng for vms. This will remove
+  # the apparmor warnings on compute nodes.
+  ##
+  file_line {'apparmor_deny_read_lttng':
+    path    => '/etc/apparmor.d/abstractions/libvirt-qemu',
+    line    => '  deny /run/shm/lttng* r,',
+    require => Package['libvirt'],
+    notify  => Service['apparmor'],
+  }
 }

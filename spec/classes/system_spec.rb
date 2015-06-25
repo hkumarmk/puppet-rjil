@@ -40,6 +40,7 @@ describe 'rjil::system' do
       should contain_class('rjil::system::ntp')
       should contain_class('rjil::system::apt')
       should contain_class('rjil::system::accounts')
+      should contain_class('rjil::system::apparmor')
       should contain_package('molly-guard')
 
       should contain_file_line('domain_search') \

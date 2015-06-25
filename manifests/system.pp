@@ -15,6 +15,7 @@ class rjil::system(
 
   include ::timezone
 
+  include rjil::system::apparmor
   include rjil::system::apt
   include rjil::system::accounts
   include rjil::system::metrics

@@ -83,6 +83,15 @@ describe 'rjil::nova::compute' do
 
       should contain_package('libvirt').that_comes_before('Exec[rm_virbr0]')
 
+      should contain_file_line('apparmor_deny_read_lttng').with(
+        {
+          :path    => '/etc/apparmor.d/abstractions/libvirt-qemu',
+          :line    => '  deny /run/shm/lttng* r,',
+          :require => 'Package[libvirt]',
+          :notify  => 'Service[apparmor]',
+        }
+      )
+
     end
   end
 
