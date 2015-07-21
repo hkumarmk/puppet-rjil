@@ -64,7 +64,7 @@ describe 'rjil::system' do
 
       should contain_cron('purge_puppet_reports').with(
         {
-          :command => 'tmpreaper -a  24h /var/lib/puppet/reports/node.local',
+          :command => "bash -c '/usr/sbin/tmpreaper -f -a  24h /var/lib/puppet/reports/node.local 2>&1' |logger -t puppet-report-cleanup",
           :user    => 'root',
           :hour    => 2,
           :minute  => 0,

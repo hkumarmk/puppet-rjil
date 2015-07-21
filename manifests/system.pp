@@ -30,7 +30,7 @@ class rjil::system(
   # Create a cron to run tmpreaper once every day
   ##
   cron {'purge_puppet_reports':
-    command => "tmpreaper -a  ${puppet_report_keep_hours}h /var/lib/puppet/reports/${::fqdn}",
+    command => "bash -c '/usr/sbin/tmpreaper -f -a  ${puppet_report_keep_hours}h /var/lib/puppet/reports/${::fqdn} 2>&1' |logger -t puppet-report-cleanup",
     user    => root,
     hour    => 2,
     minute  => 0
