@@ -16,7 +16,7 @@ nodes:
 
 networks:
   undercloud:
-    cidr: 10.130.182.0/24
+    cidr: 10.0.0.0/16
   ilo:
     cidr: 10.1.0.0/24
 securitygroups:

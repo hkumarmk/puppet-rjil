@@ -1,4 +1,2 @@
-public_address: "%{ipaddress_br_ctlplane_or_em4}"
-private_address: "%{ipaddress_br_ctlplane_or_em4}"
 ntp::servers:
   - 10.140.192.43

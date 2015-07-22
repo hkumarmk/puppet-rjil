@@ -1,5 +1,3 @@
-public_address: "%{ipaddress_br_ctlplane_or_eth0}"
-private_address: "%{ipaddress_br_ctlplane_or_eth0}"
 rjil::jiocloud::consul_role: bootstrapserver
 rjil::keystone::disable_db_sync: false
 rjil::system::ntp::run_ntpdate: false
