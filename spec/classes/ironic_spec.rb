@@ -126,6 +126,10 @@ describe 'rjil::ironic' do
             :require => 'User[ironic]'
           }
         )
+
+        should contain_file('/usr/lib/jiocloud/enroll_all_nodes.sh')
+
+        should contain_cron('enroll_all_nodes').with_command('/usr/lib/jiocloud/enroll_all_nodes.sh')
     end
   end
 

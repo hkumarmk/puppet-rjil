@@ -112,4 +112,24 @@ ironic ALL = (root) NOPASSWD: /usr/bin/ironic-rootwrap",
     require => User['ironic'],
   }
 
+  # Automatically enrol the nodes which are get IP from undercloud controller
+  # dhcp server.
+  # NOTE: currently for some reason updating ironic from dhcp is not working,
+  # which will be checking later. Until that work, this is the workaround.
+  ##
+
+  file {'/usr/lib/jiocloud/enroll_all_nodes.sh':
+    ensure =>  'file',
+    mode   => '0751',
+    content => 'for i in `grep cip /var/lib/dhcp/dhcpd.leases  | cut -f2 -d\'"\'`; do /usr/lib/jiocloud/enroll_nodes.sh $i ; done',
+  }
+
+  cron {'enroll_all_nodes':
+    ensure  => present,
+    command => '/usr/lib/jiocloud/enroll_all_nodes.sh',
+    user    => 'root',
+    hour    => 2,
+    minute  => 0,
+  }
+
 }
