@@ -28,7 +28,7 @@ class rjil::neutron::network::undercloud (
   }
 
   if ! $host_routes {
-    $ipaddr_bridge = inline_template("<%= scope.lookupvar('ipaddr_' + @br_name_for_fact) %>")
+    $ipaddr_bridge = inline_template("<%= scope.lookupvar('ipaddress_' + @br_name_for_fact) %>")
     if $ipaddr_bridge {
       $host_routes_orig = ["destination=169.254.169.254/32,nexthop=${ipaddr_bridge}"]
     }
