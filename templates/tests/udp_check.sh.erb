@@ -1,3 +1,11 @@
 #!/bin/bash
 set -e
-netcat -z -v -u <%= @address %>  <%= @port %>
+<% if @addresses.is_a? String -%>
+  <% ip, port = @addresses.split(':') -%>
+netcat -z -v -u <%= ip %>  <%= port %>
+<% elsif @addresses.is_a? Array -%>
+  <% @addresses.each do | addr | -%>
+    <% ip, port = addr.split(':') -%>
+netcat -z -v -u <%= ip %>  <%= port %>
+  <% end -%>
+<% end -%>

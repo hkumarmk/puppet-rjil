@@ -240,9 +240,8 @@ class rjil::cinder (
   include rjil::test::cinder
 
   rjil::test::check { 'cinder':
-    address => $::cinder::api::bind_host,
-    port    => $public_port,
-    ssl     => $ssl,
+    addresses => ["${::cinder::api::bind_host}:${public_port}", "${localbind_host}:${localbind_port}"],
+    ssl       => $ssl,
   }
 
   rjil::jiocloud::consul::service { 'cinder':

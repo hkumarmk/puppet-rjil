@@ -118,16 +118,14 @@ class rjil::glance (
   }
 
   rjil::test::check { 'glance':
-    type    => 'http',
-    address => 'localhost',
-    port    => $api_public_port,
-    ssl     => $ssl,
+    type      => 'http',
+    addresses => ["${glance::api::bind_host}:${api_public_port}", "${api_localbind_host}:${api_localbind_port}"],
+    ssl       => $ssl,
   }
 
   rjil::test::check { 'glance-registry':
-    type    => 'tcp',
-    address => $registry_localbind_host,
-    port    => $registry_localbind_port,
+    type      => 'tcp',
+    addresses => ["${registry_localbind_host}:${registry_localbind_port}", "${registry_public_address}:${registry_public_port}"],
   }
 
   rjil::jiocloud::consul::service { "glance":

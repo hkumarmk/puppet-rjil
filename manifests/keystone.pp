@@ -28,16 +28,15 @@ class rjil::keystone(
   }
 
   Rjil::Test::Check {
-    ssl     => $ssl,
-    address => $address,
+    ssl       => $ssl,
   }
 
   rjil::test::check { 'keystone':
-    port => $public_port,
+    addresses => ["${address}:${public_port}", "127.0.0.1:${public_port_internal}"]
   }
 
   rjil::test::check { 'keystone-admin':
-    port => $admin_port,
+    addresses => ["${address}:${admin_port}", "127.0.0.1:${admin_port_internal}"]
   }
 
   rjil::jiocloud::consul::service { "keystone":

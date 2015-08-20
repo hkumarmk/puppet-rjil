@@ -97,9 +97,8 @@ class rjil::neutron (
   }
 
   rjil::test::check { 'neutron':
-    address => '127.0.0.1',
-    port    => $public_port,
-    ssl     => $ssl,
+    addresses => ["${::neutron::bind_host}:${public_port}", "${localbind_host}:${localbind_port}"],
+    ssl       => $ssl,
   }
 
   rjil::jiocloud::consul::service { 'neutron':

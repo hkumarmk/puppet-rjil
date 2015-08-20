@@ -1,3 +1,11 @@
 #!/bin/bash
 set -e
-/usr/lib/nagios/plugins/check_tcp -H <%= @address %> -p <%= @port %>
+<% if @addresses.is_a? String -%>
+  <% ip, port = @addresses.split(':') -%>
+/usr/lib/nagios/plugins/check_tcp -H <%= ip %> -p <%= port %>
+<% elsif @addresses.is_a? Array -%>
+  <% @addresses.each do | addr | -%>
+    <% ip, port = addr.split(':') -%>
+/usr/lib/nagios/plugins/check_tcp -H <%= ip %> -p <%= port %>
+  <% end -%>
+<% end -%>

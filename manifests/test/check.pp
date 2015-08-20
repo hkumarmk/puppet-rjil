@@ -4,8 +4,7 @@
 #
 
 define rjil::test::check(
-  $port       = 0,
-  $address    = '127.0.0.1',
+  $addresses  = ['127.0.0.1:0'],
   $ssl        = false,
   $type       = 'http',
   $check_type = 'service',

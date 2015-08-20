@@ -214,9 +214,8 @@ class rjil::nova::controller (
   ##
 
   rjil::test::check { 'nova':
-    address => $::nova::api::api_bind_address,
-    port    => $osapi_public_port,
-    ssl     => $ssl,
+    addresses => ["${::nova::api::api_bind_address}:${osapi_public_port}", "${localbind_host}:${osapi_localbind_port}"],
+    ssl       => $ssl,
   }
 
   rjil::jiocloud::consul::service {'nova':

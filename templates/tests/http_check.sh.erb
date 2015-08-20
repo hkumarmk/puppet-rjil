@@ -1,7 +1,17 @@
 #!/bin/bash
 set -e
 <% if @ssl -%>
-/usr/lib/nagios/plugins/check_http -S -H <%= @address %> -p <%= @port %>
+  <% check_http='/usr/lib/nagios/plugins/check_http -S -H ' -%>
 <% else -%>
-/usr/lib/nagios/plugins/check_http -H <%= @address %> -p <%= @port %>
+  <% check_http='/usr/lib/nagios/plugins/check_http -H ' -%>
+<% end -%>
+
+<% if @addresses.is_a? String -%>
+  <% ip, port = @addresses.split(':') -%>
+<%= check_http + ip + ' -p ' + port %>
+<% elsif @addresses.is_a? Array -%>
+  <% @addresses.each do | addr | -%>
+    <% ip, port = addr.split(':') -%>
+<%= check_http + ip + ' -p ' + port %>
+  <% end -%>
 <% end -%>

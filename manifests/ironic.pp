@@ -82,14 +82,14 @@ class rjil::ironic(
   }
 
   rjil::test::check {'tftp':
+    addresses  => '127.0.0.1:69',
     type       => 'udp',
     check_type => 'validation',
-    port       => 69
   }
 
   rjil::test::check {'ironic':
-    port => $api_port,
-    ssl  => $ssl,
+    addresses => "${listen_address}:${api_port}",
+    ssl       => $ssl,
   }
 
 

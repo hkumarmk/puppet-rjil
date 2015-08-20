@@ -83,10 +83,9 @@ define rjil::haproxy_service(
 
     if ($balancer_ports) {
       rjil::test::check { $name:
-        address => $vip,
-        port    => $port,
-        ssl     => $ssl,
-        type    => $check_type,
+        addresses => "${vip}:${port}",
+        ssl       => $ssl,
+        type      => $check_type,
       }
       rjil::jiocloud::consul::service { "${name}":
         tags          => ['lb'],

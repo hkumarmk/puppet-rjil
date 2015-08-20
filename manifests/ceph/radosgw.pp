@@ -26,9 +26,8 @@ class rjil::ceph::radosgw (
   }
 
   rjil::test::check { 'radosgw':
-    address => '127.0.0.1',
-    port    => $port,
-    ssl     => $ssl,
+    addresses => ["127.0.0.1:${port}"],
+    ssl       => $ssl,
   }
 
   rjil::jiocloud::consul::service { 'radosgw':
