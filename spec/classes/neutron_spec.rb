@@ -34,8 +34,13 @@ describe 'rjil::neutron' do
   context 'with defaults' do
     it  do
       should contain_file('/usr/lib/jiocloud/tests/service_checks/neutron.sh').with_content(
-        /check_http -H 127\.0\.0\.1 -p 9696/
+        /check_http -H 0\.0\.0\.0 -p 9696/
       )
+
+      should contain_file('/usr/lib/jiocloud/tests/service_checks/neutron.sh').with_content(
+        /check_http -H 127.0.0.1 -p 19696/
+      )
+
       should contain_file('/usr/lib/jiocloud/tests/floating_ip.sh')
       should contain_package('python-six').with_ensure('latest').that_comes_before('Class[neutron::server]')
       should contain_class('neutron')
@@ -77,8 +82,12 @@ describe 'rjil::neutron' do
     end
     it do
       should contain_file('/usr/lib/jiocloud/tests/service_checks/neutron.sh').with_content(
-        /check_http -S -H 127\.0\.0\.1 -p 9696/
+        /check_http -S -H 0\.0\.0\.0 -p 9696/
       )
+      should contain_file('/usr/lib/jiocloud/tests/service_checks/neutron.sh').with_content(
+        /check_http -S -H 127.0.0.1 -p 19696/
+      )
+
       should contain_apache__vhost('neutron').with_ssl(true)
     end
   end

@@ -15,11 +15,10 @@ describe 'rjil::test::check' do
   context 'with http running on 8080' do
     let :params do
       { 
-        :name    => 'fooservice',
-        :port    => 8080,
-        :address => '127.0.0.1',
-        :ssl     => false,
-        :type    => 'http',
+        :name      => 'fooservice',
+        :addresses => '127.0.0.1:8080',
+        :ssl       => false,
+        :type      => 'http',
       }
     end
  

@@ -95,8 +95,8 @@ describe 'rjil::ironic' do
 
         should contain_rjil__test__check('ironic').with(
           {
-            :port => 6385,
-            :ssl  => false,
+            :addresses => '10.1.1.1:6385',
+            :ssl       => false,
           }
         )
 
@@ -104,7 +104,7 @@ describe 'rjil::ironic' do
           {
             :type       => 'udp',
             :check_type => 'validation',
-            :port       => 69
+            :addresses  => '127.0.0.1:69',
           }
         )
 
