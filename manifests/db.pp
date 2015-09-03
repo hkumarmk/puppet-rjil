@@ -108,19 +108,21 @@ class rjil::db (
     $user_address = $bind_address
   }
 
-  mysql_user { "monitor@${user_address}":
-    ensure        => 'present',
-    password_hash => mysql_password('monitor'),
-    require       => File['/root/.my.cnf'],
-  }
+  if $user_address {
+    mysql_user { "monitor@${user_address}":
+      ensure        => 'present',
+      password_hash => mysql_password('monitor'),
+      require       => File['/root/.my.cnf'],
+    }
 
-  mysql_grant { "monitor@${user_address}/*.*":
-    ensure     => 'present',
-    options    => ['GRANT'],
-    privileges => ['USAGE'],
-    user       => "monitor@${user_address}",
-    table      => '*.*',
-    require    => Mysql_user["monitor@${user_address}"],
+    mysql_grant { "monitor@${user_address}/*.*":
+      ensure     => 'present',
+      options    => ['GRANT'],
+      privileges => ['USAGE'],
+      user       => "monitor@${user_address}",
+      table      => '*.*',
+      require    => Mysql_user["monitor@${user_address}"],
+    }
   }
 
   rjil::jiocloud::consul::service { "mysql":
