@@ -5,6 +5,9 @@
 :yaml:
   :datadir: /etc/puppet/hiera/data
 :hierarchy:
+  # Containers will have same hostname as base host (with net=host), so
+  # container_name should override any clientcert overrides.
+  - "container/%{::container_name}"
   - "clientcert/%{::clientcert}"
   - "secrets/%{env}"
   - "role/%{env}/%{jiocloud_role}"
