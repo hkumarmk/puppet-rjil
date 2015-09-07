@@ -8,7 +8,7 @@ describe 'rjil::ceph::osd' do
       'rjil::ceph::mon::public_if'          => 'eth0',
       'rjil::ceph::mon::storage_cluster_if' => 'eth1',
       'rjil::ceph::mon::key'                => 'AQBXRgNSQNCMAxAA/wSNgHmHwzjnl2Rk22P4jA==',
-      'rjil::ceph::osd::osds'               => ['sdb','sdc','sdd'],
+      'rjil::ceph::osd::disks'              => 'sdb,sdc,sdd',
       'rjil::ceph::osd::mon_key'            => 'AQBXRgNSQNCMAxAA/wSNgHmHwzjnl2Rk22P4jA==',
       'ceph::conf::fsid'                    => '94d178a4-cae5-43fa-b420-8ae1cfedb7dc',
     }
@@ -45,8 +45,8 @@ describe 'rjil::ceph::osd' do
     end
   end
 
-  context 'with autodetect' do
-    let (:params) { {'autodetect' => true } }
+  context 'with autodetected disks - blankorcephdisks' do
+    let (:params) { {'disks' => 'sdh,sdi,sdx' } }
     it  do
       should contain_ceph__osd__device('/dev/sdh','/dev/sdi','/dev/sdx').with({
         'osd_journal_type'  => 'filesystem',
@@ -57,7 +57,7 @@ describe 'rjil::ceph::osd' do
   end
 
   context 'with autodetect and exception' do
-    let (:params) { {'autodetect' => true, 'disk_exceptions' => ['sdx'] } }
+    let (:params) { {'disks' => 'sdh,sdi,sdx', 'disk_exceptions' => 'sdx' } }
     it  do
       should contain_ceph__osd__device('/dev/sdh','/dev/sdi').with({
         'osd_journal_type'  => 'filesystem',
