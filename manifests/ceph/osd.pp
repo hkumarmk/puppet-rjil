@@ -8,14 +8,20 @@
 #     first_partition -> first partition of the data disk,
 #     filesystem -> journal directory under individual disk filesystem,
 #
-# [*osds*]
-#    An Array of all disks to be used as osds
+# [*disks*]
+#    A comma separated list of all disks to be used as osds. There are two
+#    custom facts added to support auto detecting this:
 #
-# [*autodetect*]
-#    Automatically detect all blank disks and use them for ceph OSDs
+#    $::blankorcephdisks - All disks which are either ceph or blank disks
+#    $::nonsystem_blankorcephdisks - Nonsystem disks which are either ceph or
+#    blank disks. It use /dev/disk/by-path/ to detect non-system disks. Usually
+#    baremetal system would have some system disks which are connected to
+#    builtin controllers and disks connected to JBODs which are connected
+#    through pci disk controllers.
+#
 #
 # [*disk_exceptions*]
-#    An array to configure any disks to be ignored from autodetected disks.
+#    An array to configure any disks to be ignored from disks.
 #
 # [*osd_journal_size*]
 #    size of journal in GB
@@ -45,9 +51,8 @@
 #
 class rjil::ceph::osd (
   $mon_key,
-  $osds                     = [],
-  $autodetect               = false,
-  $disk_exceptions          = [],
+  $disks                    = undef,
+  $disk_exceptions          = undef,
   $osd_journal_type         = 'filesystem',
   $osd_journal_size         = 10,
   $storage_cluster_if       = eth1,
@@ -86,10 +91,6 @@ class rjil::ceph::osd (
   }
 
   ##
-  ## Detect all blank disks (use $::blankorcephdisks facter) if autodetect is
-  ##   enabled.
-  ##  Disks to be used is difference of $blankorcephdisks and disk_exceptions
-  ##
   ## If autogenerate is enabled, a loopback disk with size $autodisk_size GB
   ##   created, and will be used as OSD.
 
@@ -124,12 +125,10 @@ class rjil::ceph::osd (
     }
     $osds_orig = ['loop0']
 
-  } elsif $autodetect {
-    $disks = split($::blankorcephdisks,',')
-    $osds_orig = difference($disks,$disk_exceptions)
-    $osd_journal_size_orig = $osd_journal_size
   } else {
-    $osds_orig = $osds
+    $disks_array = split($disks,',')
+    $disk_exceptions_array = split($disk_exceptions,',')
+    $osds_orig = difference($disks_array,$disk_exceptions_array)
     $osd_journal_size_orig = $osd_journal_size
   }
 

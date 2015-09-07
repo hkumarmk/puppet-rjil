@@ -719,33 +719,28 @@ rjil::ceph::osd::public_if: "%{hiera('public_interface')}"
 rjil::ceph::osd::storage_cluster_if: "%{hiera('private_interface')}"
 rjil::ceph::osd::mon_key: "%{hiera('rjil::ceph::mon::key')}"
 
-### This may be override in clientcert
+##
+# The value for rjil::ceph::osd::disks can be either custom fact or a comma
+# separated list of disk names.
+#
+# There are two custom facts available to be used:-
+#
+# "%{nonsystem_blankorcephdisks}" - Nonsystem disks which are either ceph or blank
+# disks. It use /dev/disk/by-path/ to detect non-system disks. Usually baremetal
+# system would have some system disks which are connected to builtin controllers
+# and disks connected to JBODs which are connected through pci disk controllers.
+#
+# "%{blankorcephdisks}" - All disks which are either ceph or blank disks
+##
+rjil::ceph::osd::disks: "%{nonsystem_blankorcephdisks}"
 
 ##
-## if autodetect is yes, puppet will detect all blank disks
-##    using $::blankorcephdisks custom facter
-## Actual disks to be used for ceph osd is the difference
-## between detected disks and rjil::ceph::osd::disk_exceptions array
-##
-
-# rjil::ceph::osd::autodetect: true
-
-##
-##  disk_exceptions to be configured for any exceptions on disk autodetect
+# disk_exceptions: a comma separated list of disk name to be configured for osd exceptions.
 ##
 ## Note: All devices should be mentioned with device names only
 ## e.g. for /dev/sdb, just specify sdb.
 ##
-# rjil::ceph::osd::disk_exceptions:
-#  - sdb
-
-##
-## In case autodetect is false, rjil::ceph::osd::osds
-## should be configured with an array of disks as below example
-##
-# rjil::ceph::osd::osds:
-#  - sdb
-#  - sdc
+# rjil::ceph::osd::disk_exceptions: sdb, sdc
 
 ##
 ## if rjil::ceph::osd::autogenerate is true, the code will generate a loopback
