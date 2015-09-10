@@ -71,10 +71,20 @@ Vagrant.configure("2") do |config|
       config.vm.provision 'shell', :inline =>
       "echo env=#{environment} > /etc/facter/facts.d/env.txt"
 
-      if ENV['http_proxy']
+      if ENV['env_http_proxy']
         config.vm.provision 'shell', :inline =>
-        "echo \"Acquire::http { Proxy \\\"#{ENV['http_proxy']}\\\" }\" > /etc/apt/apt.conf.d/03proxy"
+        "echo \"Acquire::http { Proxy \\\"#{ENV['env_http_proxy']}\\\" }\" > /etc/apt/apt.conf.d/03proxy"
+        config.vm.provision 'shell', :inline =>
+        "echo http_proxy=#{ENV['env_http_proxy']} >> /etc/environment"
       end
+
+      if ENV['env_https_proxy']
+        config.vm.provision 'shell', :inline =>
+        "echo https_proxy=#{ENV['env_https_proxy']} >> /etc/environment"
+      end
+
+      config.vm.provision 'shell', :inline =>
+        "echo no_proxy='127.0.0.1,169.254.169.254,localhost,consul,jiocloud.com' >> /etc/environment"
 
       # run apt-get update and install pip
       unless ENV['NO_APT_GET_UPDATE'] == 'true'
@@ -83,13 +93,16 @@ Vagrant.configure("2") do |config|
       end
 
       # upgrade puppet
-      if ENV['http_proxy']
+      if ENV['env_http_proxy']
         config.vm.provision 'shell', :inline =>
-        "test -e puppet.deb && exit 0; release=$(lsb_release -cs);http_proxy=#{ENV['http_proxy']} wget -O puppet.deb http://apt.puppetlabs.com/puppetlabs-release-${release}.deb;dpkg -i puppet.deb;apt-get update;apt-get install -y puppet-common=3.6.2-1puppetlabs1"
+        "test -e puppet.deb && exit 0; release=$(lsb_release -cs);http_proxy=#{ENV['env_http_proxy']} wget -O puppet.deb http://apt.puppetlabs.com/puppetlabs-release-${release}.deb;dpkg -i puppet.deb;apt-get update;apt-get install -y puppet-common=3.6.2-1puppetlabs1"
       else
         config.vm.provision 'shell', :inline =>
-        "test -e puppet.deb && exit 0; release=$(lsb_release -cs);wget -O puppet.deb http://apt.puppetlabs.com/puppetlabs-release-${release}.deb;dpkg -i puppet.deb;apt-get update;apt-get install -y puppet-common=3.6.2-1puppetlabs1"
+        "test -e puppet.deb && exit 0; release=$(lsb_release -cs);wget -O puppet.deb http://apt.puppetlabs.com/puppetlabs-release-${release}.deb;dpkg -i puppet.deb;apt-get update;apt-get install -y puppet-common"
       end
+
+      config.vm.provision 'shell', :inline =>
+      'puppet apply -e \'ini_setting { basemodulepath: path => "/etc/puppet/puppet.conf", section => main, setting => basemodulepath, value => "/etc/puppet/modules.overrides:/etc/puppet/modules" } ini_setting { default_manifest: path => "/etc/puppet/puppet.conf", section => main, setting => default_manifest, value => "/etc/puppet/manifests/site.pp" } ini_setting { disable_per_environment_manifest: path => "/etc/puppet/puppet.conf", section => main, setting => disable_per_environment_manifest, value => "true" }\''
       config.vm.provision 'shell', :inline =>
       'puppet apply --detailed-exitcodes --debug -e "include rjil::jiocloud"; if [[ $? = 1 || $? = 4 || $? = 6 ]]; then apt-get update; puppet apply --detailed-exitcodes --debug -e "include rjil::jiocloud"; fi'
 
