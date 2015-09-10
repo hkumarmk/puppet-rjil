@@ -12,7 +12,7 @@ fi
 export no_proxy=${no_proxy:-'127.0.0.1,169.254.169.254,localhost,consul,jiocloud.com'}
 
 while true ; do
-  puppet apply --detailed-exitcodes /site.pp --tags package; rv=\$?
+  puppet apply --detailed-exitcodes /site.pp --tags package,docker_build; rv=\$?
   if [[ \$rv = 1 || \$rv = 4 || \$rv = 6 ]]; then
     echo "\`date\` Puppet failed. Will retry in 5 seconds"
     sleep 5

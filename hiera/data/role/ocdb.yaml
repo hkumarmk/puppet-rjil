@@ -1,2 +1,9 @@
 rjil::keystone::disable_db_sync: false
-rjil::jiocloud::consul_role: server
+#rjil::jiocloud::consul_role: server
+#rjil::docker::containers:
+#  db:
+#    expose: [3306]
+#  memcached:
+#    expose: [11211]
+#  keystone:
+#    expose: [5000,35357]

@@ -12,6 +12,10 @@ class rjil::openstack_objects(
   $tenants           = undef,
   $roles             = undef,
   $lb_available      = true,
+  $provision_keystone_objects = false,
+  $provision_tempest_objects  = false,
+  $provision_glance_objects   = false,
+  $provision_neutron_objects  = false,
 ) {
 
   if $override_ips {
@@ -53,36 +57,45 @@ class rjil::openstack_objects(
   Runtime_fail['keystone_endpoint_not_resolvable'] -> Rjil::Service_blocker[$glance_service_name]
   Runtime_fail['keystone_endpoint_not_resolvable'] -> Rjil::Service_blocker[$neutron_service_name]
 
-  ensure_resource('rjil::service_blocker', $glance_service_name, {})
-  ensure_resource('rjil::service_blocker', $neutron_service_name, {})
-
-  Rjil::Service_blocker[$glance_service_name] -> Glance_image<||>
-  Rjil::Service_blocker[$neutron_service_name] -> Neutron_network<||>
-
-  # provision keystone objects for all services
-  include ::openstack_extras::keystone_endpoints
-  # provision tempest resources like images, network, users etc.
-  include rjil::tempest::provision
-
-  # create users, tenants, roles, default networks
-  create_resources('rjil::keystone::user',$users)
-
-  ##
-  # Tenants can be created without creating users, $tenants can be an array of
-  # all tenant names to be created, and a hash of tenants with appropriate
-  # params for rjil::keystone::tenant
-  ##
-  if is_array($tenants) {
-    rjil::keystone::tenant { $tenants: }
-  } elsif is_hash($tenants) {
-    create_resources('rjil::keystone::tenants',$tenants)
+  if ($provision_tempest_objects) or ($provision_glance_objects) {
+    ensure_resource('rjil::service_blocker', $glance_service_name, {})
+    Rjil::Service_blocker[$glance_service_name] -> Glance_image<||>
   }
 
-  if is_array($roles) {
-    keystone_role { $roles:
-      ensure => present,
+  if ($provision_tempest_objects) or ($provision_neutron_objects) {
+    ensure_resource('rjil::service_blocker', $neutron_service_name, {})
+    Rjil::Service_blocker[$neutron_service_name] -> Neutron_network<||>
+  }
+
+  if $provision_tempest_objects {
+    # provision tempest resources like images, network, users etc.
+    include rjil::tempest::provision
+  }
+  
+  if $provision_keystone_objects {
+    # provision keystone objects for all services
+    include ::openstack_extras::keystone_endpoints
+
+    # create users, tenants, roles, default networks
+    create_resources('rjil::keystone::user',$users)
+
+    ##
+    # Tenants can be created without creating users, $tenants can be an array of
+    # all tenant names to be created, and a hash of tenants with appropriate
+    # params for rjil::keystone::tenant
+    ##
+    if is_array($tenants) {
+      rjil::keystone::tenant { $tenants: }
+    } elsif is_hash($tenants) {
+      create_resources('rjil::keystone::tenants',$tenants)
     }
-  } elsif is_hash($roles) {
-    create_resources('keystone_role',$roles,{ensure =>present})
+
+    if is_array($roles) {
+      keystone_role { $roles:
+        ensure => present,
+      }
+    } elsif is_hash($roles) {
+      create_resources('keystone_role',$roles,{ensure =>present})
+    }
   }
 }

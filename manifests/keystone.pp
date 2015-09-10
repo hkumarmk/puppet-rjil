@@ -27,9 +27,12 @@ class rjil::keystone(
     $address = $public_address
   }
 
+  include rjil::test::keystone
+
   Rjil::Test::Check {
-    ssl     => $ssl,
-    address => $address,
+    ssl        => $ssl,
+    address    => $address,
+    check_type => 'validation',
   }
 
   rjil::test::check { 'keystone':
@@ -38,16 +41,6 @@ class rjil::keystone(
 
   rjil::test::check { 'keystone-admin':
     port => $admin_port,
-  }
-
-  rjil::jiocloud::consul::service { "keystone":
-    tags          => ['real'],
-    port          => 5000,
-  }
-
-  rjil::jiocloud::consul::service { "keystone-admin":
-    tags          => ['real'],
-    port          => 35357,
   }
 
   # ensure that we don't even try to configure the

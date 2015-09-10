@@ -5,7 +5,7 @@ export module_git_cache=http://jiocloud.rustedhalo.com:8080/job/puppet-jiocloud-
 export env=build
 export registry='localhost:5000'
 export puppet_modules_source_repo=https://github.com/hkumarmk/puppet-rjil
-export puppet_modules_source_branch=containers
+export puppet_modules_source_branch=dok
 export name=base
 version=${version:-latest}
 

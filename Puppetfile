@@ -5,6 +5,9 @@ mod 'puppetlabs/java',
   :git => "#{base_url}/puppetlabs/puppetlabs-java",
   :ref => '1.1.2'
 
+mod 'garethr/docker',
+  :git => "#{base_url}/garethr/garethr-docker"
+
 mod 'adrianthebo/network',
   :git => "#{base_url}/adrienthebo/puppet-network",
   :ref => '0.4.1'
