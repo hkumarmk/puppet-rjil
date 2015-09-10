@@ -7,6 +7,8 @@
 
 class rjil::db (
   $mysql_root_pass,
+  $docker_image_url,
+  $docker_image_version = latest, # this need to be changed without default, so it is mandate to provide version (for upgrade)
   $mysql_server_package_name = 'mariadb-server',
   $mysql_datadir =  '/data',
   $mysql_max_connections = 1024,
@@ -15,6 +17,7 @@ class rjil::db (
   $bind_address = '0.0.0.0',
 )  {
 
+  $docker_image = "${docker_image_url}:${docker_image_version}"
 
   ## Setup test code
 
@@ -22,6 +25,7 @@ class rjil::db (
 
   ## Call db_def to create databases, users and grants
   create_resources('rjil::db::instance', $dbs)
+
   ## setup mysql server
   class { '::mysql::server':
     root_password    => $mysql_root_pass,
@@ -35,7 +39,14 @@ class rjil::db (
     },
   }
 
+  rjil::docker::container {'db':
+    image_full_name => $docker_image,
+    expose          => [3306],
+    volumes         => ["${mysql_datadir}:${mysql_datadir}", '/etc/mysql:/etc/mysql']
+  }
+
   file { $mysql_datadir:
+    tag     => 'docker_build',
     ensure  => 'directory',
     owner   => 'mysql',
     group   => 'mysql',
@@ -123,11 +134,6 @@ class rjil::db (
       table      => '*.*',
       require    => Mysql_user["monitor@${user_address}"],
     }
-  }
-
-  rjil::jiocloud::consul::service { "mysql":
-    port          => 3306,
-    check_command => "/usr/lib/nagios/plugins/check_mysql -H ${bind_address} -u monitor -p monitor"
   }
 
   # make sure that we install mysql before our service blocker starts for the
