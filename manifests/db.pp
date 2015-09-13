@@ -7,17 +7,23 @@
 
 class rjil::db (
   $mysql_root_pass,
-  $docker_image_url,
-  $docker_image_version = latest, # this need to be changed without default, so it is mandate to provide version (for upgrade)
   $mysql_server_package_name = 'mariadb-server',
-  $mysql_datadir =  '/data',
-  $mysql_max_connections = 1024,
-  $mysql_data_disk = undef,
-  $dbs = {},
-  $bind_address = '0.0.0.0',
+  $mysql_datadir             =  '/data',
+  $mysql_max_connections     = 1024,
+  $mysql_data_disk           = undef,
+  $dbs                       = {},
+  $bind_address              = '0.0.0.0',
+  $log_to_console	     = false,
 )  {
 
-  $docker_image = "${docker_image_url}:${docker_image_version}"
+  ##
+  # log_to_console only make sense when useing containers
+  ##
+  if $log_to_console {
+    $log_error = undef
+  } else {
+    $log_error = '/var/log/mysql/error.log'
+  }
 
   ## Setup test code
 
@@ -35,18 +41,12 @@ class rjil::db (
       'max_connections' => $mysql_max_connections,
       'datadir'         => $mysql_datadir,
       'bind-address'    => $bind_address,
+      'log_error'       => $log_error,
       }
     },
   }
 
-  rjil::docker::container {'db':
-    image_full_name => $docker_image,
-    expose          => [3306],
-    volumes         => ["${mysql_datadir}:${mysql_datadir}", '/etc/mysql:/etc/mysql']
-  }
-
   file { $mysql_datadir:
-    tag     => 'docker_build',
     ensure  => 'directory',
     owner   => 'mysql',
     group   => 'mysql',
