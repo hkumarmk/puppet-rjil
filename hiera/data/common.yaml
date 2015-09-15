@@ -22,8 +22,11 @@ private_interface: "%{interface_10_0_0_0_16}"
 ########  Database config #########
 ###################################
 
+rjil::db::container::docker_image_url: "%{hiera('rjil::docker::registry_url')}/db"
+rjil::db::container::mysql_root_pass: "%{hiera('rjil::db::mysql_root_pass')}"
+
 rjil::db::bind_address: "%{hiera('private_address')}"
-rjil::db::docker_image_url: "%{hiera('rjil::docker::registry_url')}/db"
+rjil::db::log_to_console: true
 rjil::db::dbs:
   nova:
     user: "%{hiera('nova_db_user')}"
@@ -49,6 +52,8 @@ rjil::keystone::disable_db_sync: true
 
 # Dont install mysql package on docker host
 mysql::server::package_ensure: absent
+mysql::server::service_manage: false
+mysql::server::service_enable: false
 
 ####################################
 ####### Add cnames #################

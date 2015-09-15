@@ -9,6 +9,8 @@ if [ -n "${docker_https_proxy}" ]; then
   export https_proxy=${docker_https_proxy}
 fi
 
+export FACTER_env=build
+
 export no_proxy=${no_proxy:-'127.0.0.1,169.254.169.254,localhost,consul,jiocloud.com'}
 
 while true ; do

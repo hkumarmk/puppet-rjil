@@ -12,8 +12,9 @@ class rjil::db (
   $mysql_max_connections     = 1024,
   $mysql_data_disk           = undef,
   $dbs                       = {},
+  $create_db                 = true,
   $bind_address              = '0.0.0.0',
-  $log_to_console	     = false,
+  $log_to_console	           = false,
 )  {
 
   ##
@@ -29,8 +30,10 @@ class rjil::db (
 
   rjil::test { 'mysql.sh': }
 
-  ## Call db_def to create databases, users and grants
-  create_resources('rjil::db::instance', $dbs)
+  if $create_db {
+    ## Call db_def to create databases, users and grants
+    create_resources('rjil::db::instance', $dbs)
+  }
 
   ## setup mysql server
   class { '::mysql::server':

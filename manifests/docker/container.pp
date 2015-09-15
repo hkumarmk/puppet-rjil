@@ -57,6 +57,7 @@ define rjil::docker::container (
     detach        => $detach,
     expose        => $expose_orig,
     ports         => $ports_orig,
+    volumes       => $volumes,
   }
 
 }

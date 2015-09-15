@@ -1,9 +1,7 @@
 #!/bin/bash
 #
 
-wait_time=${1:-5}
-run_puppet=1
-
+wait_time=${wait_time:-10}
 ##
 # if consul_discovery_token is set, write it to factor
 ##
@@ -19,31 +17,26 @@ if [ $container_name ]; then
 fi
 
 ##
-# Below chunk of code will run in infinite loop which make sure this container
-# and apps running in this container is up and running and configured correctly.
+# Initial configuration of system done by puppet
 ##
 while true; do
-  if [ $run_puppet -eq 1 ]; then
-    echo "`date` | Running Puppet"
-    puppet apply --detailed-exitcodes /site.pp
-    ret_code=$?
-    #  python -m jiocloud.orchestrate update_own_status puppet_service $ret_code
-    if [[ $ret_code = 1 || $ret_code = 4 || $ret_code = 6 ]]; then
-      echo "`date` | Puppet failed with return code ${ret_code}"
-      sleep $wait_time
-      continue
-    else
-      run_puppet=0
-    fi
-  fi
-
-  echo "`date` | Running validation"
-  run-parts --regex=. --verbose --exit-on-error  --report /usr/lib/jiocloud/tests/
+  echo "`date` | Initial Configuration Starting"
+  puppet apply --detailed-exitcodes /site.pp
   ret_code=$?
-  if [ $ret_code -ne 0 ]; then
-    run_puppet=1
-  else
+  #  python -m jiocloud.orchestrate update_own_status puppet_service $ret_code
+  if [[ $ret_code = 1 || $ret_code = 4 || $ret_code = 6 ]]; then
+    echo "`date` | Puppet failed with return code ${ret_code}"
     sleep $wait_time
+    break
   fi
-  #python -m jiocloud.orchestrate update_own_status validation_service $ret_code
 done
+##
+# Now run maintain.sh, to run validation continuously and if failed, run puppet.
+##
+if [ -f /maintain.sh ]; then
+  mkdir -p /var/log/docker/${container_name}/
+  nohup bash /maintain.sh 2>&1 >> /var/log/docker/${container_name}/maintain.log &
+fi
+
+# Run the application
+exec "$@"
