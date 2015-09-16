@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 
-wait_time=${1:-5}
+wait_time=${wait_time:-10}
 run_puppet=1
 
 ##
