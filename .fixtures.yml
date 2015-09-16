@@ -5,6 +5,8 @@ fixtures:
     haproxy:
       repo: git://github.com/puppetlabs/puppetlabs-haproxy
       ref: 1.0.0
+    docker:
+      repo: https://github.com/garethr/garethr-docker
     inifile:
       repo: git://github.com/puppetlabs/puppetlabs-inifile.git
       ref: 41e2ddbc1cd861247e57d16b778cbe891602f509

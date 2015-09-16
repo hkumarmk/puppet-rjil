@@ -19,6 +19,11 @@ class rjil::jiocloud (
   # and we cannot currently recover if we fail to
   # install python-jiocloud
   ensure_resource('package','python-six', { ensure => 'latest' })
+
+  package {'docker-engine':
+    ensure => 'installed'
+  }
+
   package { 'python-jiocloud':
     before => [Package['dnsmasq'], Package['consul']]
   }
