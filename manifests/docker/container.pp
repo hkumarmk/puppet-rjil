@@ -2,22 +2,30 @@
 #
 #
 define rjil::docker::container (
-  $image_name    = $name,
-  $registry      = undef,
-  $image_version = 'latest',
-  $image_full_name = undef,
-  $pull_on_start = true,
-  $restart       = 'always',
-  $env           = [],
-  $net           = 'host',
-  $tty           = false,
-  $detach        = true,
-  $expose        = [],
-  $ports         = [],
-  $volumes       = [],
+  $image_name            = $name,
+  $registry              = undef,
+  $image_version         = 'latest',
+  $image_full_name       = undef,
+  $pull_on_start         = true,
+  $restart               = 'always',
+  $env                   = [],
+  $net                   = 'host',
+  $tty                   = false,
+  $detach                = true,
+  $expose                = [],
+  $ports                 = [],
+  $volumes               = [],
+  $consul_check_script   = undef,
+  $consul_check_ttl      = undef,
+  $consul_check_interval = '10s',
+  $consul_service_name   = $name,
+  $consul_service_tags   = undef,
 ) {
 
-  $env_orig = union($env,["container_name=${name}"])
+  $env_orig = union($env,["container_name=${name}", "SERVICE_NAME=${consul_service_name}",
+        "SERVICE_TAGS='${consul_service_tags}'", "SERVICE_CHECK_SCRIPT='${consul_check_script}'",
+        "_CHECK_INTERVAL=${consul_check_interval}", "SERVICE_CHECK_TTL=${consul_check_ttl}",
+        "SERVICE_NAME=${consul_service_name}"])
 
   ##
   # either image_full_name or image_name, registry, and image_version must be
