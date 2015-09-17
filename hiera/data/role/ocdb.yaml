@@ -10,6 +10,7 @@ rjil::keystone::disable_db_sync: false
 rjil::docker::containers:
   db:
     expose: [3306]
+    consul_service_name: mysql
     consul_check_script: "/usr/lib/nagios/plugins/check_mysql -H $SERVICE_IP -u %{hiera('rjil::db::monitor_user')} -p %{hiera('rjil::db::monitor_password')}"
   memcached:
     expose: [11211]
