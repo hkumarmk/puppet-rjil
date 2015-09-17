@@ -23,6 +23,8 @@ private_interface: "%{interface_10_0_0_0_16}"
 ###################################
 
 rjil::db::bind_address: "%{hiera('private_address')}"
+rjil::db::monitor_user: monitor
+rjil::db::monitor_password: 'P@ssw0rd'
 rjil::db::dbs:
   nova:
     user: "%{hiera('nova_db_user')}"

@@ -13,6 +13,8 @@ class rjil::db (
   $mysql_data_disk = undef,
   $dbs = {},
   $bind_address = '0.0.0.0',
+  $monitor_user = 'monitor',
+  $monitor_password = 'monitor',
 )  {
 
 
@@ -109,19 +111,19 @@ class rjil::db (
   }
 
   if $user_address {
-    mysql_user { "monitor@${user_address}":
+    mysql_user { "${monitor_user}@${user_address}":
       ensure        => 'present',
-      password_hash => mysql_password('monitor'),
+      password_hash => mysql_password($monitor_password),
       require       => File['/root/.my.cnf'],
     }
 
-    mysql_grant { "monitor@${user_address}/*.*":
+    mysql_grant { "${monitor_user}@${user_address}/*.*":
       ensure     => 'present',
       options    => ['GRANT'],
       privileges => ['USAGE'],
-      user       => "monitor@${user_address}",
+      user       => "${monitor_user}@${user_address}",
       table      => '*.*',
-      require    => Mysql_user["monitor@${user_address}"],
+      require    => Mysql_user["${monitor_user}@${user_address}"],
     }
   }
 
