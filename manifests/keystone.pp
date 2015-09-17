@@ -40,16 +40,6 @@ class rjil::keystone(
     port => $admin_port,
   }
 
-  rjil::jiocloud::consul::service { "keystone":
-    tags          => ['real'],
-    port          => 5000,
-  }
-
-  rjil::jiocloud::consul::service { "keystone-admin":
-    tags          => ['real'],
-    port          => 35357,
-  }
-
   # ensure that we don't even try to configure the
   # database connection until the service is up
   ensure_resource( 'rjil::service_blocker', 'mysql', {})

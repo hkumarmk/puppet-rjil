@@ -14,5 +14,5 @@ rjil::docker::containers:
   memcached:
     expose: [11211]
     consul_check_script: 'echo stats | nc $SERVICE_IP $SERVICE_PORT | grep -q uptime'
-#  keystone:
-#    expose: [5000,35357]
+  keystone:
+    expose: [5000,35357]

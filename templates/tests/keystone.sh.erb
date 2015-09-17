@@ -1,0 +1,22 @@
+#!/bin/bash
+set -e
+function fail {
+  echo "CRITICAL: $@"
+  exit 2
+}
+
+if [ -f /root/openrc ]; then
+  source /root/openrc
+  echo -n "Getting keystone catalog... "
+  keystone catalog &> /dev/null; rv=$?
+  if [ $rv -eq 0 ]; then
+    echo "OK"
+    exit 0
+  else
+    echo "Failed"
+    exit 2
+  fi
+else
+  echo 'Critical: Openrc does not exist'
+  exit 2
+fi
