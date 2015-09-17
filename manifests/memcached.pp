@@ -12,9 +12,4 @@ class rjil::memcached {
   ## Call memcached class
   include '::memcached'
 
-  rjil::jiocloud::consul::service {'memcached':
-    port          => 11211,
-    check_command => 'echo stats | nc localhost 11211 | grep -q uptime'
-  }
-
 }
