@@ -59,7 +59,7 @@ rjil::keystone::disable_db_sync: true
 
 rjil::jiocloud::dns::entries:
   identity.jiocloud.com:
-    cname: lb.keystone.service.consul
+    cname: keystone.service.consul
   volume.jiocloud.com:
     cname: lb.cinder.service.consul
   network.jiocloud.com:
