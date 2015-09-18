@@ -1,0 +1,4 @@
+#!/bin/bash
+LOGDIR=<%= @service_logdir %>
+mkdir -p $LOGDIR
+exec svlogd <% if @log_timestamp %>-tt <% end %>$LOGDIR

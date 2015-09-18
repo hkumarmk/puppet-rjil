@@ -1,0 +1,16 @@
+#!/bin/bash
+## Redirect stderr so everything ends up in the log file
+exec 2>&1
+
+## Announce ourselves
+echo "<%= @service_name %> start"
+
+<% if @user -%>
+  <% if @group -%>
+exec chpst -u <%= @user %>:<%= @group %>  <%= @command %>
+  <% else -%>
+exec chpst -u <%= @user %> <%= @command %>
+  <% end -%>
+<% else -%>
+exec <%= @command %>
+<% end -%>
