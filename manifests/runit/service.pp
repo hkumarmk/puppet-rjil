@@ -29,7 +29,7 @@ define rjil::runit::service (
   file {"/etc/sv/${service_name}/run":
       ensure  => file,
       mode    => '0750',
-      content => template('runit/service/run.erb'),
+      content => template('rjil/runit/service/run.erb'),
       require => File["/etc/sv/${service_name}"],
   }
 
@@ -41,19 +41,19 @@ define rjil::runit::service (
     file {"/etc/sv/${service_name}/log/run":
       ensure  => file,
       mode    => '0750',
-      content => template('runit/service/log_run.erb'),
+      content => template('rjil/runit/service/log_run.erb'),
       require => File["/etc/sv/${service_name}/log"],
     }
 
     file {"/etc/sv/${service_name}/log/config":
       ensure  => file,
       mode    => '0440',
-      content => template('runit/service/log_config.erb'),
+      content => template('rjil/runit/service/log_config.erb'),
       require => File["/etc/sv/${service_name}/log"],
     }
   }
 
-  if $enabled {
+  if $enable {
     file {"/etc/service/${service_name}":
       ensure => 'link',
       target => "/etc/sv/${service_name}",

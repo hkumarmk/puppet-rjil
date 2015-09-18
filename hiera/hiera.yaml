@@ -13,6 +13,7 @@
   - "role/%{env}/%{jiocloud_role}"
   - "role/%{jiocloud_role}"
   - "hw/%{cloud_provider}/%{productname}"
+  - "hw_type/%{virtual}"
   - "cloud_provider/%{cloud_provider}"
   - "env/%{env}"
   - "secrets/common"

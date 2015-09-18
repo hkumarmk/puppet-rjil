@@ -1,11 +1,7 @@
 #!/bin/bash
 # Just temporary stuffs to add appropriate variables, will be removed later
-export module_git_cache=http://jiocloud.rustedhalo.com:8080/job/puppet-jiocloud-cache/lastSuccessfulBuild/artifact/cache.tar.gz
 export env=${env:-build}
 export registry=${registry:-'localhost:5000'}
-export git_protocol=https
-export puppet_modules_source_repo=https://github.com/hkumarmk/puppet-rjil
-export puppet_modules_source_branch=dockers
 export name=base
 version=${version:-latest}
 

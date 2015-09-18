@@ -19,6 +19,7 @@ class rjil::keystone(
   $disable_db_sync        = false,
   $rewrites               = undef,
   $headers                = undef,
+  $service_supervisor     = false,
 ) {
 
   if $public_address == '0.0.0.0' {
@@ -38,6 +39,20 @@ class rjil::keystone(
 
   rjil::test::check { 'keystone-admin':
     port => $admin_port,
+  }
+
+  ##
+  # runit can be used to supervise services. This is useful especially for
+  # containers when you run multiple processes.
+  # TODO: This need disabling service for keystone (bodepd have a patch to add a
+  # service provider for noop integrating which will be helpful)
+  ##
+  if $service_supervisor {
+    rjil::runit::service {'keystone':
+      command => '/usr/bin/keystone-all',
+      user    => 'keystone',
+      enable_log => false,  # no need to log from runit as keystone already log all under /var/log/keystone/keystone-all.log
+    }
   }
 
   # ensure that we don't even try to configure the
