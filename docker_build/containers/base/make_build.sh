@@ -46,7 +46,7 @@ dpkg -i jiocloud.deb
 n=0
 while [ \$n -le 5 ]
 do
-  apt-get update && apt-get install -y puppet software-properties-common puppet-jiocloud jiocloud-ssl-certificate && break
+  apt-get update && apt-get install -y puppet runit software-properties-common puppet-jiocloud jiocloud-ssl-certificate && break
   n=\$((\$n+1))
   sleep 5
 done
@@ -95,5 +95,16 @@ else
 fi
 puppet apply /site.pp --tags package
 apt-get clean
+
+##
+# create runit run script for maintain.sh (which run validation and puppet run)
+##
+mkdir -p /etc/sv/maintain/log /var/log/maintain
+echo -e '#!/bin/bash\n/maintain.sh' > /etc/sv/maintain/run
+echo -e '#!/bin/bash\nexec svlogd -tt /var/log/maintain' > /etc/sv/maintain/log/run
+chmod +x /etc/sv/maintain/run /etc/sv/maintain/log/run
+ln -s /etc/sv/maintain /etc/service/
+
+
 date
 BUILD
