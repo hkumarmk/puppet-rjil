@@ -126,4 +126,9 @@ class rjil::keystone(
     logdir => '/var/log/keystone'
   }
 
+  ##
+  # Create keystone objects
+  ##
+  include rjil::keystone::objects
+
 }

@@ -113,22 +113,22 @@ public_network_name: public
 ########### auth for test user
 ##################################
 
-rjil::openstack_objects::users:
+rjil::keystone::objects::users:
   "%{hiera('test_user_name')}":
     password: "%{hiera('test_user_password')}"
     user_tenant: "%{hiera('test_user_tenant')}"
     create_network: false
 ##
-# rjil::openstack_objects::tenants can be either a array of tenant names or a
+# rjil::keystone::objects::tenants can be either a array of tenant names or a
 # hash of tenants with params for rjil::keystone::tenant
 ##
-rjil::openstack_objects::tenants: ['mgmt_tenant','internal_tenant']
+rjil::keystone::objects::tenants: ['mgmt_tenant','internal_tenant']
 
 ##
-# rjil::openstack_objects::roles can be either a array of role names or a
+# rjil::keystone::objects::roles can be either a array of role names or a
 # hash of roles with params for rjil::keystone::role
 ##
-rjil::openstack_objects::roles: ['tenant_admin','engineering']
+rjil::keystone::objects::roles: ['tenant_admin','engineering']
 
 rjil::keystone::test_user::username: "%{hiera('test_user_name')}"
 rjil::keystone::test_user::tenant_name: "%{hiera('test_user_tenant')}"
