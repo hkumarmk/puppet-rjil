@@ -3,10 +3,10 @@
 #
 class rjil::keystone(
   $admin_email            = 'root@localhost',
-  $public_address         = '0.0.0.0',
+  $userapi_address         = '0.0.0.0',
   $server_name            = 'localhost',
-  $public_port            = '443',
-  $public_port_internal   = '5000',
+  $userapi_port            = '443',
+  $userapi_port_internal   = '5000',
   $admin_port             = '35357',
   $admin_port_internal    = '35357',
   $ssl                    = false,
@@ -22,10 +22,10 @@ class rjil::keystone(
   $service_manager        = undef,
 ) {
 
-  if $public_address == '0.0.0.0' {
+  if $userapi_address == '0.0.0.0' {
     $address = '127.0.0.1'
   } else {
-    $address = $public_address
+    $address = $userapi_address
   }
 
   Rjil::Test::Check {
@@ -34,7 +34,7 @@ class rjil::keystone(
   }
 
   rjil::test::check { 'keystone':
-    port => $public_port,
+    port => $userapi_port,
   }
 
   rjil::test::check { 'keystone-admin':
@@ -82,12 +82,12 @@ class rjil::keystone(
   apache::vhost { 'keystone':
     servername      => $server_name,
     serveradmin     => $admin_email,
-    port            => $public_port,
+    port            => $userapi_port,
     ssl             => $ssl,
     docroot         => '/usr/lib/cgi-bin/keystone',
     error_log_file  => 'keystone.log',
     access_log_file => 'keystone.log',
-    proxy_pass      => [ { path => '/', url => "http://localhost:${public_port_internal}/"  } ],
+    proxy_pass      => [ { path => '/', url => "http://localhost:${userapi_port_internal}/"  } ],
     rewrites        => $rewrites,
     headers         => $headers,
   }

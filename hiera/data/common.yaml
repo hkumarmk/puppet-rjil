@@ -463,11 +463,11 @@ rjil::keystone::ssl: true
 rjil::keystone::protocol: "%{hiera('api_protocol')}"
 rjil::keystone::version: v2.0
 rjil::keystone::admin_email: "%{hiera('admin_email')}"
-rjil::keystone::public_port: "%{hiera('keystone_port')}"
-rjil::keystone::public_port_internal: "%{hiera('keystone_localbind_port')}"
+rjil::keystone::userapi_port: "%{hiera('keystone_port')}"
+rjil::keystone::userapi_port_internal: "%{hiera('keystone_localbind_port')}"
 rjil::keystone::admin_port: "%{hiera('keystone_admin_port')}"
 rjil::keystone::admin_port_internal: "%{hiera('keystone_admin_localbind_port')}"
-rjil::keystone::public_address: "%{hiera('public_address')}"
+rjil::keystone::userapi_address: "%{hiera('public_address')}"
 rjil::keystone::server_name: "%{hiera('keystone_public_address')}"
 rjil::keystone::rewrites:
   - comment: "Return 200 for OPTIONS request"
