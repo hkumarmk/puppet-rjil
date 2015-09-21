@@ -18,14 +18,24 @@ define rjil::docker::container (
   $consul_check_script   = undef,
   $consul_check_ttl      = undef,
   $consul_check_interval = '10s',
-  $consul_service_name   = $name,
+  $consul_service_names  = $name,
   $consul_service_tags   = undef,
 ) {
 
-  $env_orig = union($env,["container_name=${name}", "SERVICE_NAME=${consul_service_name}",
-        "SERVICE_TAGS='${consul_service_tags}'", "SERVICE_CHECK_SCRIPT='${consul_check_script}'",
-        "_CHECK_INTERVAL=${consul_check_interval}", "SERVICE_CHECK_TTL=${consul_check_ttl}",
-        "SERVICE_NAME=${consul_service_name}", "consul_discovery_token=${::consul_discovery_token}"])
+  ##
+  # if consul_service_names is a hash, then create multiple environment
+  # variables out of it.
+  # if it is string, then there is only one variable
+  ##
+  if is_hash($consul_service_names) {
+    $env_service_names=split(strip(inline_template("<% @consul_service_names.each do |k, v|%> <%= \"SERVICE_#{k}_NAME=#{v}\" %> <% end %>")),' +')
+  } else {
+    $env_service_names=["SERVICE_NAME=${consul_service_names}"]
+  }
+
+  $env_orig = union(union($env, $env_service_names), ["container_name=${name}", "SERVICE_TAGS='${consul_service_tags}'",
+        "SERVICE_CHECK_SCRIPT='${consul_check_script}'", "_CHECK_INTERVAL=${consul_check_interval}",
+        "SERVICE_CHECK_TTL=${consul_check_ttl}", "consul_discovery_token=${::consul_discovery_token}"])
 
   ##
   # either image_full_name or image_name, registry, and image_version must be

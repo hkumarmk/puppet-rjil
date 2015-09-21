@@ -10,10 +10,13 @@ rjil::keystone::disable_db_sync: false
 rjil::docker::containers:
   db:
     expose: [3306]
-    consul_service_name: mysql
+    consul_service_names: mysql
     consul_check_script: "/usr/lib/nagios/plugins/check_mysql -H $SERVICE_IP -u %{hiera('rjil::db::monitor_user')} -p %{hiera('rjil::db::monitor_password')}"
   memcached:
     expose: [11211]
     consul_check_script: 'echo stats | nc $SERVICE_IP $SERVICE_PORT | grep -q uptime'
   keystone:
     expose: [5000,35357]
+    consul_service_names:
+      5000: keystone
+      35357: keystone-admin
