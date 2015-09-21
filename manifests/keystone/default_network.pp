@@ -9,11 +9,16 @@
 ##
 
 define rjil::keystone::default_network (
-  $network_name = "${name}_default_net",
-  $subnet_name  = "${name}_default_subnet",
-  $cidr         = '192.168.0.0/24',
-  $tenant       = $name,
+  $network_name      = "${name}_default_net",
+  $subnet_name       = "${name}_default_subnet",
+  $cidr              = '192.168.0.0/24',
+  $tenant            = $name,
+  $configure_neutron = true,
 ) {
+
+  if $configure_neutron {
+    include rjil::openstack_config::neutron
+  }
 
   neutron_network {$network_name:
     ensure      => present,
