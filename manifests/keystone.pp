@@ -19,7 +19,7 @@ class rjil::keystone(
   $disable_db_sync        = false,
   $rewrites               = undef,
   $headers                = undef,
-  $service_supervisor     = false,
+  $service_manager        = undef,
 ) {
 
   if $public_address == '0.0.0.0' {
@@ -47,11 +47,16 @@ class rjil::keystone(
   # TODO: This need disabling service for keystone (bodepd have a patch to add a
   # service provider for noop integrating which will be helpful)
   ##
-  if $service_supervisor {
+  if $service_manager == 'runit' {
     rjil::runit::service {'keystone':
       command => '/usr/bin/keystone-all',
       user    => 'keystone',
       enable_log => false,  # no need to log from runit as keystone already log all under /var/log/keystone/keystone-all.log
+    }
+
+    # use runit provider for keystone service
+    Service<| title == 'keystone' |> {
+      provider => 'runit',
     }
   }
 

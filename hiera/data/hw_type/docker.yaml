@@ -1,2 +1,2 @@
 # Service supervisor is required in docker containers for services which use upstart, as upstart doesnt work in docker containers.
-rjil::keystone::service_supervisor: true
+rjil::keystone::service_manager: runit
