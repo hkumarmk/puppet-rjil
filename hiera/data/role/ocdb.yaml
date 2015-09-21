@@ -11,12 +11,16 @@ rjil::docker::containers:
   db:
     expose: [3306]
     consul_service_names: mysql
-    consul_check_script: "/usr/lib/nagios/plugins/check_mysql -H $SERVICE_IP -u %{hiera('rjil::db::monitor_user')} -p %{hiera('rjil::db::monitor_password')}"
+    consul_check_scripts: "/usr/lib/nagios/plugins/check_mysql -H $SERVICE_IP -u %{hiera('rjil::db::monitor_user')} -p %{hiera('rjil::db::monitor_password')}"
   memcached:
     expose: [11211]
-    consul_check_script: 'echo stats | nc $SERVICE_IP $SERVICE_PORT | grep -q uptime'
+    consul_check_scripts: 'echo stats | nc $SERVICE_IP $SERVICE_PORT | grep -q uptime'
   keystone:
     expose: [5000,35357]
     consul_service_names:
       5000: keystone
       35357: keystone-admin
+    consul_check_scripts:
+      5000: /usr/lib/jiocloud/tests/service_checks/keystone.sh
+      35357: /usr/lib/jiocloud/tests/service_checks/keystone-admin.sh
+    consul_service_tags: real

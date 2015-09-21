@@ -43,6 +43,13 @@ class rjil::docker (
   }
 
   ##
+  # Create containers log directory
+  ##
+  file {'/var/log/containers':
+    ensure => 'directory',
+  }
+
+  ##
   # First to start registrator and then other containers
   ##
   Docker::Run<| title == 'registrator' |> -> Rjil::Docker::Container<| |>
