@@ -28,6 +28,12 @@ class rjil::keystone(
     $address = $userapi_address
   }
 
+
+  ##
+  # Create validation check for keystone
+  ##
+  include rjil::test::keystone
+
   Rjil::Test::Check {
     ssl     => $ssl,
     address => $address,
@@ -44,8 +50,6 @@ class rjil::keystone(
   ##
   # runit can be used to supervise services. This is useful especially for
   # containers when you run multiple processes.
-  # TODO: This need disabling service for keystone (bodepd have a patch to add a
-  # service provider for noop integrating which will be helpful)
   ##
   if $service_manager == 'runit' {
     rjil::runit::service {'keystone':
