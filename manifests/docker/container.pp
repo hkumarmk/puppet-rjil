@@ -35,7 +35,8 @@ define rjil::docker::container (
 
   $env_orig = union(union($env, $env_service_names), ["container_name=${name}", "SERVICE_TAGS='${consul_service_tags}'",
         "SERVICE_CHECK_SCRIPT='${consul_check_script}'", "_CHECK_INTERVAL=${consul_check_interval}",
-        "SERVICE_CHECK_TTL=${consul_check_ttl}", "consul_discovery_token=${::consul_discovery_token}"])
+        "SERVICE_CHECK_TTL=${consul_check_ttl}", "consul_discovery_token=${::consul_discovery_token}"
+        "env=$::{env}"])
 
   ##
   # either image_full_name or image_name, registry, and image_version must be
