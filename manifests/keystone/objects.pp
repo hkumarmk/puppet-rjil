@@ -8,6 +8,15 @@ class rjil::keystone::objects (
   $roles                   = undef,
 ) {
 
+  ##
+  # With the current work on containeraizing openstack components, neutron will
+  # not be available, so just disabling creating default networks to avoid
+  # errors, this will be reverted once neutron get configured
+  ##
+  Rjil::Keystone::Tenant<||> {
+    create_network => false
+  }
+
   ensure_resource( 'rjil::service_blocker', 'keystone-admin', {})
   ensure_resource( 'rjil::service_blocker', 'keystone', {})
 
