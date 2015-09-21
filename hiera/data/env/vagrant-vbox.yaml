@@ -1,3 +1,7 @@
+rjil::docker::container_common_volumes:
+  - '/etc/puppet/modules:/etc/puppet/modules.overrides'
+  - '/etc/puppet/hiera:/etc/puppet/hiera.overrides'
+
 public_address: "%{ipaddress_192_168_100_0_24}"
 public_interface: "%{interface_192_168_100_0_24}"
 private_address: "%{ipaddress_192_168_100_0_24}"

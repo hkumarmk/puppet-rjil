@@ -15,12 +15,23 @@ define rjil::docker::container (
   $expose                = [],
   $ports                 = [],
   $volumes               = [],
+  $common_volumes        = [],
   $consul_check_script   = undef,
   $consul_check_ttl      = undef,
   $consul_check_interval = '10s',
   $consul_service_names  = $name,
   $consul_service_tags   = undef,
 ) {
+
+  ##
+  # merge common volumes and volumes - common volumes is the volumes which will
+  # be attached to all containers in the docker host - this is helpful for dev
+  # environment to share the development folder between docker host and
+  # container so changing the data in docker host will cause the change added on
+  # all containers in the docker host. Combining with vagrant it is going to be
+  # very helpful.
+  ##
+  $all_volumes = union($common_volumes,$volumes)
 
   ##
   # if consul_service_names is a hash, then create multiple environment
@@ -35,8 +46,8 @@ define rjil::docker::container (
 
   $env_orig = union(union($env, $env_service_names), ["container_name=${name}", "SERVICE_TAGS='${consul_service_tags}'",
         "SERVICE_CHECK_SCRIPT='${consul_check_script}'", "_CHECK_INTERVAL=${consul_check_interval}",
-        "SERVICE_CHECK_TTL=${consul_check_ttl}", "consul_discovery_token=${::consul_discovery_token}"
-        "env=$::{env}"])
+        "SERVICE_CHECK_TTL=${consul_check_ttl}", "consul_discovery_token=${::consul_discovery_token}",
+        "env=${::env}"])
 
   ##
   # either image_full_name or image_name, registry, and image_version must be
@@ -76,7 +87,7 @@ define rjil::docker::container (
     detach        => $detach,
     expose        => $expose_orig,
     ports         => $ports_orig,
-    volumes       => $volumes,
+    volumes       => $all_volumes,
   }
 
 }
