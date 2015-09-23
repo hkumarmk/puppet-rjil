@@ -99,12 +99,12 @@ apt-get clean
 ##
 # create runit run script for maintain.sh (which run validation and puppet run)
 ##
-mkdir -p /etc/sv/maintain/log /var/log/maintain
-echo -e '#!/bin/bash\n/maintain.sh' > /etc/sv/maintain/run
-echo -e '#!/bin/bash\nexec svlogd -tt /var/log/maintain' > /etc/sv/maintain/log/run
-chmod +x /etc/sv/maintain/run /etc/sv/maintain/log/run
-ln -s /etc/sv/maintain /etc/service/
-
+cat <<MAINTAIN_RUN | puppet apply --config_version='echo settings'
+rjil::runit::service {'maintain':
+  command => '/maintain.sh',
+  enable_log => true,
+}
+MAINTAIN_RUN
 
 date
 BUILD
