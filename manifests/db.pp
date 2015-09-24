@@ -22,6 +22,11 @@ class rjil::db (
 
   rjil::test { 'mysql.sh': }
 
+  file {'/var/log/mysql':
+    ensure => 'directory',
+    owner  => 'mysql',
+  }
+
   ## Call db_def to create databases, users and grants
   create_resources('rjil::db::instance', $dbs)
   ## setup mysql server
