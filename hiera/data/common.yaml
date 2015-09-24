@@ -58,6 +58,8 @@ rjil::keystone::disable_db_sync: true
 rjil::jiocloud::dns::entries:
   kdb.jiocloud.com:
     cname: kdb.service.consul
+  kcache.jiocloud.com:
+    cname: kcache.service.consul
   identity.jiocloud.com:
     cname: keystone.service.consul
   volume.jiocloud.com:
@@ -113,6 +115,7 @@ public_network_name: public
 ########### auth for test user
 ##################################
 keystone_db_host: kdb.jiocloud.com
+keystone_memcached_host: kcache.jiocloud.com
 rjil::keystone::objects::users:
   "%{hiera('test_user_name')}":
     password: "%{hiera('test_user_password')}"
@@ -501,7 +504,7 @@ keystone::public_endpoint: "%{hiera('api_protocol')}://%{hiera('keystone_public_
 # these changes are just from our fork and need to be moved to the profile
 rjil::keystone::cache_enabled: true
 rjil::keystone::cache_backend: dogpile.cache.memcached
-rjil::keystone::cache_backend_argument: url:127.0.0.1:11211
+rjil::keystone::cache_backend_argument: "url:%{hiera('keystone_memcached_host')}:11211"
 
 rjil::openstack_objects::identity_address: "%{hiera('keystone_public_address')}"
 
