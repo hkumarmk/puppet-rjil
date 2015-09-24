@@ -6,6 +6,12 @@ resources:
     networks: default
     boot_volume: default_volume
     assign_floating_ip: true
+  kdb:
+    number: 1
+    flavor: small
+    image: trusty
+    networks: default
+    boot_volume: default_volume
   haproxy:
     number: 1
     flavor: medium

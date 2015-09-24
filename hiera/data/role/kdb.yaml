@@ -1,0 +1,11 @@
+rjil::db::dbs:
+  keystone:
+    user: "%{hiera('keystone_db_user')}"
+    pass: "%{hiera('keystone_db_password')}"
+
+rjil::docker::containers:
+  kdb:
+    expose: [3306]
+    image_name: db
+    consul_service_names: kdb
+    consul_check_scripts: "/usr/lib/nagios/plugins/check_mysql -H %{hiera('rjil::db::bind_address')} -u %{hiera('rjil::db::monitor_user')} -p %{hiera('rjil::db::monitor_password')}"
