@@ -17,8 +17,12 @@ class rjil::keystone::objects (
     create_network => false
   }
 
+
   ensure_resource( 'rjil::service_blocker', 'keystone-admin', {})
   ensure_resource( 'rjil::service_blocker', 'keystone', {})
+
+  Service['httpd'] -> Rjil::Service_blocker['keystone-admin']
+  Service['httpd'] -> Rjil::Service_blocker['keystone']
 
   Rjil::Service_blocker['keystone-admin'] ->
   Rjil::Service_blocker['keystone'] ->
