@@ -12,12 +12,13 @@ cat <<EOF > Dockerfile
 FROM ${base_image}
 MAINTAINER ${maintainer:-'Jiocloud'}
 COPY site.pp build.sh /
-RUN bash /build.sh
-
 # Set the locale
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
+
+RUN bash /build.sh
+
 
 ENTRYPOINT ["/usr/bin/runsvdir"]
 CMD ["-P", "/etc/service"]
