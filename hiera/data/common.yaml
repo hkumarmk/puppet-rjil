@@ -21,7 +21,6 @@ private_interface: "%{interface_10_0_0_0_16}"
 ###################################
 ########  Database config #########
 ###################################
-
 rjil::db::bind_address: "%{hiera('private_address')}"
 rjil::db::monitor_user: monitor
 rjil::db::monitor_password: 'P@ssw0rd'
@@ -56,8 +55,9 @@ rjil::keystone::disable_db_sync: true
 # in the certificate.
 ##
 
-
 rjil::jiocloud::dns::entries:
+  kdb.jiocloud.com:
+    cname: kdb.service.consul
   identity.jiocloud.com:
     cname: keystone.service.consul
   volume.jiocloud.com:
@@ -112,7 +112,7 @@ public_network_name: public
 
 ########### auth for test user
 ##################################
-
+keystone_db_host: kdb.jiocloud.com
 rjil::keystone::objects::users:
   "%{hiera('test_user_name')}":
     password: "%{hiera('test_user_password')}"
@@ -481,7 +481,7 @@ rjil::keystone::headers:
 keystone::roles::admin::email: "%{hiera('admin_email')}"
 keystone::roles::admin::password: "%{hiera('admin_password')}"
 keystone::admin_password: "%{hiera('admin_password')}"
-keystone::database_connection: "mysql://keystone:%{hiera('keystone_db_password')}@%{hiera('db_host')}/keystone"
+keystone::database_connection: "mysql://keystone:%{hiera('keystone_db_password')}@%{hiera('keystone_db_host')}/keystone"
 keystone::debug: "%{hiera('debug')}"
 keystone::verbose: "%{hiera('verbose')}"
 keystone::admin_port: "%{hiera('keystone_admin_localbind_port')}"
