@@ -20,8 +20,7 @@ define rjil::runit::service (
 
   include rjil::runit
 
-  $sv_dirs = ['/etc/sv', '/etc/service', "/etc/sv/${service_name}"]
-  file {$sv_dirs:
+  file {"/etc/sv/${service_name}":
     ensure  => 'directory',
     require => Package['runit'],
   }

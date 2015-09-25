@@ -8,4 +8,11 @@ class rjil::runit {
     ensure => installed,
   }
 
+  $sv_dirs = ['/etc/sv', '/etc/service']
+
+  file {$sv_dirs:
+    ensure  => 'directory',
+    require => Package['runit'],
+  }
+
 }
