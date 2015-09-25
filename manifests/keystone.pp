@@ -1,12 +1,26 @@
 #
 # profile for configuring keystone role
 #
+#
+# [*service_manager*]
+#   Service manager, by default it is using system specific service manager, say
+#   for ubuntu it is upstart. But in case of docker container, docker doesnt
+#   support upstart service scripts, so have to use different one, another
+#   supported service manager is 'runit'.
+# [*service_registrator*]
+#   In case of docker container, there is an app called registrator which
+#   register/deregister services to consul (and other service discovery tools)
+#   as the container come up/down. So in case service_registrator is
+#   true, no need to do define consul services using
+#   rjil::jiocloud::consul::service. Default is false.
+#
+
 class rjil::keystone(
   $admin_email            = 'root@localhost',
-  $userapi_address         = '0.0.0.0',
+  $userapi_address        = '0.0.0.0',
   $server_name            = 'localhost',
-  $userapi_port            = '443',
-  $userapi_port_internal   = '5000',
+  $userapi_port           = '443',
+  $userapi_port_internal  = '5000',
   $admin_port             = '35357',
   $admin_port_internal    = '35357',
   $ssl                    = false,
@@ -20,6 +34,7 @@ class rjil::keystone(
   $rewrites               = undef,
   $headers                = undef,
   $service_manager        = undef,
+  $service_registrator    = false,
 ) {
 
   if $userapi_address == '0.0.0.0' {
@@ -45,6 +60,24 @@ class rjil::keystone(
 
   rjil::test::check { 'keystone-admin':
     port => $admin_port,
+  }
+
+  ##
+  # In case of running keystone in container, there is one app called registrator
+  # which can be used to automatically register/deregister the consul services
+  # automatically as and when the container up/down. in which case no need to
+  # use rjil::jiocloud::consul::service to register the service.
+  ##
+  if ! $service_registrator {
+    rjil::jiocloud::consul::service { "keystone":
+      tags          => ['real'],
+      port          => 5000,
+    }
+
+    rjil::jiocloud::consul::service { "keystone-admin":
+      tags          => ['real'],
+      port          => 35357,
+    }
   }
 
   ##
