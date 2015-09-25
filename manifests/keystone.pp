@@ -35,6 +35,7 @@ class rjil::keystone(
   $headers                = undef,
   $service_manager        = undef,
   $service_registrator    = false,
+  $db_hostname            = undef,
 ) {
 
   if $userapi_address == '0.0.0.0' {
@@ -99,7 +100,14 @@ class rjil::keystone(
 
   # ensure that we don't even try to configure the
   # database connection until the service is up
-  ensure_resource( 'rjil::service_blocker', 'mysql', {})
+
+  if $db_hostname {
+    $db_sb_params = { service_hostname => $db_hostname }
+  } else {
+    $db_sb_params = {}
+  }
+
+  ensure_resource( 'rjil::service_blocker', 'mysql', $db_sb_params)
   Rjil::Service_blocker['mysql'] -> Keystone_config['database/connection']
 
   if $disable_db_sync {
