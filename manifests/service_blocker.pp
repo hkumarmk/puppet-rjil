@@ -12,12 +12,11 @@
 # the service is resolvable to consul)
 #
 define rjil::service_blocker(
-  $tries      = 30,
-  $try_sleep  = 20,
-  $datacenter = $::consul_discovery_token,
+  $tries            = 30,
+  $try_sleep        = 20,
+  $service_hostname = "${name}.service.${datacenter}.consul",
+  $datacenter       = $::consul_discovery_token,
 ) {
-
-  $service_hostname = "${name}.service.${datacenter}.consul"
 
   dns_blocker { $service_hostname:
     try_sleep => $try_sleep,
