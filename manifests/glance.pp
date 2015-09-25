@@ -1,4 +1,17 @@
 ## Class: rjil::openstack::glance
+#
+# [*service_manager*]
+#   Service manager, by default it is using system specific service manager, say
+#   for ubuntu it is upstart. But in case of docker container, docker doesnt
+#   support upstart service scripts, so have to use different one, another
+#   supported service manager is 'runit'.
+# [*service_registrator*]
+#   In case of docker container, there is an app called registrator which
+#   register/deregister services to consul (and other service discovery tools)
+#   as the container come up/down. So in case service_registrator is
+#   true, no need to do define consul services using
+#   rjil::jiocloud::consul::service. Default is false.
+#
 class rjil::glance (
   $ceph_mon_key                   = undef,
   $backend                        = 'file',
@@ -7,7 +20,6 @@ class rjil::glance (
   $ceph_keyring_path              = '/etc/ceph/keyring.ceph.client.glance',
   $ceph_keyring_cap               = 'mon "allow r" osd "allow class-read object_prefix rbd_children, allow rwx pool=images"',
   $admin_email                    = 'root@localhost',
-
   $server_name                    = 'localhost',
   $api_localbind_host             = '127.0.0.1',
   $api_localbind_port             = '19292',
@@ -19,8 +31,48 @@ class rjil::glance (
   $ssl                            = false,
   $rewrites                       = undef,
   $headers                        = undef,
-  $allow_upload_img_admin_only    = true
+  $allow_upload_img_admin_only    = true,
+  $service_manager                = undef,
+  $service_registrator            = false,
+  $db_hostname                    = undef,
 ) {
+
+  ##
+  # make sure log directory exist - this would be required in case of container
+  # and the log volume is mounted from docker host.
+  ##
+
+  file {'/var/log/glance':
+    ensure => 'directory',
+    owner  => 'glance',
+  }
+
+  ##
+  # runit can be used to supervise services. This is useful especially for
+  # containers when you run multiple processes.
+  ##
+  if $service_manager == 'runit' {
+    rjil::runit::service {'glance-api':
+      command    => '/usr/bin/glance-api',
+      enable_log => false,
+      user       => 'glance',
+    }
+
+    rjil::runit::service {'glance-registry':
+      command    => '/usr/bin/glance-registry',
+      enable_log => false,
+      user       => 'glance',
+    }
+    # use runit provider for services
+    Service<| title == 'glance-api' |> {
+      provider => 'runit',
+    }
+
+    Service<| title == 'glance-registry' |> {
+      provider => 'runit',
+    }
+  }
+
 
   ## Add tests for glance api and registry
   class {'rjil::test::glance':
@@ -29,7 +81,15 @@ class rjil::glance (
 
   # ensure that we don't even try to configure the
   # database connection until the service is up
-  ensure_resource( 'rjil::service_blocker', 'mysql', {})
+
+  if $db_hostname {
+    $db_sb_params = { service_hostname => $db_hostname }
+  } else {
+    $db_sb_params = {}
+  }
+
+  ensure_resource( 'rjil::service_blocker', 'mysql', $db_sb_params)
+
   Rjil::Service_blocker['mysql'] -> Glance_api_config<| title == 'database/connection' |>
   Rjil::Service_blocker['mysql'] -> Glance_registry_config<| title == 'database/connection' |>
 
@@ -130,14 +190,23 @@ class rjil::glance (
     port    => $registry_localbind_port,
   }
 
-  rjil::jiocloud::consul::service { "glance":
-    tags          => ['real'],
-    port          => $::glance::api::bind_port,
-  }
 
-  rjil::jiocloud::consul::service { 'glance-registry':
-    tags          => ['real'],
-    port          => $::glance::registry::bind_port,
+  ##
+  # In case of running glance in container, there is one app called registrator
+  # which can be used to automatically register/deregister the consul services
+  # automatically as and when the container up/down. in which case no need to
+  # use rjil::jiocloud::consul::service to register the service.
+  ##
+  if ! $service_registrator {
+    rjil::jiocloud::consul::service { "glance":
+      tags          => ['real'],
+      port          => $::glance::api::bind_port,
+    }
+
+    rjil::jiocloud::consul::service { 'glance-registry':
+      tags          => ['real'],
+      port          => $::glance::registry::bind_port,
+    }
   }
 
   file { "/etc/glance/policy.json":

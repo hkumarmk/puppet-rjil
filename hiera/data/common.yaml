@@ -60,8 +60,10 @@ rjil::jiocloud::dns::entries:
     cname: kdb.service.consul
   kcache.jiocloud.com:
     cname: kcache.service.consul
+  gdb.jiocloud.com:
+    cname: gdb.service.consul
   identity.jiocloud.com:
-    cname: keystone.service.consul
+    cname: real.keystone.service.consul
   volume.jiocloud.com:
     cname: lb.cinder.service.consul
   network.jiocloud.com:
@@ -69,7 +71,7 @@ rjil::jiocloud::dns::entries:
   compute.jiocloud.com:
     cname: lb.nova.service.consul
   image.jiocloud.com:
-    cname: lb.glance.service.consul
+    cname: real.glance.service.consul
   object.jiocloud.com:
     cname: lb.radosgw.service.consul
   ironic.jiocloud.com:
@@ -178,6 +180,8 @@ rjil::rabbitmq::rabbit_admin_pass: "%{hiera('rabbit_admin_pass')}"
 ########### glance config
 ###################################
 
+glance_db_host: gdb.jiocloud.com
+
 rjil::glance::ssl: true
 
 ## rjil::glance::backend: Allowed values - rbd, file, swift, cinder
@@ -225,7 +229,7 @@ glance::api::auth_host: "%{hiera('keystone_public_address')}"
 glance::api::auth_protocol: "%{hiera('rjil::keystone::protocol')}"
 glance::api::auth_uri: "%{hiera('rjil::keystone::protocol')}://%{hiera('glance::api::auth_host')}:%{hiera('keystone_port')}/%{hiera('rjil::keystone::version')}"
 glance::api::keystone_password: "%{hiera('glance::keystone::auth::password')}"
-glance::api::database_connection: "mysql://%{hiera('glance_db_user')}:%{hiera('glance_db_password')}@%{hiera('db_host')}/glance"
+glance::api::database_connection: "mysql://%{hiera('glance_db_user')}:%{hiera('glance_db_password')}@%{hiera('glance_db_host')}/glance"
 glance::api::mysql_module: 2.3
 
 glance::registry::debug: "%{hiera('debug')}"
