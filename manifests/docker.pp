@@ -30,16 +30,28 @@ class rjil::docker (
   ##
   include ::docker
 
-  ##
-  # registrator should be running on all nodes which handles
-  # registoring/deregistoring the services per node
-  ##
-  ::docker::run {'registrator':
-    image   => 'gliderlabs/registrator:latest',
-    restart => 'always',
-    command => '-internal consul://localhost:8500',
-    volumes => ['/var/run/docker.sock:/tmp/docker.sock'],
-    net     => 'host',
+  if ! empty($containers) {
+    ##
+    # registrator should be running on all nodes which handles
+    # registoring/deregistoring the services per node. At least one docker
+    # container should be running before registrator run fine (may be a bug
+    # in registrator, will need to check).
+    ##
+    ::docker::run {'registrator':
+      image   => 'gliderlabs/registrator:latest',
+      restart => 'always',
+      command => '-internal consul://localhost:8500',
+      volumes => ['/var/run/docker.sock:/tmp/docker.sock'],
+      net     => 'host',
+    }
+
+    ##
+    # First to start other containers and then start registrator
+    ##
+    Rjil::Docker::Container<| |> ->  Docker::Run<| title == 'registrator' |>
+
+    #create_resources('::docker::image',$images,{image_tag => $version})
+    create_resources('rjil::docker::container', $containers, {common_volumes => $container_common_volumes, registry => $registry_url})
   }
 
   ##
@@ -48,13 +60,5 @@ class rjil::docker (
   file {'/var/log/containers':
     ensure => 'directory',
   }
-
-  ##
-  # First to start registrator and then other containers
-  ##
-  Docker::Run<| title == 'registrator' |> -> Rjil::Docker::Container<| |>
-
-  #create_resources('::docker::image',$images,{image_tag => $version})
-  create_resources('rjil::docker::container', $containers, {common_volumes => $container_common_volumes, registry => $registry_url})
 
 }
