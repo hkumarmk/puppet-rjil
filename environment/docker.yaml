@@ -1,0 +1,94 @@
+resources:
+  build:
+    number: 1
+    flavor: small
+    image: trusty
+    networks: default
+    boot_volume: default_volume
+    assign_floating_ip: true
+  bootstrap:
+    number: 1
+    flavor: small
+    image: trusty
+    networks: default
+    boot_volume: default_volume
+    assign_floating_ip: true
+  kdb:
+    number: 1
+    flavor: small
+    image: trusty
+    networks: default
+    boot_volume: default_volume
+  keystone:
+    number: 1
+    flavor: small
+    image: trusty
+    networks: default
+    boot_volume: default_volume
+  gdb:
+    number: 1
+    flavor: small
+    image: trusty
+    networks: default
+    boot_volume: default_volume
+  glance:
+    number: 1
+    flavor: small
+    image: trusty
+    networks: default
+    boot_volume: default_volume
+#  haproxy:
+#    number: 1
+#    flavor: medium
+#    image: trusty
+#    networks: default
+#    boot_volume: default_volume
+#  oc:
+#    number: 1
+#    flavor: large
+#    image: trusty
+#    networks: default
+#    boot_volume: default_volume
+#  ocdb:
+#    number: 1
+#    flavor: large
+#    image: trusty
+#    networks: default
+#    boot_volume: default_volume
+#    assign_floating_ip: true
+#  ct:
+#    number: 1
+#    flavor: large
+#    image: trusty
+#    networks: default
+#    boot_volume: default_volume
+#  stmonleader:
+#    number: 1
+#    flavor: storage
+#    image: trusty
+#    networks: default
+#    boot_volume: default_volume
+#  stmon:
+#    number: 2
+#    flavor: storage
+#    image: trusty
+#    networks: default
+#    boot_volume: default_volume
+#  st:
+#    number: 1
+#    flavor: storage
+#    image: trusty
+#    networks: default
+#    boot_volume: default_volume
+#  cp:
+#    number: 2
+#    flavor: large
+#    image: trusty
+#    networks: default
+#    boot_volume: default_volume
+#  gcp:
+#    number: 1
+#    flavor: large
+#    image: trusty
+#    networks: default
+#    boot_volume: default_volume
