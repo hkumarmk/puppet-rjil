@@ -37,21 +37,26 @@ class rjil::ironic(
     ensure => 'directory',
     owner  => 'ironic',
     group  => 'ironic',
+    mode   => '0755',
   } ->
   file { '/tftpboot/pxelinux.cfg':
     ensure => 'directory',
     owner  => 'ironic',
     group  => 'ironic',
+    mode   => '0755',
   } ->
   file { '/tftpboot/pxelinux.0':
+    ensure  => 'file',
     owner   => 'ironic',
     group   => 'ironic',
+    mode    => '0644',
     source  => '/usr/lib/syslinux/pxelinux.0',
-    require => Package['syslinux']
+    require => Package['syslinux'],
   } ->
   file { '/tftpboot/map-file':
     owner  => 'ironic',
     group  => 'ironic',
+    mode   => '0644',
     source => 'puppet:///modules/rjil/tftpd.map-file',
   }
 
