@@ -71,16 +71,19 @@ Vagrant.configure("2") do |config|
       config.vm.provision 'shell', :inline =>
       "echo env=#{environment} > /etc/facter/facts.d/env.txt"
 
-      if ENV['env_http_proxy']
+      http_proxy = ENV['env_http_proxy'] || ENV['http_proxy']
+      https_proxy = ENV['env_https_proxy'] || ENV['env_https_proxy']
+
+      if http_proxy
         config.vm.provision 'shell', :inline =>
-        "echo \"Acquire::http { Proxy \\\"#{ENV['env_http_proxy']}\\\" }\" > /etc/apt/apt.conf.d/03proxy"
+        "echo \"Acquire::http { Proxy \\\"#{http_proxy}\\\" }\" > /etc/apt/apt.conf.d/03proxy"
         config.vm.provision 'shell', :inline =>
-        "echo http_proxy=#{ENV['env_http_proxy']} >> /etc/environment"
+        "echo http_proxy=#{http_proxy} >> /etc/environment"
       end
 
-      if ENV['env_https_proxy']
+      if https_proxy
         config.vm.provision 'shell', :inline =>
-        "echo https_proxy=#{ENV['env_https_proxy']} >> /etc/environment"
+        "echo https_proxy=#{https_proxy} >> /etc/environment"
       end
 
       config.vm.provision 'shell', :inline =>
@@ -93,9 +96,9 @@ Vagrant.configure("2") do |config|
       end
 
       # upgrade puppet
-      if ENV['env_http_proxy']
+      if ENV['http_proxy']
         config.vm.provision 'shell', :inline =>
-        "test -e puppet.deb && exit 0; release=$(lsb_release -cs);http_proxy=#{ENV['env_http_proxy']} wget -O puppet.deb http://apt.puppetlabs.com/puppetlabs-release-${release}.deb;dpkg -i puppet.deb;apt-get update;apt-get install -y puppet-common=3.6.2-1puppetlabs1"
+        "test -e puppet.deb && exit 0; release=$(lsb_release -cs);http_proxy=#{http_proxy} wget -O puppet.deb http://apt.puppetlabs.com/puppetlabs-release-${release}.deb;dpkg -i puppet.deb;apt-get update;apt-get install -y puppet-common=3.6.2-1puppetlabs1"
       else
         config.vm.provision 'shell', :inline =>
         "test -e puppet.deb && exit 0; release=$(lsb_release -cs);wget -O puppet.deb http://apt.puppetlabs.com/puppetlabs-release-${release}.deb;dpkg -i puppet.deb;apt-get update;apt-get install -y puppet-common"
