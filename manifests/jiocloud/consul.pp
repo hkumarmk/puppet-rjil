@@ -2,7 +2,8 @@
 #
 class rjil::jiocloud::consul(
   $config_hash,
-  $encrypt = false,
+  $encrypt         = false,
+  $service_manager = undef,
 ) {
   include dnsmasq
 
@@ -16,6 +17,20 @@ class rjil::jiocloud::consul(
   } else {
     $encrypt_hash = {}
   }
+
+  if $service_manager == 'runit' {
+    rjil::runit::service {'consul':
+      command    => '/usr/bin/consul agent -config-dir /etc/consul',
+      user       => 'consul',
+      enable_log => true,
+    }
+ 
+    # use runit provider for consul service
+    Service<| title == 'consul' |> {
+      provider => 'runit',
+    }
+  }
+
 
   $overridden_hash = merge($encrypt_hash, $config_hash)
 

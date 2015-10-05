@@ -23,6 +23,7 @@ class rjil::docker (
   $container_common_volumes = [],
   $registry_url             = undef,
   $enable_registrator       = true,
+  $enable_system_container  = true,
 ) {
 
   ##
@@ -30,7 +31,23 @@ class rjil::docker (
   ##
   include ::docker
 
-  if ! empty($containers) {
+  ##
+  # Setup system container
+  ##
+  if $enable_system_container {
+    $system_container_details = {
+        image_name      => 'system',
+        restart         => 'always',
+        privileged      => true,
+        net             => 'host',
+      }
+
+      $containers_orig = merge($containers, {'system' => $system_container_details} )
+  } else {
+    $containers_orig = $containers
+  }
+
+  if ! empty($containers_orig) {
     ##
     # registrator should be running on all nodes which handles
     # registoring/deregistoring the services per node. At least one docker
@@ -51,7 +68,7 @@ class rjil::docker (
     Rjil::Docker::Container<| |> ->  Docker::Run<| title == 'registrator' |>
 
     #create_resources('::docker::image',$images,{image_tag => $version})
-    create_resources('rjil::docker::container', $containers, {common_volumes => $container_common_volumes, registry => $registry_url})
+    create_resources('rjil::docker::container', $containers_orig, {common_volumes => $container_common_volumes, registry => $registry_url})
   }
 
   ##

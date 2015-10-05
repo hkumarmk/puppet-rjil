@@ -8,7 +8,7 @@ class rjil::base (
   include rjil::system
   include logrotate::base
   include rjil::jiocloud::dns
-  include rjil::default_manifest
+  include rjil::puppet_config
   include rjil::system::sensitive_services
   ##
   # In case of self signed certificate mostly all of the servers need to trust

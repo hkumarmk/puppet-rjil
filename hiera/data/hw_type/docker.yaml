@@ -9,3 +9,5 @@ rjil::glance::db_hostname: "%{hiera('glance_db_host')}"
 
 # for now ceph is not available, so making file backend to get glance worked
 rjil::glance::backend: file
+
+rjil::jiocloud::consul::service_manager: runit

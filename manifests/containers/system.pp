@@ -1,13 +1,12 @@
 #
-# Class rjil::system_container
+# Class rjil::containers::system
 #
-class rjil::system_container (
+class rjil::containers::system (
   $check_address_facts = true,
 ) {
   include rjil::jiocloud
-  #include rjil::system
+  include rjil::system
   include rjil::jiocloud::dns
-  include rjil::default_manifest
 
   ##
   # New kind of ipaddress and interface facts (ipaddress and interface based on

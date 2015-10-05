@@ -23,6 +23,7 @@ define rjil::docker::container (
   $consul_check_intervals = '10s',
   $consul_service_names   = $name,
   $consul_service_tags    = undef,
+  $privileged             = false,
 ) {
 
   ##
@@ -140,6 +141,7 @@ define rjil::docker::container (
     expose        => $expose_orig,
     ports         => $ports_orig,
     volumes       => $all_volumes,
+    privileged    => $privileged,
   }
 
 }

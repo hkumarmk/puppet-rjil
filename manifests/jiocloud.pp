@@ -38,52 +38,13 @@ class rjil::jiocloud (
       before        => Service['consul'],
     }
   }
+
   include "rjil::jiocloud::consul::${consul_role}"
 
   include rjil::jiocloud::consul::base_checks
 
-  package { 'run-one':
-    ensure => present,
-  }
+  include rjil::puppet_config
 
-  file { '/usr/local/bin/jiocloud-update.sh':
-    source => 'puppet:///modules/rjil/update.sh',
-    mode => '0755',
-    owner => 'root',
-    group => 'root'
-  }
-
-  file { '/usr/local/bin/maybe-upgrade.sh':
-    source => 'puppet:///modules/rjil/maybe-upgrade.sh',
-    mode   => '0755',
-    owner  => 'root',
-    group  => 'root'
-  }
-  cron { 'maybe-upgrade':
-    command => 'run-one /usr/local/bin/maybe-upgrade.sh 2>&1 | logger',
-    user    => 'root',
-    require => Package['run-one'],
-  }
-
-  ini_setting { 'templatedir':
-    ensure  => absent,
-    path    => "/etc/puppet/puppet.conf",
-    section => 'main',
-    setting => 'templatedir',
-  }
-
-  ini_setting { 'modulepath':
-    ensure  => absent,
-    path    => "/etc/puppet/puppet.conf",
-    section => 'main',
-    setting => 'modulepath',
-  }
-
-  ini_setting { 'manifestdir':
-    ensure  => absent,
-    path    => "/etc/puppet/puppet.conf",
-    section => 'main',
-    setting => 'manifestdir',
-  }
+  include rjil::puppet_run
 
 }

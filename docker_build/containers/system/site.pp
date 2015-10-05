@@ -4,4 +4,4 @@ Package<||> { tag => 'package' }
 Apt::Source<||> { tag => 'package' }
 
 
-include rjil::system_container
+include rjil::containers::system

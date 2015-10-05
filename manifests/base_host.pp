@@ -6,8 +6,8 @@ class rjil::base_host () {
   include rjil::system::apt
   include rjil::system::accounts
   include logrotate::base
-  include rjil::default_manifest
-#  include rjil::system::sensitive_services
+  include rjil::puppet_config
+  include rjil::puppet_run
 
 
   package {'docker-engine':
