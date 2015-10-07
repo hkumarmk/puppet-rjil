@@ -592,42 +592,74 @@ rustedhalo_apt_repo_release: 'trusty'
 
 rjil::system::apt::enable_puppetlabs: true
 rjil::system::apt::repositories:
-  rustedhalo:
-    location: 'http://jiocloud.rustedhalo.com/ubuntu/'
-    release: "%{hiera('rustedhalo_apt_repo_release')}"
+  aasemble:
+    location: 'http://apt.overcastcloud.com/JioCloud/JioCloud/'
+    release: 'overcast'
     repos: 'main'
     include_src: false
-    key: '85596F7A'
+    key: '62F750FB8FD735B6'
     key_content: |
       -----BEGIN PGP PUBLIC KEY BLOCK-----
       Version: GnuPG v1
 
-      mQENBFM0FdsBCADbcuhgf4ny6HQXSCrskXK3hp8HUA4UbW9xIO/fqUzKTvxRuwUR
-      yRZHXVdCCaLOD8En+h4fnAs2PY3ueVfcIDt9DsJcmqWE+cbFG191Yw8hQV/MtxXU
-      YNAS6oKOwMheC3BtxdbplJ4hbg065m38wPmcgt/rJiAQZBxrKggCHTvIQunvJnmG
-      /7OMuwhkzewEAaG5E1mmdVq+IMJAg0ltMiRANASo07wrB0At4q62ozBomua6Hk3s
-      69ie5ZGiQtyIOgB1mO4RwxS0MoMd+ffq6Kyc8GPoM9EFj4zYGIyOZBa4YqI9cs9A
-      88E5910lHNx8p2wZCsN+Z00IDN3c6nGmHrzNABEBAAG0Kkppb0Nsb3VkIFJlcG9z
-      aXRvcnkgPHN1cHBvcnRAamlvY2xvdWQuY29tPokBOAQTAQIAIgUCUzQV2wIbAwYL
-      CQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQhgQCvoVZb3oKVwf+Pr3hBs1h5oOk
-      VFHwQ/whCcnLjdY1so9wVeZ0TsZVRTrepyKB4Bi+yy4xtYZ572JLbORqRIfdOTgE
-      06cagaoi2Mc1e5sW/l0ifOvfjlrxIECMX4ftL2igZ7Cu4GB8+WmuDdHpsTdi1Fvx
-      9cn2eHAylHS3oblwoKpdfiHLPkP0Dt5aJFKOyBQfDPhjX4LF0S0aC0Zg43jNIZdf
-      nnC71P2+i5WwvljJV2+DTtp3/ImBMKVKgAISxOtBsA5PC+yP6X4lsUUwEP4amti8
-      jnq2HAjKkpM3UTAWLbHN3x6O2Mg+OIvjYUhrbYeHqQEQurUoPUx2FjZhrXDM/Cxg
-      tnaES5wRqLkBDQRTNBXbAQgAs4OQ1KlirGpiZC4hEvfmrkBKiJUk1sxsRzqqatkv
-      Ul5ay3DWoknYO+C7RIzYTwMQ9lv/QwJA2T+FpYykiu6gg872W5aje9xqg98z9DTM
-      C2lZ79yUMNiMNdKr6Zd05Q6zz0EQVaTMwrYEb+DOW0H8ka7HJA2MJc/ot0Bf2G2A
-      uavopMiikaVX67901qvHKqQMFgFzbe0C16poK057W3iFEnYAYTzJ6sLhCukfMkwk
-      6cIApeCEDz9d1tq5aiYcgXhnhnLnXBR9nUlI5qdfU/6+Nmcgh+izjtQp+U5cKHhl
-      YaiPfbVLQVUg/jbhem0XZuXJ9LdaNoeDdG+7KP7s+N+fIwARAQABiQEfBBgBAgAJ
-      BQJTNBXbAhsMAAoJEIYEAr6FWW96QewH/20zMCYcDgt8AoRJsyhLPLw8Xa8N57YD
-      EJfNUKA/74UrUSiLNktXzOVRLa1vAp5kdd9x6HNg5C0bt8kjvYzTvVChRBGt7NRg
-      SViL4sowyCFpT23JhHRajMmiJPigG+c4gjIJF4DbnpSG8WPC3jDPV891EZCodmaz
-      klc+BnhnZrb4FcB04RdQ/WXgVshDCzVQhmdIEILGKYHMTjlK/HkV6YqH7l7+jRvJ
-      phmH35+GJQumLfXWlvDchtBjUTo5ZDCa7TWhwhXZoFg5nxadQDX4TwHhZBQH1TX5
-      Chk4NnD90SYZt36sTLITe5O/BgYlRMqVo+bVj0tmjMJP/B4PZjABX7A=
-      =iZW7
+      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
+      16+QzFr7AQp9IcNIFsdOH+dS
+      =B/Wl
       -----END PGP PUBLIC KEY BLOCK-----
   ubuntu:
     location: 'http://in.archive.ubuntu.com/ubuntu'
