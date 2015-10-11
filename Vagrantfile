@@ -14,6 +14,8 @@ Vagrant.configure("2") do |config|
   layout = ENV['layout'] || 'full'
   map = ENV['map'] || environment
 
+  vagrant_root = File.dirname(File.expand_path(__FILE__))
+
   config.vm.provider :virtualbox do |vb, override|
     vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
     vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
@@ -46,6 +48,18 @@ Vagrant.configure("2") do |config|
         flavor = info['flavor'] || default_flavor
         vb.memory = map_data['flavor'][flavor]['ram']
         vb.cpus = map_data['flavor'][flavor]['cpu']
+        second_disk = map_data['flavor'][flavor]['disk']
+        if second_disk
+          if ! ENV['extra_disk_location']
+            warn("The extra_disk_location is not specifiied, creating in vagrant directory")
+          end
+          disk_location = ENV['extra_disk_location'] || vagrant_root
+          disk_file =  "#{disk_location}/#{node_name}.vdi"
+          unless File.exist?("#{disk_file}")
+            vb.customize ['createhd', '--filename', "#{disk_file}", '--size', second_disk * 1024]
+          end
+          vb.customize ['storageattach', :id, '--storagectl', 'SATAController', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', "#{disk_file}" ]
+        end
       end
 
       config.vm.synced_folder("hiera/", '/etc/puppet/hiera/')
