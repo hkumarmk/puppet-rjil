@@ -38,7 +38,7 @@ class rjil::docker (
     # in registrator, will need to check).
     ##
     ::docker::run {'registrator':
-      image   => 'gliderlabs/registrator:latest',
+      image   => "${registry_url}/registrator:latest",
       restart => 'always',
       command => '-internal consul://localhost:8500',
       volumes => ['/var/run/docker.sock:/tmp/docker.sock'],
