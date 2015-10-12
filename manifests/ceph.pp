@@ -37,6 +37,10 @@
 #   Default number of replicas for all pools, unless override in any pools.
 #   Default: 3, and it should be 3 or more in production systems.
 #
+# [*enable_ntp*]
+#   Whether to setup ntp or not, ntp will not be setup in case of container
+#
+#
 
 class rjil::ceph (
   $fsid,
@@ -47,7 +51,8 @@ class rjil::ceph (
   $public_network         = undef,
   $public_if              = eth0,
   $osd_journal_type       = 'filesystem',
-  $pool_default_size      = 3
+  $pool_default_size      = 3,
+  $enable_ntp             = true,
 ) {
 
   anchor {'rjil::ceph::start':
@@ -57,9 +62,11 @@ class rjil::ceph (
     require => Class['::ceph::conf']
   }
 
-  include ntp
+  if $enable_ntp {
+    include ntp
 
-  Service[ntp] -> Package[ceph]
+    Service[ntp] -> Package[ceph]
+  }
 
   if $storage_cluster_network {
     $storage_cluster_network_orig = $storage_cluster_network
@@ -90,8 +97,9 @@ class rjil::ceph (
   ## This should go to ::ceph class, will be moved
   ##     if not there in thier master
 
-  file {'/etc/ceph':
+  file {['/etc/ceph', '/var/log/ceph']:
     ensure => directory,
+    before => Class['ceph::conf'],
   }
 
   ## Generage basic ceph configuration

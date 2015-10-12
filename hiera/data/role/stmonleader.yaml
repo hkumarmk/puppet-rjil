@@ -1,1 +1,6 @@
 rjil::ceph::mon::mon_config::leader: true
+rjil::docker::containers:
+  stmonleader:
+    image_name: stmon
+    expose: [6789]
+    consul_service_names: stmon

@@ -9,3 +9,6 @@ rjil::glance::db_hostname: "%{hiera('glance_db_host')}"
 
 # for now ceph is not available, so making file backend to get glance worked
 rjil::glance::backend: file
+
+# no need to setup ntp on ceph containers
+rjil::ceph::enable_ntp: false

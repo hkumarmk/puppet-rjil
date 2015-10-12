@@ -1,0 +1,3 @@
+rjil::docker::containers:
+  stmon:
+    expose: [6789]

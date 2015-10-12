@@ -22,18 +22,25 @@
 #   Number of placement groups per pool, default: 128.
 #   Note: This is a tunable for performance.
 #
+# [*service_registrator*]
+#   In case of docker container, there is an app called registrator which
+#   register/deregister services to consul (and other service discovery tools)
+#   as the container come up/down. So in case service_registrator is
+#   true, no need to do define consul services using
+#   rjil::jiocloud::consul::service. Default is false.
 
 class rjil::ceph::mon (
   $key,
-  $public_if        = 'eth0',
-  $mon_service_name = 'stmon',
-  $pools            = ['volumes','backups','images'],
-  $rgw_index_pools  = ['.rgw.root', '.rgw.control', '.rgw.gc', '.rgw', '.users.uid', '.rgw.buckets.index'],
-  $rgw_data_pools   = ['.rgw.buckets'],
-  $pool_pg_num      = 128,
-  $index_pool_pg_num= 32,
-  $pool_size  = 3,
-  $data_pool_pg_num = 128,
+  $public_if           = 'eth0',
+  $mon_service_name    = 'stmon',
+  $pools               = ['volumes','backups','images'],
+  $rgw_index_pools     = ['.rgw.root', '.rgw.control', '.rgw.gc', '.rgw', '.users.uid', '.rgw.buckets.index'],
+  $rgw_data_pools      = ['.rgw.buckets'],
+  $pool_pg_num         = 128,
+  $index_pool_pg_num   = 32,
+  $pool_size           = 3,
+  $data_pool_pg_num    = 128,
+  $service_registrator = false,
 ) {
 
 
@@ -100,11 +107,14 @@ class rjil::ceph::mon (
   ##
   # Add consul service, use test script as check_command.
   # Note: This script need root access to be executed.
+  # This is not required in case of using service_registrator
   ##
 
-  rjil::jiocloud::consul::service { $mon_service_name:
-    port          => 6789,
-    check_command => '/usr/lib/jiocloud/tests/check_ceph_mon.sh'
+  if ! $service_registrator {
+    rjil::jiocloud::consul::service { $mon_service_name:
+      port          => 6789,
+      check_command => '/usr/lib/jiocloud/tests/check_ceph_mon.sh'
+    }
   }
 
 }
