@@ -21,6 +21,12 @@ for i in `ls ../containers` ; do
       echo "WARNING, consul image is not used at this moment"
 #      ./docker_build.sh consul 8500 10
       ;;
+    st)
+      ./docker_build.sh st
+      ;;
+    stmon)
+      ./docker_build.sh stmon
+      ;;
     *)
       echo "$i not supported at this moment"
   esac
