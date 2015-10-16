@@ -12,3 +12,8 @@ rjil::glance::backend: file
 
 # no need to setup ntp on ceph containers
 rjil::ceph::enable_ntp: false
+
+# This fact is passed to the container as environment variable
+# (FACTER_osd_disks) when the container is created. Usually only one disk will
+# be passed per container.
+rjil::ceph::osd::disks: "%{osd_disks}"

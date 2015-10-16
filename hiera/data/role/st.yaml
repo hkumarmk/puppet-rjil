@@ -1,0 +1,5 @@
+rjil::docker::containers:
+  osd:
+    container_params:
+      image_name: st
+    helper_class: 'rjil::docker::container::ceph_osd'
