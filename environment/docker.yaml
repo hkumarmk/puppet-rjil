@@ -39,22 +39,21 @@ resources:
     boot_volume: default_volume
   stmonleader:
     number: 1
-    flavor: small
+    flavor: storage
     image: trusty
     networks: default
     boot_volume: default_volume
   stmon:
     number: 2
-    flavor: small
+    flavor: storage
     image: trusty
     networks: default
     boot_volume: default_volume
   st:
-    number: 2
-    flavor: small
+    number: 1
+    flavor: storage
     image: trusty
     networks: default
-    disk: 10
     boot_volume: default_volume
 #  haproxy:
 #    number: 1

@@ -7,7 +7,6 @@ flavor:
   small:
     ram: 1024
     cpu: 1
-    disk: 10
   medium:
     ram: 2046
     cpu: 1
@@ -15,5 +14,6 @@ flavor:
     ram: 4096
     cpu: 2
   storage:
-    ram: 4096
-    cpu: 2
+    ram: 1024
+    cpu: 1
+    disk: 10
