@@ -2,7 +2,7 @@ rjil::docker::containers:
   stmon:
     container_params:
       expose: [6789]
-      consul_check_scripts: docker exec stmon /usr/lib/jiocloud/tests/service_checks/check_ceph_mon.sh
+      consul_check_scripts: docker exec stmon /usr/lib/jiocloud/tests/check_ceph_mon.sh
   osd:
     container_params:
       image_name: st
