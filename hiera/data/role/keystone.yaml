@@ -8,11 +8,12 @@ rjil::keystone::disable_db_sync: false
 ##
 rjil::docker::containers:
   keystone:
-    expose: [5000,35357]
-    consul_service_names:
-      5000: keystone
-      35357: keystone-admin
-    consul_check_scripts:
-      5000: /usr/lib/jiocloud/tests/service_checks/keystone.sh
-      35357: /usr/lib/jiocloud/tests/service_checks/keystone-admin.sh
-    consul_service_tags: real
+    container_params:
+      expose: [5000,35357]
+      consul_service_names:
+        5000: keystone
+        35357: keystone-admin
+      consul_check_scripts:
+        5000: /usr/lib/jiocloud/tests/service_checks/keystone.sh
+        35357: /usr/lib/jiocloud/tests/service_checks/keystone-admin.sh
+      consul_service_tags: real

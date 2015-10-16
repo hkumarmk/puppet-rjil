@@ -50,8 +50,12 @@ class rjil::docker (
     ##
     Rjil::Docker::Container<| |> ->  Docker::Run<| title == 'registrator' |>
 
+    $default_params = {
+        common_volumes => $container_common_volumes,
+        registry       => $registry_url,
+      }
     #create_resources('::docker::image',$images,{image_tag => $version})
-    create_resources('rjil::docker::container', $containers, {common_volumes => $container_common_volumes, registry => $registry_url})
+    create_resources('rjil::docker::container_wrapper', $containers, {default_params => $default_params})
   }
 
   ##

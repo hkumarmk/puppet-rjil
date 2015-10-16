@@ -1,10 +1,11 @@
 rjil::docker::containers:
   glance:
-    expose: [9191,9292]
-    consul_service_names:
-      9191: glance-registry
-      9292: glance
-    consul_check_scripts:
-      9191: /usr/lib/jiocloud/tests/service_checks/glance-registry.sh
-      9292: /usr/lib/jiocloud/tests/service_checks/glance.sh
-    consul_service_tags: real
+    container_params:
+      expose: [9191,9292]
+      consul_service_names:
+        9191: glance-registry
+        9292: glance
+      consul_check_scripts:
+        9191: /usr/lib/jiocloud/tests/service_checks/glance-registry.sh
+        9292: /usr/lib/jiocloud/tests/service_checks/glance.sh
+      consul_service_tags: real

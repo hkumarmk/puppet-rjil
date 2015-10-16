@@ -1,6 +1,8 @@
 rjil::ceph::mon::mon_config::leader: true
 rjil::docker::containers:
   stmonleader:
-    image_name: stmon
-    expose: [6789]
-    consul_service_names: stmon
+    container_params:
+      image_name: stmon
+      expose: [6789]
+      consul_service_names: stmon
+      consul_check_scripts: docker exec stmonleader  /usr/lib/jiocloud/tests/service_checks/check_ceph_mon.sh

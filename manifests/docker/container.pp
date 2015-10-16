@@ -8,14 +8,18 @@ define rjil::docker::container (
   $image_full_name        = undef,
   $pull_on_start          = true,
   $restart                = 'always',
-  $env                    = [],
+  $envvars                = [],
+  $extra_envvars          = [],
   $net                    = 'host',
   $tty                    = false,
   $detach                 = true,
   $expose                 = [],
   $ports                  = [],
   $volumes                = [],
+  $devices                = [],
   $common_volumes         = [],
+  $extra_volumes          = [],
+  $privileged             = false,
   $mount_log_volume       = true,
   $mount_service_check_volume  = true,
   $consul_check_scripts   = undef,
@@ -52,6 +56,10 @@ define rjil::docker::container (
   }
 
   ##
+  # In some situations, the volume to be mounted conditionally from puppet code
+  # (from helper_class/helper_type), in which case it is easy if we have a param
+  # for $extra_volumes
+  #
   # merge common volumes and volumes - common volumes is the volumes which will
   # be attached to all containers in the docker host - this is helpful for dev
   # environment to share the development folder between docker host and
@@ -59,7 +67,7 @@ define rjil::docker::container (
   # all containers in the docker host. Combining with vagrant it is going to be
   # very helpful.
   ##
-  $all_common_volumes = concat($common_volumes, $log_volume, $jiocloud_volume)
+  $all_common_volumes = concat($common_volumes, $log_volume, $jiocloud_volume, $extra_volumes)
   $all_volumes = union($all_common_volumes, $volumes)
 
   ##
@@ -98,8 +106,8 @@ define rjil::docker::container (
     $env_consul_service_tags=["SERVICE_TAGS=${consul_service_tags}"]
   }
 
-  $env_1 = concat($env_service_names, $env_consul_check_scripts, $env_consul_check_intervals, $env_consul_check_ttls, $env_consul_service_tags, $env)
-  $env_orig = union($env_1, ["container_name=${name}", "consul_discovery_token=${::consul_discovery_token}", "env=${::env}"])
+  $env_1 = concat($env_service_names, $env_consul_check_scripts, $env_consul_check_intervals, $env_consul_check_ttls, $env_consul_service_tags, $envvars, ["container_name=${name}", "consul_discovery_token=${::consul_discovery_token}", "env=${::env}"])
+  $env_orig = union($env_1, $extra_envvars)
 
   ##
   # either image_full_name or image_name, registry, and image_version must be
@@ -140,6 +148,8 @@ define rjil::docker::container (
     expose        => $expose_orig,
     ports         => $ports_orig,
     volumes       => $all_volumes,
+    devices       => $devices,
+    privileged    => $privileged,
   }
 
 }
