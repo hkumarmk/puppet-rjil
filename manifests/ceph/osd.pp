@@ -49,9 +49,15 @@
 # Note: both autogenerate and autodisk_size is only required while testing in
 # dev machines or Vagrant.
 #
+# [*initialize*]
+#   Initialize the disks by setup the disks like partitioning and formatting
+#the disks
+#
+#
+
 class rjil::ceph::osd (
-  $mon_key,
-  $disks                    = undef,
+  $mon_key                  = undef,
+  $disks                    = $::osd_disks,
   $disk_exceptions          = undef,
   $osd_journal_type         = 'filesystem',
   $osd_journal_size         = 10,
@@ -61,33 +67,11 @@ class rjil::ceph::osd (
   $public_if                = eth0,
   $autogenerate             = false,
   $autodisk_size            = 10,
+  $initialize               = false,
 ) {
 
-  if $storage_cluster_address {
-    $storage_cluster_address_orig = $storage_cluster_address
-  } elsif $storage_cluster_if {
-    $storage_cluster_address_orig = inline_template("<%= scope.lookupvar('ipaddress_' + @storage_cluster_if) %>")
-  }
-
-  if $public_address {
-    $public_address_orig = $public_address
-  } elsif $public_if {
-    $public_address_orig = inline_template("<%= scope.lookupvar('ipaddress_' + @public_if) %>")
-  }
-
-  ##
-  ## Fix for ceph being hang because of memory fragmentation
-  ##
-
-  sysctl::value { 'vm.dirty_background_ratio':
-    value => 5,
-  }
-
-  exec { 'cleanup_caches':
-    command => '/bin/sync && /bin/echo 1 > /proc/sys/vm/drop_caches',
-    onlyif => "awk 'BEGIN {s=0} /DMA32|Normal/ { if \
-                (\$9+\$10+\$11+\$12+\$13+\$14+\$15 < 100) {s=1} } END { \
-                 print s }' /proc/buddyinfo | grep '1'",
+  if (! $initialize) and (! $mon_key) {
+    fail('mon_key need to be specified unless initializing the osd sisks')
   }
 
   ##
@@ -109,20 +93,25 @@ class rjil::ceph::osd (
     }
     $osd_journal_size_orig = $osd_journal_size
     $autodisk_size_4k = $autodisk_size*1000000/4
-    exec { 'make_disk_file':
-      command => "dd if=/dev/zero of=/var/lib/ceph/disk-1 bs=4k \
-                  count=${autodisk_size_4k}",
-      unless  => 'test -e /var/lib/ceph/disk-1',
-      timeout => 600,
-      require => Package['ceph'],
+
+    if $initialize {
+      exec { 'make_disk_file':
+        command => "dd if=/dev/zero of=/var/lib/ceph/disk-1 bs=4k \
+                    count=${autodisk_size_4k}",
+        unless  => 'test -e /var/lib/ceph/disk-1',
+        timeout => 600,
+        require => Package['ceph'],
+      }
+      Exec['attach_loop'] -> ::Ceph::OSD::Disk_setup['/dev/loop0']
+    } else {
+      Exec['attach_loop'] -> ::Ceph::OSD::Device['/dev/loop0']
     }
 
     exec {'attach_loop':
       command => 'losetup /dev/loop0 /var/lib/ceph/disk-1',
       unless  => 'losetup /dev/loop0',
-      require => Exec['make_disk_file'],
-      before  => ::Ceph::OSD::Device['/dev/loop0']
     }
+
     $osds_orig = ['loop0']
 
   } else {
@@ -133,53 +122,92 @@ class rjil::ceph::osd (
   }
 
   ##
-  # Ceph osd validation check
-  ##
-  rjil::test::ceph_osd { $osds_orig: }
-
-  ##
   ## Add a prefix /dev/ to all disk devices
   ##
 
   $osd_disks = regsubst($osds_orig,'^([\w\d].*)$','/dev/\1',G)
 
+  ##
+  # Do the disk setup, if initialize is true, i.e on initial start.
+  ##
+  if $initialize {
+    notice( " osds JOURNAL SIZE: $osd_journal_size_orig")
+    ::ceph::osd::disk_setup { $osd_disks:
+      osd_journal_type => $osd_journal_type,
+      osd_journal_size => $osd_journal_size_orig,
+      autogenerate     => $autogenerate,
+    }
+  } else {
+    if $storage_cluster_address {
+      $storage_cluster_address_orig = $storage_cluster_address
+    } elsif $storage_cluster_if {
+      $storage_cluster_address_orig = inline_template("<%= scope.lookupvar('ipaddress_' + @storage_cluster_if) %>")
+    }
 
-  ##
-  ## Add ceph osd configuration
-  ##
-  class { '::ceph::osd' :
-    public_address => $public_address_orig,
-    cluster_address => $storage_cluster_address_orig,
-  }
+    if $public_address {
+      $public_address_orig = $public_address
+    } elsif $public_if {
+      $public_address_orig = inline_template("<%= scope.lookupvar('ipaddress_' + @public_if) %>")
+    }
 
-  ##
-  ##  Add all osd_disks to ceph
-  ##
-  ::ceph::osd::device { $osd_disks:
-    osd_journal_type  => $osd_journal_type,
-    osd_journal_size  => $osd_journal_size_orig,
-    autogenerate     => $autogenerate,
-  }
+    ##
+    ## Fix for ceph being hang because of memory fragmentation
+    ##
 
-  ##
-  # ceph admin keyring only created on mon nodes by ceph module, but it is
-  # required on all ceph nodes, so adding it here to create the keyring on all
-  # nodes where osds are hosted
-  ##
+    sysctl::value { 'vm.dirty_background_ratio':
+      value => 5,
+    }
 
-  ceph::auth {'admin':
-    mon_key      => $mon_key,
-    keyring_path => '/etc/ceph/keyring',
-    cap          => "mon 'allow *' osd 'allow *' mds 'allow'",
-  }
+    exec { 'cleanup_caches':
+      command => '/bin/sync && /bin/echo 1 > /proc/sys/vm/drop_caches',
+      onlyif => "awk 'BEGIN {s=0} /DMA32|Normal/ { if \
+                  (\$9+\$10+\$11+\$12+\$13+\$14+\$15 < 100) {s=1} } END { \
+                   print s }' /proc/buddyinfo | grep '1'",
+    }
 
-  ##
-  # Running ceph::key with fake secret with admin just to satisfy condition in ceph module
-  # The condition in ::ceph module may need to be removed, after checking upstream code.
-  ##
+    ##
+    ## Add ceph osd configuration
+    ##
+    class { '::ceph::osd' :
+      public_address => $public_address_orig,
+      cluster_address => $storage_cluster_address_orig,
+    }
 
-  ::ceph::key { 'admin':
-    secret   => 'AQCNhbZTCKXiGhAAWsXesOdPlNnUSoJg7BZvsw==',
+    ##
+    ##  Add all osd_disks to ceph
+    ##
+    ::ceph::osd::device { $osd_disks:
+      osd_journal_type => $osd_journal_type,
+      osd_journal_size => $osd_journal_size_orig,
+      autogenerate     => $autogenerate,
+    }
+
+    ##
+    # ceph admin keyring only created on mon nodes by ceph module, but it is
+    # required on all ceph nodes, so adding it here to create the keyring on all
+    # nodes where osds are hosted
+    ##
+
+    ceph::auth {'admin':
+      mon_key      => $mon_key,
+      keyring_path => '/etc/ceph/keyring',
+      cap          => "mon 'allow *' osd 'allow *' mds 'allow'",
+    }
+
+    ##
+    # Running ceph::key with fake secret with admin just to satisfy condition in ceph module
+    # The condition in ::ceph module may need to be removed, after checking upstream code.
+    ##
+
+    ::ceph::key { 'admin':
+      secret   => 'AQCNhbZTCKXiGhAAWsXesOdPlNnUSoJg7BZvsw==',
+    }
+
+    ##
+    # Ceph osd validation check
+    ##
+    rjil::test::ceph_osd { $osds_orig: }
+
   }
 
   ## End of ceph_setup

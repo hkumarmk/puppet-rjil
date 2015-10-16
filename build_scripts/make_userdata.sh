@@ -159,5 +159,13 @@ do
     break
   fi
 done
+
+cat << OSD_DISK_INIT | puppet apply
+class {'rjil::ceph::osd':
+  initialize => true
+}
+Exec { path => [ "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/", "/usr/local/bin/","/usr/local/sbin/" ] }
+OSD_DISK_INIT
+
 date
 EOF

@@ -120,6 +120,9 @@ Vagrant.configure("2") do |config|
       config.vm.provision 'shell', :inline =>
       'puppet apply --detailed-exitcodes --debug -e "include rjil::jiocloud"; if [[ $? = 1 || $? = 4 || $? = 6 ]]; then apt-get update; puppet apply --detailed-exitcodes --debug -e "include rjil::jiocloud"; fi'
 
+      config.vm.provision 'shell', :inline =>
+      'puppet apply --detailed-exitcodes --debug -e \'Exec { path => [ "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/", "/usr/local/bin/","/usr/local/sbin/" ] } class {"rjil::ceph::osd": initialize => true, disks => $::blankorcephdisks }\''
+
       net_prefix = ENV['NET_PREFIX'] || "192.168.100.0"
       config.vm.network "private_network", :type => :dhcp, :ip => net_prefix, :netmask => "255.255.255.0"
     end
