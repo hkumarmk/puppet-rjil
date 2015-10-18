@@ -37,6 +37,18 @@ resources:
     image: trusty
     networks: default
     boot_volume: default_volume
+  cdb:
+    number: 1
+    flavor: small
+    image: trusty
+    networks: default
+    boot_volume: default_volume
+  cinder:
+    number: 1
+    flavor: small
+    image: trusty
+    networks: default
+    boot_volume: default_volume
   stmonleader:
     number: 1
     flavor: storage

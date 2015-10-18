@@ -1,0 +1,15 @@
+rjil::docker::containers:
+  cinder:
+    container_params:
+      expose: [8776, 8777, 8778, 8779]
+      consul_service_names:
+        8776: cinder
+        8777: cinder-scheduler
+        8778: cinder-volume
+        8779: cinder-backup
+      consul_check_scripts:
+        8776: /usr/lib/jiocloud/tests/service_checks/cinder.sh
+        8777: docker exec cinder /usr/lib/jiocloud/tests/service_checks/cinder-scheduler.sh
+        8778: docker exec cinder /usr/lib/jiocloud/tests/service_checks/cinder-volume.sh
+        8779: docker exec cinder /usr/lib/jiocloud/tests/service_checks/cinder-backup.sh
+      consul_service_tags: real

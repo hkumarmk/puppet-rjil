@@ -1,0 +1,11 @@
+rjil::db::dbs:
+  cinder:
+    user: "%{hiera('cinder_db_user')}"
+    pass: "%{hiera('cinder_db_password')}"
+
+rjil::docker::containers:
+  cdb:
+    container_params:
+      expose: [3306]
+      image_name: db
+      consul_check_scripts: "/usr/lib/nagios/plugins/check_mysql -H %{hiera('rjil::db::bind_address')} -u %{hiera('rjil::db::monitor_user')} -p %{hiera('rjil::db::monitor_password')}"
