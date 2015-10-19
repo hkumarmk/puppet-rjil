@@ -13,3 +13,9 @@ rjil::docker::containers:
         8778: docker exec cinder /usr/lib/jiocloud/tests/service_checks/cinder-volume.sh
         8779: docker exec cinder /usr/lib/jiocloud/tests/service_checks/cinder-backup.sh
       consul_service_tags: real
+      volumes: ['/var/run/openstack:/var/run/openstack', '/etc/oslo:/etc/oslo']
+  zmq-receiver:
+    container_params:
+      image_name: zmq_receiver
+      consul_service_names: zmq-receiver
+      volumes: ['/var/run/openstack:/var/run/openstack', '/etc/oslo:/etc/oslo']

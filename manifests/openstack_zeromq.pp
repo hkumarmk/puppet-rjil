@@ -36,6 +36,7 @@
 
 
 class rjil::openstack_zeromq (
+  $service_manager        = undef,
   $cinder_scheduler_nodes = service_discover_consul('cinder-scheduler'),
   $cinder_volume_nodes    = service_discover_consul('cinder-volume'),
   $nova_scheduler_nodes   = service_discover_consul('nova-scheduler'),
@@ -83,5 +84,26 @@ class rjil::openstack_zeromq (
     nova_conductor_nodes   => $nova_conductor_nodes_orig,
     nova_cert_nodes        => $nova_cert_nodes_orig,
     nova_compute_nodes     => $nova_compute_nodes_orig,
+  }
+
+  if $service_manager == 'runit' {
+    rjil::runit::service {'oslo-messaging-zmq-receiver':
+      command    => '/usr/bin/oslo-messaging-zmq-receiver --config-file /etc/oslo/zmq_receiver.conf',
+      pre_start  => ['mkdir -p /var/run/openstack; chown root:openstack /var/run/openstack; chmod 2775 /var/run/openstack; umask 0002'],
+      enable_log => true,
+      user       => 'root',
+    }
+
+    # use runit provider for services
+    Service<| title == 'oslo-messaging-zmq-receiver' |> {
+      provider => 'runit',
+    }
+  }
+
+  # Create a validation script for zmq_receiver
+  rjil::test::check { 'zmq_receiver':
+    type       => 'tcp',
+    port       => 9501,
+    check_type => 'validation',
   }
 }
