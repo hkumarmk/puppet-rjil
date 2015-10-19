@@ -5,6 +5,7 @@
 
 define rjil::runit::service (
   $command,
+  $pre_start       = [],
   $service_name    = $name,
   $enable          = true,
   $user            = undef,
