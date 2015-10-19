@@ -29,6 +29,11 @@ class rjil::docker (
   # Install and setup docker on hosts
   ##
   include ::docker
+  include rjil::docker::pre_container
+
+  # Run pre_container code before containers
+  Class['Rjil::Docker::Pre_container'] ->
+  Rjil::Docker::Container_wrapper<||>
 
   if ! empty($containers) {
     ##
