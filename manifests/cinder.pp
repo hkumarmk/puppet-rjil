@@ -65,6 +65,9 @@ class rjil::cinder (
   $rewrites                = undef,
   $headers                 = undef,
   $use_default_quota_class = false,
+  $service_manager         = undef,
+  $service_registrator     = false,
+  $db_hostname             = undef,
 ) {
 
   ######################## Service Blockers and Ordering
@@ -74,8 +77,13 @@ class rjil::cinder (
   # Adding service blocker for mysql which make sure mysql is avaiable before
   # database configuration.
   ##
+  if $db_hostname {
+    $db_sb_params = { service_hostname => $db_hostname }
+  } else {
+    $db_sb_params = {}
+  }
 
-  ensure_resource( 'rjil::service_blocker', 'mysql', {})
+  ensure_resource( 'rjil::service_blocker', 'mysql', $db_sb_params)
   Rjil::Service_blocker['mysql'] -> Cinder_config<| title == 'database/connection' |>
 
   ##
@@ -89,6 +97,58 @@ class rjil::cinder (
   Rjil::Service_blocker['stmon']  ->
   Class['rjil::ceph::mon_config'] ->
   Class['::cinder::volume']
+
+  ##
+  # runit can be used to supervise services. This is useful especially for
+  # containers when you run multiple processes.
+  ##
+  if $service_manager == 'runit' {
+    rjil::runit::service {'cinder-api':
+      command    => '/usr/bin/cinder-api --config-file=/etc/cinder/cinder.conf --log-file=/var/log/cinder/cinder-api.log',
+      enable_log => false,
+      user       => 'cinder',
+    }
+
+    # use runit provider for services
+    Service<| title == 'cinder-api' |> {
+      provider => 'runit',
+    }
+
+    rjil::runit::service {'cinder-scheduler':
+      command    => '/usr/bin/cinder-scheduler --config-file=/etc/cinder/cinder.conf --log-file=/var/log/cinder/cinder-scheduler.log',
+      enable_log => false,
+      user       => 'cinder',
+    }
+
+    # use runit provider for services
+    Service<| title == 'cinder-scheduler' |> {
+      provider => 'runit',
+    }
+
+    rjil::runit::service {'cinder-volume':
+      command    => '/usr/bin/cinder-volume --config-file=/etc/cinder/cinder.conf --log-file=/var/log/cinder/cinder-volume.log',
+      enable_log => false,
+      user       => 'cinder',
+    }
+
+    # use runit provider for services
+    Service<| title == 'cinder-volume' |> {
+      provider => 'runit',
+    }
+
+
+    rjil::runit::service {'cinder-backup':
+      command    => '/usr/bin/cinder-backup --config-file=/etc/cinder/cinder.conf --log-file=/var/log/cinder/cinder-backup.log',
+      enable_log => false,
+      user       => 'cinder',
+    }
+
+    # use runit provider for services
+    Service<| title == 'cinder-backup' |> {
+      provider => 'runit',
+    }
+
+  }
 
   include rjil::apache
 
@@ -178,7 +238,8 @@ class rjil::cinder (
   ensure_resource('user','cinder',{ensure => present})
 
   file { '/var/log/cinder':
-    ensure => directory
+    ensure => 'directory',
+    owner  => 'cinder',
   }
 
   file {'/var/log/cinder/cinder-manage.log':
@@ -191,6 +252,7 @@ class rjil::cinder (
   # Include rjil::ceph::mon_config because of dependancy.
   ##
 
+  include rjil::ceph
   include rjil::ceph::mon_config
   include ::cinder
   include ::cinder::api
@@ -245,28 +307,38 @@ class rjil::cinder (
     ssl     => $ssl,
   }
 
-  rjil::jiocloud::consul::service { 'cinder':
-    tags          => ['real'],
-    port          => $public_port,
-  }
-
   rjil::test::check { 'cinder-volume':
     type => 'proc',
   }
 
-  rjil::jiocloud::consul::service { 'cinder-volume': }
 
   rjil::test::check { 'cinder-scheduler':
     type => 'proc',
   }
 
-  rjil::jiocloud::consul::service { 'cinder-scheduler': }
 
   rjil::test::check { 'cinder-backup':
     type => 'proc',
   }
 
-  rjil::jiocloud::consul::service { 'cinder-backup': }
+ ##
+ # In case of running cinder in container, there is one app called registrator
+ # which can be used to automatically register/deregister the consul services
+ # automatically as and when the container up/down. in which case no need to
+ # use rjil::jiocloud::consul::service to register the service.
+ ##
+  if ! $service_registrator {
+    rjil::jiocloud::consul::service { 'cinder':
+      tags          => ['real'],
+      port          => $public_port,
+    }
+
+    rjil::jiocloud::consul::service { 'cinder-scheduler': }
+
+    rjil::jiocloud::consul::service { 'cinder-volume': }
+
+    rjil::jiocloud::consul::service { 'cinder-backup': }
+  }
 
   $cinder_logs = ['cinder-api',
                   'cinder-scheduler',

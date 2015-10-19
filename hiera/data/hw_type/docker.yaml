@@ -14,3 +14,7 @@ rjil::ceph::enable_ntp: false
 # (FACTER_osd_disks) when the container is created. Usually only one disk will
 # be passed per container.
 rjil::ceph::osd::disks: "%{osd_disks}"
+
+rjil::cinder::service_manager: runit
+rjil::cinder::service_registrator: true
+rjil::cinder::db_hostname: "%{hiera('cinder_db_host')}"
