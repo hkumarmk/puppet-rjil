@@ -106,7 +106,6 @@ class rjil::cinder (
     rjil::runit::service {'cinder-api':
       command    => '/usr/bin/cinder-api --config-file=/etc/cinder/cinder.conf --log-file=/var/log/cinder/cinder-api.log',
       enable_log => false,
-      user       => 'cinder',
     }
 
     # use runit provider for services
@@ -117,7 +116,6 @@ class rjil::cinder (
     rjil::runit::service {'cinder-scheduler':
       command    => '/usr/bin/cinder-scheduler --config-file=/etc/cinder/cinder.conf --log-file=/var/log/cinder/cinder-scheduler.log',
       enable_log => false,
-      user       => 'cinder',
     }
 
     # use runit provider for services
@@ -128,7 +126,6 @@ class rjil::cinder (
     rjil::runit::service {'cinder-volume':
       command    => '/usr/bin/cinder-volume --config-file=/etc/cinder/cinder.conf --log-file=/var/log/cinder/cinder-volume.log',
       enable_log => false,
-      user       => 'cinder',
     }
 
     # use runit provider for services
@@ -140,7 +137,6 @@ class rjil::cinder (
     rjil::runit::service {'cinder-backup':
       command    => '/usr/bin/cinder-backup --config-file=/etc/cinder/cinder.conf --log-file=/var/log/cinder/cinder-backup.log',
       enable_log => false,
-      user       => 'cinder',
     }
 
     # use runit provider for services
@@ -227,6 +223,11 @@ class rjil::cinder (
       'DEFAULT/rpc_zmq_matchmaker':   value => $rpc_zmq_matchmaker;
       'DEFAULT/rpc_zmq_host':         value => $::hostname;
     }
+
+    ##
+    # python-zeromq to be installed to get this worked.
+    ##
+    include ::openstack_zeromq::install
   }
 
   ##
